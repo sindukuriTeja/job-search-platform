@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume-Based Job Search Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Client-side PDF parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <!-- Client-side DOCX parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- Our modules -->
+    <script src="static/resume_parser.js"></script>
+    <script src="static/cors_proxy.js"></script>
+    <script src="static/job_search_engine.js"></script>
+    <script src="static/job_matcher.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 1400px;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .upload-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed var(--primary-color);
+        }
+
+        .upload-area {
+            text-align: center;
+            padding: 40px;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f8f9ff;
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .platform-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .platform-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.1);
+        }
+
+        .platform-card.selected {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+        }
+
+        .platform-card i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .platform-card .platform-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .platform-card .platform-count {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .results-stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .job-card.excellent { border-left-color: var(--success-color); }
+        .job-card.good { border-left-color: var(--primary-color); }
+        .job-card.fair { border-left-color: var(--warning-color); }
+        .job-card.partial { border-left-color: #6b7280; }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .job-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .job-company {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .match-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .match-badge.excellent { background: var(--success-color); }
+        .match-badge.good { background: var(--primary-color); }
+        .match-badge.fair { background: var(--warning-color); }
+        .match-badge.partial { background: #6b7280; }
+
+        .job-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .job-detail {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .job-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .skills-section {
+            margin-bottom: 15px;
+        }
+
+        .skills-section h6 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 2px;
+            font-weight: 500;
+        }
+
+        .skill-tag.matched {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .skill-tag.missing {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-apply {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-apply:hover {
+            background: #1d4ed8;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-save {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-section {
+            margin-top: 20px;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 8px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .platform-status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .platform-status-item {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .platform-status-item.searching {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .platform-status-item.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .platform-status-item.failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Direct platform links section */
+        #platformLinksSection {
+            margin-top: 30px;
+        }
+
+        .platforms-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .platforms-header h4 { margin-bottom: 8px; font-weight: 700; }
+
+        .platforms-subtext { opacity: 0.9; margin-bottom: 12px; font-size: 0.95rem; }
+
+        .skill-query-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .platform-category-block {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-top: none;
+            padding: 20px 25px;
+        }
+
+        .platform-category-block:last-child { border-radius: 0 0 15px 15px; }
+
+        .platform-category-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .platform-links-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .platform-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1.5px solid #d1d5db;
+            color: #374151;
+            background: white;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .platform-link-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: #f0f7ff;
+            text-decoration: none;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(37,99,235,0.15);
+        }
+
+        .platform-link-btn i { font-size: 0.75rem; opacity: 0.6; }
+
+        .file-input-hidden {
+            display: none;
+        }
+
+        .file-info-box {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .file-icon {
+            color: var(--success-color);
+        }
+
+        .file-name-label {
+            margin-left: 10px;
+            font-weight: 500;
+        }
+
+        .progress-bar-init {
+            width: 0%;
+        }
+
+        .resume-analysis {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .analysis-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .analysis-item .score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .analysis-item .label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .platform-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .job-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .job-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-briefcase"></i> Resume-Based Job Search Platform</h1>
+            <p>Upload your resume and discover matching jobs across 100+ platforms</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h4>Drop your resume here or click to upload</h4>
+                <p>Supports PDF, DOCX, and TXT files</p>
+                <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" class="file-input-hidden">
+            </div>
+            <div id="fileInfo" class="file-info-box">
+                <i class="fas fa-file-alt file-icon"></i>
+                <span id="fileName" class="file-name-label"></span>
+                <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="clearFile()">Remove</button>
+            </div>
+        </div>
+
+        <!-- Search Configuration -->
+        <div class="form-section">
+            <h3><i class="fas fa-cog"></i> Search Configuration</h3>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Preferred Location</label>
+                        <input type="text" class="form-control" id="location"
+                               placeholder="e.g., Bangalore, India or Remote">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Experience Level</label>
+                        <select class="form-select" id="experienceLevel">
+                            <option value="all">All Levels</option>
+                            <option value="fresher">Fresher (0-1 years)</option>
+                            <option value="entry">Entry Level (1-2 years)</option>
+                            <option value="mid">Mid Level (2-5 years)</option>
+                            <option value="senior">Senior Level (5+ years)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Job Categories to Search</label>
+                <div class="platform-grid" id="categoryGrid">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="button" class="btn search-btn" id="searchBtn" onclick="startSearch()" disabled>
+                    <i class="fas fa-search"></i> Search Jobs
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <h4>Searching for jobs...</h4>
+                <p id="searchStatus">Initializing search engine...</p>
+
+                <div class="progress-section">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar progress-bar-init" id="progressBar"></div>
+                    </div>
+                    <div class="platform-status" id="platformStatus"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <div class="results-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalJobs">0</span>
+                        <span class="stat-label">Total Jobs Found</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="excellentMatches">0</span>
+                        <span class="stat-label">Excellent Matches</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="goodMatches">0</span>
+                        <span class="stat-label">Good Matches</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="platformsSearched">0</span>
+                        <span class="stat-label">Platforms Searched</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resume Analysis -->
+            <div class="resume-analysis">
+                <h5><i class="fas fa-chart-bar"></i> Resume Analysis</h5>
+                <div class="analysis-grid" id="analysisGrid">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Job Listings -->
+            <div id="jobListings">
+                <!-- Jobs will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Direct Platform Links Section -->
+        <div id="platformLinksSection" style="display:none;">
+            <div class="platforms-header">
+                <h4><i class="fas fa-link"></i> Direct Platform Links</h4>
+                <p class="platforms-subtext">Browse jobs on these platforms with your skills pre-filled — click any button to open a new search.</p>
+                <div id="skillQueryBadge"></div>
+            </div>
+            <div id="platformLinksGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        // ---- Job platform categories ----
+        const JOB_CATEGORIES = [
+            { id: 'india', name: 'India Job Portals', icon: 'fa-building', platforms: 15 },
+            { id: 'software', name: 'Software Engineering', icon: 'fa-code', platforms: 15 },
+            { id: 'ai_ml', name: 'AI/ML & Data Science', icon: 'fa-brain', platforms: 15 },
+            { id: 'remote', name: 'Remote Jobs', icon: 'fa-globe', platforms: 15 },
+            { id: 'international', name: 'International Jobs', icon: 'fa-plane', platforms: 30 },
+            { id: 'internships', name: 'Internships', icon: 'fa-graduation-cap', platforms: 15 },
+            { id: 'freelancing', name: 'Freelancing', icon: 'fa-laptop', platforms: 12 },
+            { id: 'startups', name: 'Startup Jobs', icon: 'fa-rocket', platforms: 10 },
+            { id: 'companies', name: 'Company Career Pages', icon: 'fa-building', platforms: 30 },
+            { id: 'offcampus', name: 'Off-Campus Hiring', icon: 'fa-user-graduate', platforms: 15 },
+            { id: 'government', name: 'Government Jobs', icon: 'fa-landmark', platforms: 15 },
+        ];
+
+        // ---- State ----
+        let resumeData = null;
+        let selectedCategories = new Set(['india', 'software']);
+
+        const PLATFORM_LINKS_BY_CATEGORY = {
+            india: [
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+                { name: 'Indeed India', url: 'https://www.indeed.co.in/jobs?q={q}&l={loc}' },
+                { name: 'Naukri', url: 'https://www.naukri.com/{slug}-jobs{locPath}' },
+                { name: 'Shine', url: 'https://www.shine.com/job-search/{q}-jobs{locPath}' },
+            ],
+            software: [
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+                { name: 'Indeed', url: 'https://www.indeed.com/jobs?q={q}&l={loc}' },
+                { name: 'Glassdoor', url: 'https://www.glassdoor.com/Job/jobs.htm?sc.keyword={q}&locT=C&locId=0&locKeyword={loc}' },
+                { name: 'Remote OK', url: 'https://remoteok.com/remote-{slug}' },
+            ],
+            ai_ml: [
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+                { name: 'Indeed', url: 'https://www.indeed.com/jobs?q={q}&l={loc}' },
+                { name: 'Kaggle Jobs', url: 'https://www.kaggle.com/jobs?search={q}' },
+            ],
+            remote: [
+                { name: 'Remote OK', url: 'https://remoteok.com/remote-{slug}' },
+                { name: 'We Work Remotely', url: 'https://weworkremotely.com/remote-jobs/search?term={q}' },
+                { name: 'Remotive', url: 'https://remotive.com/search/remote-{slug}' },
+            ],
+            international: [
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+                { name: 'Indeed', url: 'https://www.indeed.com/jobs?q={q}&l={loc}' },
+                { name: 'Glassdoor', url: 'https://www.glassdoor.com/Job/jobs.htm?sc.keyword={q}&locT=C&locId=0&locKeyword={loc}' },
+            ],
+            internships: [
+                { name: 'Internshala', url: 'https://internshala.com/internships/keywords-{q}' },
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+                { name: 'Indeed Internships', url: 'https://www.indeed.com/q-{q}-internship-jobs.html' },
+            ],
+            freelancing: [
+                { name: 'Upwork', url: 'https://www.upwork.com/search/jobs/?q={q}' },
+                { name: 'Fiverr', url: 'https://www.fiverr.com/search/gigs?query={q}' },
+                { name: 'Freelancer', url: 'https://www.freelancer.com/jobs/{slug}/' },
+            ],
+            startups: [
+                { name: 'AngelList', url: 'https://angel.co/jobs?keywords={q}&location={loc}' },
+                { name: 'Wellfound', url: 'https://wellfound.com/jobs?search={q}&location={loc}' },
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+            ],
+            companies: [
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+                { name: 'Indeed', url: 'https://www.indeed.com/jobs?q={q}&l={loc}' },
+                { name: 'Glassdoor', url: 'https://www.glassdoor.com/Job/jobs.htm?sc.keyword={q}&locT=C&locId=0&locKeyword={loc}' },
+            ],
+            offcampus: [
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+                { name: 'Internshala', url: 'https://internshala.com/internships/keywords-{q}' },
+                { name: 'Freshersworld', url: 'https://www.freshersworld.com/jobs/jobsearch/{slug}-jobs' },
+            ],
+            government: [
+                { name: 'Naukri', url: 'https://www.naukri.com/{slug}-jobs' },
+                { name: 'LinkedIn', url: 'https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}' },
+                { name: 'Indeed', url: 'https://www.indeed.com/jobs?q={q}&l={loc}' },
+            ],
+        };
+
+        function buildPlatformLinkUrl(template, query, location) {
+            const q = encodeURIComponent(query);
+            const loc = encodeURIComponent(location || '');
+            const slug = encodeURIComponent(query.toLowerCase().replace(/\s+/g, '-'));
+            const locPath = location ? `/${encodeURIComponent(location.replace(/\s+/g, '-'))}` : '';
+            return template
+                .replace(/{q}/g, q)
+                .replace(/{loc}/g, loc)
+                .replace(/{slug}/g, slug)
+                .replace(/{locPath}/g, locPath);
+        }
+
+        function getPlatformLinksForCategory(category, query, location) {
+            const templates = PLATFORM_LINKS_BY_CATEGORY[category] || [];
+            return templates.map(template => ({
+                name: template.name,
+                url: buildPlatformLinkUrl(template.url, query, location),
+            }));
+        }
+
+        function buildPlatformLinks(query, location, categories) {
+            const links = {};
+            categories.forEach(category => {
+                links[category] = getPlatformLinksForCategory(category, query, location);
+            });
+            return links;
+        }
+
+        // ---- Initialize ----
+        document.addEventListener('DOMContentLoaded', () => {
+            populateCategories();
+            setupDragDrop();
+        });
+
+        function populateCategories() {
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = JOB_CATEGORIES.map(cat => `
+                <div class="platform-card" data-category="${cat.id}" onclick="toggleCategory('${cat.id}')">
+                    <i class="fas ${cat.icon}"></i>
+                    <div class="platform-name">${cat.name}</div>
+                    <div class="platform-count">${cat.platforms} platforms</div>
+                </div>
+            `).join('');
+
+            // Pre-select defaults
+            document.querySelectorAll('.platform-card').forEach(card => {
+                if (selectedCategories.has(card.dataset.category)) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        function toggleCategory(id) {
+            const card = document.querySelector(`.platform-card[data-category="${id}"]`);
+            if (selectedCategories.has(id)) {
+                selectedCategories.delete(id);
+                card.classList.remove('selected');
+            } else {
+                selectedCategories.add(id);
+                card.classList.add('selected');
+            }
+            updateSearchButton();
+        }
+
+        function updateSearchButton() {
+            const btn = document.getElementById('searchBtn');
+            btn.disabled = !resumeData || selectedCategories.size === 0;
+        }
+
+        // ---- File upload handling ----
+        function setupDragDrop() {
+            const area = document.getElementById('uploadArea');
+            const input = document.getElementById('resumeFile');
+
+            area.addEventListener('click', () => input.click());
+
+            area.addEventListener('dragover', e => {
+                e.preventDefault();
+                area.style.borderColor = 'var(--primary-color)';
+                area.style.background = '#f8f9ff';
+            });
+
+            area.addEventListener('dragleave', e => {
+                e.preventDefault();
+                area.style.borderColor = '#ccc';
+                area.style.background = 'white';
+            });
+
+            area.addEventListener('drop', e => {
+                e.preventDefault();
+                area.style.borderColor = '#ccc';
+                area.style.background = 'white';
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
+
+            input.addEventListener('change', e => {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+        }
+
+        async function handleFileUpload(file) {
+            const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+            const ext = file.name.split('.').pop().toLowerCase();
+            const validExts = ['pdf', 'docx', 'txt'];
+
+            if (!validExts.includes(ext)) {
+                alert('Please upload a PDF, DOCX, or TXT file.');
+                return;
+            }
+
+            try {
+                const parser = new ResumeParser();
+                resumeData = await parser.parseResume(file);
+
+                // Show file info
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileInfo').style.display = 'flex';
+                document.getElementById('uploadArea').style.display = 'none';
+
+                // Auto-fill location from resume
+                if (resumeData.location) {
+                    document.getElementById('location').value = resumeData.location;
+                }
+
+                updateSearchButton();
+            } catch (err) {
+                alert('Failed to parse resume: ' + err.message);
+            }
+        }
+
+        function clearFile() {
+            resumeData = null;
+            document.getElementById('resumeFile').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('uploadArea').style.display = 'block';
+            updateSearchButton();
+        }
+
+        // ---- Search ----
+        async function startSearch() {
+            if (!resumeData) {
+                alert('Please upload your resume first.');
+                return;
+            }
+
+            const location = document.getElementById('location').value.trim();
+            const experienceLevel = document.getElementById('experienceLevel').value;
+
+            const searchParams = {
+                skills: resumeData.skills,
+                keywords: resumeData.keywords,
+                location: location,
+                experience_level: experienceLevel,
+                job_categories: Array.from(selectedCategories),
+            };
+
+            // Show loading overlay
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('platformLinksSection').style.display = 'none';
+            updateProgress(0, 'Starting search...');
+            document.getElementById('platformStatus').innerHTML = '';
+
+            try {
+                // Run search in background with progress polling
+                const searchPromise = searchJobs(searchParams);
+                startProgressPolling(searchPromise);
+
+                const result = await searchPromise;
+                stopProgressPolling();
+
+                // Match jobs with resume
+                const matchedJobs = matchJobs(result.jobs, resumeData);
+
+                updateProgress(100, 'Search complete!');
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    displayResults({
+                        jobs: matchedJobs,
+                        total_jobs: matchedJobs.length,
+                        platforms_searched: result.platforms_searched.length,
+                        failed_platforms: result.failed_platforms.length,
+                        resume_summary: {
+                            skills: resumeData.skills,
+                            experience_years: resumeData.experience_years,
+                            education: resumeData.education,
+                        },
+                        search_query: searchParams.skills.slice(0, 3).join(', '),
+                    });
+                    loadPlatformLinks(searchParams.skills.slice(0, 3).join(', '), location, Array.from(selectedCategories));
+                }, 500);
+
+            } catch (err) {
+                stopProgressPolling();
+                document.getElementById('loadingOverlay').style.display = 'none';
+                alert('Search failed: ' + err.message);
+            }
+        }
+
+        function updateProgress(percent, status) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('searchStatus').textContent = status;
+        }
+
+        let progressPoller = null;
+
+        function startProgressPolling(searchPromise) {
+            let dots = 0;
+            progressPoller = setInterval(() => {
+                dots = (dots + 1) % 4;
+                document.getElementById('searchStatus').textContent =
+                    `Searching${'.'.repeat(dots)} — platforms are being queried in parallel`;
+            }, 500);
+        }
+
+        function stopProgressPolling() {
+            if (progressPoller) { clearInterval(progressPoller); progressPoller = null; }
+        }
+
+        function displayResults(result) {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.style.display = 'block';
+
+            // Update statistics
+            document.getElementById('totalJobs').textContent = result.total_jobs;
+            document.getElementById('excellentMatches').textContent =
+                result.jobs.filter(job => job.match_level === 'Excellent Match').length;
+            document.getElementById('goodMatches').textContent =
+                result.jobs.filter(job => job.match_level === 'Good Match').length;
+            document.getElementById('platformsSearched').textContent =
+                result.platforms_searched || 0;
+
+            // Display resume analysis
+            displayResumeAnalysis(result.resume_summary);
+
+            // Display job listings
+            displayJobListings(result.jobs);
+
+            // Show direct platform links
+            const location = document.getElementById('location').value.trim();
+            loadPlatformLinks(result.search_query, location, Array.from(selectedCategories));
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function displayResumeAnalysis(summary) {
+            const analysisGrid = document.getElementById('analysisGrid');
+            analysisGrid.innerHTML = `
+                <div class="analysis-item">
+                    <div class="score">${summary.skills.length}</div>
+                    <div class="label">Skills Detected</div>
+                </div>
+                <div class="analysis-item">
+                    <div class="score">${summary.experience_years}</div>
+                    <div class="label">Years Experience</div>
+                </div>
+                <div class="analysis-item">
+                    <div class="score">${summary.education.length}</div>
+                    <div class="label">Education Entries</div>
+                </div>
+            `;
+        }
+
+        function displayJobListings(jobs) {
+            const container = document.getElementById('jobListings');
+            container.innerHTML = '';
+
+            if (jobs.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-search" style="font-size: 3rem; color: #ccc;"></i>
+                        <h4 class="mt-3">No matching jobs found</h4>
+                        <p class="text-muted">Try adjusting your search criteria or resume details.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            jobs.forEach(job => {
+                const jobCard = createJobCard(job);
+                container.appendChild(jobCard);
+            });
+        }
+
+        function createJobCard(job) {
+            const card = document.createElement('div');
+            card.className = `job-card ${job.match_level.toLowerCase().replace(' ', '')}`;
+
+            const matchClass = job.match_level.toLowerCase().replace(' ', '');
+
+            card.innerHTML = `
+                <div class="job-header">
+                    <div>
+                        <div class="job-title">${escapeHtml(job.title)}</div>
+                        <div class="job-company">${escapeHtml(job.company)}</div>
+                    </div>
+                    <div class="match-badge ${matchClass}">
+                        ${job.match_percentage}% Match
+                    </div>
+                </div>
+
+                <div class="job-details">
+                    ${job.location ? `<div class="job-detail"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(job.location)}</div>` : ''}
+                    ${job.salary ? `<div class="job-detail"><i class="fas fa-money-bill-wave"></i> ${escapeHtml(job.salary)}</div>` : ''}
+                    ${job.experience_required ? `<div class="job-detail"><i class="fas fa-briefcase"></i> ${escapeHtml(job.experience_required)}</div>` : ''}
+                    ${job.job_type ? `<div class="job-detail"><i class="fas fa-clock"></i> ${escapeHtml(job.job_type)}</div>` : ''}
+                    <div class="job-detail"><i class="fas fa-globe"></i> ${escapeHtml(job.portal)}</div>
+                    ${job.posted_date ? `<div class="job-detail"><i class="fas fa-calendar"></i> ${escapeHtml(job.posted_date)}</div>` : ''}
+                </div>
+
+                ${job.description ? `<div class="job-description">${escapeHtml(job.description)}</div>` : ''}
+
+                ${job.matched_skills && job.matched_skills.length > 0 ? `
+                    <div class="skills-section">
+                        <h6><i class="fas fa-check-circle text-success"></i> Matched Skills</h6>
+                        ${job.matched_skills.map(skill => `<span class="skill-tag matched">${escapeHtml(skill)}</span>`).join('')}
+                    </div>
+                ` : ''}
+
+                ${job.missing_skills && job.missing_skills.length > 0 ? `
+                    <div class="skills-section">
+                        <h6><i class="fas fa-times-circle text-danger"></i> Missing Skills</h6>
+                        ${job.missing_skills.map(skill => `<span class="skill-tag missing">${escapeHtml(skill)}</span>`).join('')}
+                    </div>
+                ` : ''}
+
+                <div class="job-actions">
+                    <button class="btn-save" onclick="saveJob('${job.url}')">
+                        <i class="fas fa-bookmark"></i> Save
+                    </button>
+                    <a href="${job.url}" target="_blank" class="btn-apply">
+                        <i class="fas fa-external-link-alt"></i> Apply Now
+                    </a>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function saveJob(url) {
+            // Implement job saving functionality
+            alert('Job saved to your favorites!');
+        }
+
+        // ---- Direct platform links ----------------------------------
+        function loadPlatformLinks(query, location, categories) {
+            const platforms = buildPlatformLinks(query, location, categories);
+            renderPlatformLinks(platforms, query);
+        }
+
+        function renderPlatformLinks(platforms, query) {
+            const section = document.getElementById('platformLinksSection');
+            const grid    = document.getElementById('platformLinksGrid');
+            const badge   = document.getElementById('skillQueryBadge');
+
+            badge.innerHTML = `<span class="skill-query-badge"><i class="fas fa-search"></i> Searching for: "${escapeHtml(query)}"</span>`;
+
+            const categoryLabels = {
+                india:         '🇮🇳 India Job Portals',
+                software:      '💻 Software Engineering',
+                ai_ml:         '🤖 AI / ML & Data Science',
+                remote:        '🌐 Remote Jobs',
+                international: '✈️ International Portals',
+                internships:   '🎓 Internships',
+                freelancing:   '🧑‍💻 Freelancing',
+                startups:      '🚀 Startup Jobs',
+                companies:     '🏢 Company Career Pages',
+                offcampus:     '🎯 Off-Campus Hiring',
+                government:    '🏛️ Government Jobs',
+            };
+
+            grid.innerHTML = '';
+            for (const [cat, links] of Object.entries(platforms)) {
+                const block = document.createElement('div');
+                block.className = 'platform-category-block';
+                const label = categoryLabels[cat] || cat;
+                block.innerHTML = `
+                    <div class="platform-category-title">${label}</div>
+                    <div class="platform-links-row">
+                        ${links.map(p => `
+                            <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="platform-link-btn">
+                                <i class="fas fa-external-link-alt"></i>${escapeHtml(p.name)}
+                            </a>
+                        `).join('')}
+                    </div>
+                `;
+                grid.appendChild(block);
+            }
+            section.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

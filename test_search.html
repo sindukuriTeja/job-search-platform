@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Search Engine Test</title>
+<style>
+body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; background: #f5f5f5; }
+h1 { color: #1a1a2e; }
+.search-box { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+input, button { padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; }
+input { width: 70%; margin-right: 0.5rem; }
+button { background: #4361ee; color: white; border: none; cursor: pointer; }
+button:hover { background: #3a56d4; }
+#results { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.job { border-bottom: 1px solid #eee; padding: 1rem 0; }
+.job:last-child { border-bottom: none; }
+.job h3 { margin: 0 0 0.25rem; color: #4361ee; }
+.job .company { color: #666; font-size: 0.9rem; }
+.job .location { color: #888; font-size: 0.85rem; }
+.job .match { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem; margin-top: 0.5rem; }
+.job .match.low { background: #fff3e0; color: #e65100; }
+.job .skills { font-size: 0.85rem; color: #555; margin-top: 0.3rem; }
+.status { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+.status.running { background: #e3f2fd; color: #1565c0; }
+.status.done { background: #e8f5e9; color: #2e7d32; }
+.status.error { background: #ffebee; color: #c62828; }
+#log { font-family: monospace; font-size: 0.85rem; color: #666; margin-top: 1rem; }
+</style>
+</head>
+<body>
+<h1>Job Search Engine Test</h1>
+<p>Tests the static job search engine against real job platforms. Results are limited by CORS — most platforms block browser fetch requests, but some APIs work.</p>
+
+<div class="search-box">
+  <input type="text" id="query" value="python developer" placeholder="Search query">
+  <input type="text" id="location" value="Hyderabad" placeholder="Location" style="width: 20%;">
+  <button onclick="runTest()">Search</button>
+</div>
+
+<div id="status" class="status running">Ready to search...</div>
+<div id="results"></div>
+<div id="log"></div>
+
+<script src="static/job_search_engine.js"></script>
+<script>
+function setStatus(msg, type) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = 'status ' + type;
+}
+function log(msg) {
+    document.getElementById('log').textContent += msg + '\n';
+}
+
+async function runTest() {
+    const query = document.getElementById('query').value;
+    const location = document.getElementById('location').value;
+    const resultsEl = document.getElementById('results');
+    resultsEl.innerHTML = '';
+    document.getElementById('log').textContent = '';
+    setStatus('Searching across platforms...', 'running');
+
+    const searchParams = {
+        skills: ['python', 'javascript', 'react', 'node.js', 'sql', 'aws', 'docker', 'machine learning', 'data analysis', 'web development'],
+        keywords: ['software', 'developer', 'engineer', 'programming', 'coding'],
+        location: location,
+        experience_level: 'fresher',
+        job_categories: ['india', 'software', 'ai_ml', 'internships', 'offcampus', 'startups'],
+    };
+
+    try {
+        const result = await searchJobs(searchParams);
+        setStatus(`Done! Found ${result.jobs.length} jobs from ${result.platforms_searched.length} platforms. Failed: ${result.failed_platforms.join(', ') || 'none'}`, result.jobs.length > 0 ? 'done' : 'error');
+        log('Platforms searched: ' + result.platforms_searched.join(', '));
+        log('Failed platforms: ' + (result.failed_platforms.join(', ') || 'none'));
+
+        if (result.jobs.length === 0) {
+            resultsEl.innerHTML = '<p>No jobs found. This is expected — most job platforms block browser fetch requests due to CORS. The search engine works best when run from a server or with CORS disabled.</p>';
+        } else {
+            result.jobs.forEach(job => {
+                const div = document.createElement('div');
+                div.className = 'job';
+                div.innerHTML = `
+                    <h3>${job.title}</h3>
+                    <div class="company">${job.company}</div>
+                    <div class="location">${job.location}${job.job_type ? ' • ' + job.job_type : ''}</div>
+                    <div class="skills">${job.description.substring(0, 200) || 'No description'}</div>
+                    <a href="${job.url}" target="_blank" style="color: #4361ee; font-size: 0.85rem;">Apply →</a>
+                `;
+                resultsEl.appendChild(div);
+            });
+        }
+    } catch (err) {
+        setStatus('Error: ' + err.message, 'error');
+        log('Error: ' + err.stack);
+    }
+}
+</script>
+</body>
+</html>
