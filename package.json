@@ -1,0 +1,16 @@
+{
+  "name": "job-search-platform",
+  "version": "2.0.0",
+  "description": "AI-powered resume job search with multi-platform integration",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}

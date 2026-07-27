@@ -230,9 +230,11 @@
     </div>
 
     <script src="static/resume_parser.js"></script>
-    <script src="static/cors_proxy.js"></script>
-    <script src="static/job_search_engine.js"></script>
     <script src="static/job_matcher.js"></script>
+    <script>
+        // Backend API URL — change this to your deployed backend
+        const BACKEND_URL = 'https://your-app.vercel.app/api/search';
+    </script>
     <script>
         let selectedCategories = new Set();
         let resumeData = null;
@@ -370,18 +372,28 @@
             const experienceLevel = document.getElementById('experienceLevel').value;
             const query = resumeData.skills.slice(0, 3).join(' ');
 
-            showLoading('Searching for jobs...', 'Connecting to multiple job platforms');
+            showLoading('Searching for jobs...', 'Connecting to job platforms via API');
             document.getElementById('searchBtn').disabled = true;
 
             try {
-                const results = await searchJobs({
-                    skills: resumeData.skills,
-                    keywords: resumeData.keywords,
-                    location: location,
-                    experience_level: experienceLevel,
-                    job_categories: Array.from(selectedCategories),
-                    on_progress: updateProgress,
+                // Call backend API
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        skills: resumeData.skills,
+                        keywords: resumeData.keywords,
+                        location: location,
+                        experience_level: experienceLevel,
+                        job_categories: Array.from(selectedCategories),
+                    }),
                 });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status} ${response.statusText}`);
+                }
+
+                const results = await response.json();
 
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
@@ -389,7 +401,7 @@
                 // Show direct search links for ALL platforms (always visible)
                 renderPlatformLinks(query, location, Array.from(selectedCategories));
 
-                if (results.jobs.length > 0) {
+                if (results.jobs && results.jobs.length > 0) {
                     const matched = matchJobs(results.jobs, resumeData, location, experienceLevel);
                     renderResults(matched);
                 } else {
@@ -398,7 +410,7 @@
             } catch (error) {
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
-                alert('Search failed: ' + error.message);
+                alert('Search failed: ' + error.message + '\n\nMake sure your backend is deployed and BACKEND_URL is set correctly.');
             }
         }
 
