@@ -411,22 +411,21 @@ async function searchWeWorkRemotely(query, location) {
 
                 const parts = title.split(':');
                 const company = parts[0].trim();
-                const jobTitle = parts.length > 1 ? parts.slice(1).join(':').trim() : title;
+                const jobTitle = parts.slice(1).join(':').trim();
 
-                const text = (title + ' ' + desc).toLowerCase();
-                if (terms.some(t => text.includes(t))) {
-                    jobs.push({
-                        title: jobTitle,
-                        company,
-                        location: 'Remote',
-                        description: desc.substring(0, 300),
-                        url: link,
-                        portal: 'We Work Remotely',
-                        job_type: 'Remote',
-                        posted_date: pubDate,
-                    });
-                }
-                if (jobs.length >= 100) break;
+                if (!jobTitle) continue;
+                if (!terms.some(t => jobTitle.toLowerCase().includes(t) || desc.toLowerCase().includes(t))) continue;
+
+                jobs.push({
+                    title: jobTitle,
+                    company,
+                    location: 'Remote',
+                    description: desc.substring(0, 300),
+                    url: link,
+                    portal: 'We Work Remotely',
+                    job_type: 'Remote',
+                    posted_date: pubDate,
+                });
             }
             if (jobs.length >= 100) break;
         }
