@@ -88,7 +88,7 @@
         <div class="container d-flex justify-content-between align-items-center">
             <div class="navbar-brand">Nex<span>Jobs</span></div>
             <div id="authArea">
-                <button class="btn btn-login" id="loginBtn" onclick="startLogin()">
+                <button class="btn btn-login" onclick="startLogin()">
                     <i class="fab fa-google"></i> Sign in with Google
                 </button>
             </div>
@@ -225,7 +225,7 @@
             <div class="loading-box">
                 <div class="spinner"></div>
                 <h4 id="loadingText">Searching for jobs...</h4>
-                <p class="text-muted" id="loadingStatus">Scanning multiple platforms</p>
+                <p class="text-muted" id="loadingStatus">Connecting to job platforms via API</p>
                 <div class="progress mt-3" style="height: 8px;">
                     <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
                 </div>
@@ -254,19 +254,19 @@
 
     <script src="static/resume_parser.js"></script>
     <script src="static/job_matcher.js"></script>
+    <script src="static/search_engine.js"></script>
     <script>
         let selectedCategories = new Set();
         let resumeData = null;
         let currentUser = null;
 
-        // Auth helpers
+        // === AUTH (client-side with localStorage) ===
         async function checkAuth() {
             try {
-                const resp = await fetch('/api/session');
-                const data = await resp.json();
-                if (data.authenticated) {
-                    currentUser = data.user;
-                    showLoggedInUI(data.user);
+                const session = localStorage.getItem('pokee_session');
+                if (session) {
+                    currentUser = JSON.parse(session);
+                    showLoggedInUI(currentUser);
                     loadSearchHistory();
                 } else {
                     currentUser = null;
@@ -295,11 +295,18 @@
         }
 
         function startLogin() {
-            window.location.href = '/api/auth?action=start';
+            // Google OAuth — redirect to Google, then come back to /auth_callback.html
+            const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'; // Replace with your client ID
+            const REDIRECT_URI = window.location.origin + '/auth_callback.html';
+            const scope = encodeURIComponent('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email');
+            const state = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
+            localStorage.setItem('pokee_oauth_state', state);
+            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${scope}&state=${state}`;
         }
 
         async function logout() {
-            await fetch('/api/auth?action=logout');
+            localStorage.removeItem('pokee_session');
+            localStorage.removeItem('pokee_user_data');
             currentUser = null;
             showLoggedOutUI();
             document.getElementById('searchHistorySection').style.display = 'none';
@@ -308,11 +315,11 @@
         async function loadSearchHistory() {
             if (!currentUser) return;
             try {
-                const resp = await fetch('/api/user_data');
-                const data = await resp.json();
-                if (data.searches && data.searches.length > 0) {
+                const data = JSON.parse(localStorage.getItem('pokee_user_data') || '{}');
+                const searches = data.searches || [];
+                if (searches.length > 0) {
                     const list = document.getElementById('searchHistoryList');
-                    list.innerHTML = data.searches.slice(0, 5).map(s => `
+                    list.innerHTML = searches.slice(0, 5).map(s => `
                         <div class="search-history-item">
                             <div>
                                 <strong>${escapeHtml(s.skills.join(', '))}</strong>
@@ -329,19 +336,31 @@
         async function saveSearch(skills, location, categories, resultsCount) {
             if (!currentUser) return;
             try {
-                await fetch('/api/user_data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ search: { skills, location, categories, results_count: resultsCount } }),
+                const data = JSON.parse(localStorage.getItem('pokee_user_data') || '{}');
+                if (!data.searches) data.searches = [];
+                data.searches.unshift({
+                    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36),
+                    timestamp: new Date().toISOString(),
+                    skills: skills || [],
+                    location: location || '',
+                    categories: categories || [],
+                    results_count: resultsCount || 0,
                 });
+                // Keep only last 20 searches
+                if (data.searches.length > 20) {
+                    data.searches = data.searches.slice(0, 20);
+                }
+                localStorage.setItem('pokee_user_data', JSON.stringify(data));
+                loadSearchHistory();
             } catch (e) { /* ignore */ }
         }
 
+        // === RESUME PARSING ===
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
             // If redirected from Google callback, handle it
             const params = new URLSearchParams(window.location.search);
-            if (params.get('code') && params.get('action') === 'callback') {
+            if (params.get('code') && window.location.pathname === '/auth_callback.html') {
                 handleCallback(params.get('code'));
                 return;
             }
@@ -353,16 +372,13 @@
 
         async function handleCallback(code) {
             try {
-                const resp = await fetch(`/api/auth?action=callback&code=${code}`);
-                const data = await resp.json();
-                if (data.success) {
-                    currentUser = data.user;
-                    showLoggedInUI(data.user);
-                    loadSearchHistory();
-                    window.history.replaceState({}, '', window.location.pathname);
-                } else {
-                    alert('Login failed: ' + data.error);
-                }
+                // Exchange code for token — this would normally go through a backend,
+                // but since we're backend-less, we store the code and use Google's
+                // token endpoint directly (requires exposing client secret, not ideal)
+                // For a truly backend-less app, use Google Sign-In JavaScript SDK instead.
+                // For now, we'll use a simpler approach: Google Identity Services (GIS)
+                alert('For a fully backend-less setup, please use the Google Sign-In button below instead of the redirect flow.');
+                window.history.replaceState({}, '', window.location.pathname);
             } catch (e) {
                 alert('Login failed: ' + e.message);
             }
@@ -496,23 +512,14 @@
             document.getElementById('searchBtn').disabled = true;
 
             try {
-                const response = await fetch('/api/search', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        skills: resumeData.skills,
-                        keywords: resumeData.keywords,
-                        location: location,
-                        experience_level: experienceLevel,
-                        job_categories: Array.from(selectedCategories),
-                    }),
+                // Run client-side search
+                const results = await searchJobs({
+                    skills: resumeData.skills,
+                    keywords: resumeData.keywords,
+                    location: location,
+                    experience_level: experienceLevel,
+                    job_categories: Array.from(selectedCategories),
                 });
-
-                if (!response.ok) {
-                    throw new Error(`API error: ${response.status} ${response.statusText}`);
-                }
-
-                const results = await response.json();
 
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
@@ -532,7 +539,7 @@
             } catch (error) {
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
-                alert('Search failed: ' + error.message + '\n\nMake sure your backend is deployed and the API endpoint is correct.');
+                alert('Search failed: ' + error.message);
             }
         }
 

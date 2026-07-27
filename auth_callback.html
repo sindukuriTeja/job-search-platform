@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signing in...</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f8fafc; }
+        .loading { text-align: center; }
+        .spinner { border: 4px solid #f3f4f6; border-top: 4px solid #2563eb; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <div class="spinner"></div>
+        <h3>Signing in...</h3>
+        <p id="status">Connecting to Google...</p>
+    </div>
+    <script>
+        // This page handles the Google OAuth callback.
+        // Since we're backend-less, we use Google's JavaScript token endpoint
+        // which requires the client secret — not ideal for production.
+        // For production, use Google Identity Services (GIS) or a backend.
+        
+        const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'; // Replace with your client ID
+        const CLIENT_SECRET = 'YOUR_GOOGLE_CLIENT_SECRET'; // Replace with your client secret
+        const REDIRECT_URI = window.location.origin + '/auth_callback.html';
+
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const state = params.get('state');
+
+        if (!code) {
+            document.getElementById('status').textContent = 'Error: No authorization code received';
+            setTimeout(() => window.location.href = '/', 3000);
+        } else {
+            // Exchange code for token
+            fetch('https://oauth2.googleapis.com/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `code=${code}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&grant_type=authorization_code`,
+            })
+            .then(resp => resp.json())
+            .then(tokenData => {
+                if (tokenData.error) throw new Error(tokenData.error_description || tokenData.error);
+                // Get user info
+                return fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenData.access_token}` },
+                }).then(r => r.json());
+            })
+            .then(user => {
+                // Save session to localStorage
+                localStorage.setItem('pokee_session', JSON.stringify({
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    picture: user.picture,
+                }));
+                document.getElementById('status').textContent = 'Success! Redirecting...';
+                setTimeout(() => window.location.href = '/', 1000);
+            })
+            .catch(err => {
+                document.getElementById('status').textContent = 'Error: ' + err.message;
+                setTimeout(() => window.location.href = '/', 3000);
+            });
+        }
+    </script>
+</body>
+</html>

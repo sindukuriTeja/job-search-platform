@@ -1,18 +1,15 @@
 {
   "name": "job-search-platform",
-  "version": "2.0.0",
-  "description": "AI-powered resume job search with multi-platform integration",
+  "version": "3.0.0",
+  "description": "AI-powered resume job search — fully client-side, no backend required",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Static site - no build needed'",
+    "dev": "npx serve .",
+    "build": "echo 'Static site — no build needed'",
     "deploy": "vercel --prod"
   },
-  "dependencies": {
-    "axios": "^1.6.0",
-    "node-fetch": "^2.7.0",
-    "xml2js": "^0.6.2"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "serve": "^14.2.0",
     "vercel": "^33.0.0"
   }
 }
