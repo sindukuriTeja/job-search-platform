@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
 """
 Test the resume parser and job matcher pipeline.
-Parses the resume PDF, then matches against sample jobs.
+Parses the sample resume, then matches against sample jobs.
 """
 import json, sys
 sys.path.insert(0, '.')
 from resume_parser import ResumeParser
-from job_matcher import JobMatcher
+from job_matcher import match_jobs
 
 def main():
     parser = ResumeParser()
-    matcher = JobMatcher()
 
     # Parse resume
     print("=" * 60)
     print("JOB SEARCH PLATFORM — RESUME MATCHING TEST")
     print("=" * 60)
 
-    resume_path = "/opt/sandbox/workspace/Sindukuri_Teja_FlowCV_Resume_2026-07-20.pdf"
+    resume_path = "sample_resume.txt"
     print(f"\n[1] Parsing resume: {resume_path}")
     resume_data = parser.parse_resume(resume_path)
 
@@ -101,7 +100,9 @@ def main():
 
     # Match jobs
     print(f"\n[2] Matching {len(sample_jobs)} sample jobs against resume...")
-    matched = matcher.match_jobs(sample_jobs, resume_data)
+    print(f"    Preferred location: Hyderabad")
+    print(f"    Experience level: 0-1 years")
+    matched = match_jobs(sample_jobs, resume_data, preferred_location="Hyderabad", experience_level="0-1 years")
 
     print(f"\n    Matched jobs: {len(matched)}")
     print()

@@ -1,0 +1,52 @@
+SINDUKURI TEJA
+Email: tejasindukuri5@gmail.com | Phone: +91 8500116578
+Location: Hyderabad, Telangana, India
+
+PROFESSIONAL SUMMARY
+AI/ML enthusiast and full-stack developer with hands-on experience in building intelligent applications, blockchain solutions, and IoT systems. Passionate about leveraging technology to solve real-world problems.
+
+EDUCATION
+B.Tech in Artificial Intelligence
+K L University, Vijayawada | 2022 - 2026 | CGPA: 8.2
+
+Higher Secondary (MPC)
+Vignan Jr. College, Guntur | 2022 | 92%
+
+SKILLS
+Python, JavaScript, C, C++, HTML, CSS, React, Node.js, Django, Flask
+Machine Learning, Deep Learning, NLP, Computer Vision
+Blockchain, Solidity, Smart Contracts, Ethereum
+IoT, ESP32, Sensors, Cloud Integration
+Git, GitHub, Docker, AWS, MongoDB, PostgreSQL, MySQL
+Data Analysis, Pandas, NumPy, Matplotlib, Plotly
+
+PROJECTS
+PestVid — AI-Powered Crop Disease Detection
+• Built a computer vision model using Python and TensorFlow to detect crop diseases from leaf images
+• Achieved 94% accuracy on test dataset with 12 crop disease classes
+• Deployed as a web application using Flask for farmers to upload and analyze images
+
+Data Analysis & Visualization Platform
+• Developed an interactive dashboard using Python, Pandas, and Plotly for business data analysis
+• Implemented automated data cleaning, ETL pipelines, and report generation
+• Integrated with PostgreSQL for data storage and MongoDB for unstructured data
+
+NFT Marketplace (Blockchain)
+• Created a decentralized NFT marketplace on Ethereum using Solidity smart contracts
+• Built frontend with React.js and integrated MetaMask wallet for transactions
+• Implemented IPFS storage for NFT metadata and media files
+
+Smart Home IoT System
+• Designed an IoT-based home automation system using ESP32 microcontrollers
+• Integrated temperature, humidity, and motion sensors with cloud dashboard
+• Implemented ML model for predictive maintenance and energy optimization
+
+CERTIFICATIONS
+• Ethereum Fundamentals — Blockchain Council (2024)
+• AI and ChatGPT Tools — LinkedIn Learning (2024)
+
+LANGUAGES
+English (Fluent), Hindi (Fluent), Telugu (Native)
+
+INTERESTS
+Open-source contributions, AI research, competitive programming, tech blogging
