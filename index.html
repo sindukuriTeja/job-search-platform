@@ -17,7 +17,14 @@
         .navbar { background: white; padding: 1rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
         .navbar-brand { font-size: 1.5rem; font-weight: 800; color: #2563eb; }
         .navbar-brand span { color: #7c3aed; }
-        
+        .nav-user { display: flex; align-items: center; gap: 0.75rem; }
+        .nav-user img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #e2e8f0; }
+        .nav-user-name { font-weight: 600; font-size: 0.9rem; color: #1e293b; }
+        .btn-login { background: #2563eb; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; color: white; font-size: 0.9rem; }
+        .btn-login:hover { background: #1d4ed8; color: white; }
+        .btn-logout { background: none; border: 2px solid #e2e8f0; padding: 6px 16px; border-radius: 8px; font-weight: 600; color: #64748b; font-size: 0.85rem; }
+        .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
+
         .hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #2563eb 100%); padding: 120px 0 80px; color: white; text-align: center; }
         .hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; }
         .hero p { font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 0 auto 2rem; }
@@ -65,6 +72,11 @@
         
         .badge { font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; }
         
+        .search-history { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+        .search-history-item { padding: 0.75rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .search-history-item:last-child { border-bottom: none; }
+        .search-history-item small { color: #94a3b8; }
+
         @media (max-width: 768px) {
             .hero h1 { font-size: 2rem; }
             .upload-section { margin: -20px 1rem 2rem; padding: 20px; }
@@ -73,8 +85,13 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="container">
+        <div class="container d-flex justify-content-between align-items-center">
             <div class="navbar-brand">Nex<span>Jobs</span></div>
+            <div id="authArea">
+                <button class="btn btn-login" id="loginBtn" onclick="startLogin()">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -193,6 +210,12 @@
             </button>
         </div>
 
+        <!-- Search History (shown when logged in) -->
+        <div id="searchHistorySection" class="search-history" style="display:none;">
+            <h4><i class="fas fa-clock-rotate-left"></i> Recent Searches</h4>
+            <div id="searchHistoryList"></div>
+        </div>
+
         <div id="resumeAnalysis" class="upload-section" style="display:none;">
             <h4 class="mb-4"><i class="fas fa-chart-bar"></i> Resume Analysis</h4>
             <div class="row" id="analysisGrid"></div>
@@ -232,21 +255,118 @@
     <script src="static/resume_parser.js"></script>
     <script src="static/job_matcher.js"></script>
     <script>
-        // Backend API URL — change this to your deployed backend
-        const BACKEND_URL = 'https://your-app.vercel.app/api/search';
-    </script>
-    <script>
         let selectedCategories = new Set();
         let resumeData = null;
+        let currentUser = null;
+
+        // Auth helpers
+        async function checkAuth() {
+            try {
+                const resp = await fetch('/api/session');
+                const data = await resp.json();
+                if (data.authenticated) {
+                    currentUser = data.user;
+                    showLoggedInUI(data.user);
+                    loadSearchHistory();
+                } else {
+                    currentUser = null;
+                    showLoggedOutUI();
+                }
+            } catch (e) {
+                currentUser = null;
+                showLoggedOutUI();
+            }
+        }
+
+        function showLoggedInUI(user) {
+            document.getElementById('authArea').innerHTML = `
+                <div class="nav-user">
+                    <img src="${user.picture || ''}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=2563eb&color=fff'">
+                    <span class="nav-user-name">${escapeHtml(user.name)}</span>
+                    <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>`;
+        }
+
+        function showLoggedOutUI() {
+            document.getElementById('authArea').innerHTML = `
+                <button class="btn btn-login" onclick="startLogin()">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>`;
+        }
+
+        function startLogin() {
+            window.location.href = '/api/auth?action=start';
+        }
+
+        async function logout() {
+            await fetch('/api/auth?action=logout');
+            currentUser = null;
+            showLoggedOutUI();
+            document.getElementById('searchHistorySection').style.display = 'none';
+        }
+
+        async function loadSearchHistory() {
+            if (!currentUser) return;
+            try {
+                const resp = await fetch('/api/user_data');
+                const data = await resp.json();
+                if (data.searches && data.searches.length > 0) {
+                    const list = document.getElementById('searchHistoryList');
+                    list.innerHTML = data.searches.slice(0, 5).map(s => `
+                        <div class="search-history-item">
+                            <div>
+                                <strong>${escapeHtml(s.skills.join(', '))}</strong>
+                                ${s.location ? ` in ${escapeHtml(s.location)}` : ''}
+                            </div>
+                            <small>${new Date(s.timestamp).toLocaleDateString()} · ${s.results_count} results</small>
+                        </div>
+                    `).join('');
+                    document.getElementById('searchHistorySection').style.display = 'block';
+                }
+            } catch (e) { /* ignore */ }
+        }
+
+        async function saveSearch(skills, location, categories, resultsCount) {
+            if (!currentUser) return;
+            try {
+                await fetch('/api/user_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ search: { skills, location, categories, results_count: resultsCount } }),
+                });
+            } catch (e) { /* ignore */ }
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded, setting up handlers...');
+            checkAuth();
+            // If redirected from Google callback, handle it
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('code') && params.get('action') === 'callback') {
+                handleCallback(params.get('code'));
+                return;
+            }
             setupDragAndDrop();
             setupFileInput();
             setupPlatformSelection();
             setupSearchButton();
-            console.log('Setup complete');
         });
+
+        async function handleCallback(code) {
+            try {
+                const resp = await fetch(`/api/auth?action=callback&code=${code}`);
+                const data = await resp.json();
+                if (data.success) {
+                    currentUser = data.user;
+                    showLoggedInUI(data.user);
+                    loadSearchHistory();
+                    window.history.replaceState({}, '', window.location.pathname);
+                } else {
+                    alert('Login failed: ' + data.error);
+                }
+            } catch (e) {
+                alert('Login failed: ' + e.message);
+            }
+        }
 
         function setupDragAndDrop() {
             const dropZone = document.getElementById('dropZone');
@@ -342,11 +462,11 @@
             document.getElementById('selectAllBtn').addEventListener('click', function() {
                 if (selectedCategories.size === 12) {
                     selectedCategories.clear();
-                    document.querySelectorAll('.platform-card').forEach(card => card.classList.remove('selected'));
+                    document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('selected'));
                 } else {
-                    document.querySelectorAll('.platform-card').forEach(card => {
-                        selectedCategories.add(card.dataset.category);
-                        card.classList.add('selected');
+                    document.querySelectorAll('.platform-card').forEach(c => {
+                        selectedCategories.add(c.dataset.category);
+                        c.classList.add('selected');
                     });
                 }
                 updateSelectAllButton();
@@ -376,8 +496,7 @@
             document.getElementById('searchBtn').disabled = true;
 
             try {
-                // Call backend API
-                const response = await fetch(BACKEND_URL, {
+                const response = await fetch('/api/search', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -398,6 +517,9 @@
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
 
+                // Save search history if logged in
+                await saveSearch(resumeData.skills, location, Array.from(selectedCategories), results.jobs?.length || 0);
+
                 // Show direct search links for ALL platforms (always visible)
                 renderPlatformLinks(query, location, Array.from(selectedCategories));
 
@@ -410,7 +532,7 @@
             } catch (error) {
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
-                alert('Search failed: ' + error.message + '\n\nMake sure your backend is deployed and BACKEND_URL is set correctly.');
+                alert('Search failed: ' + error.message + '\n\nMake sure your backend is deployed and the API endpoint is correct.');
             }
         }
 
@@ -474,7 +596,7 @@
                 remote:        '🌐 Remote Jobs',
                 international: '✈️ International Portals',
                 internships:   '🎓 Internships',
-                freelancing:   '🧑‍💻 Freelancing',
+                freelancing:   '👨‍💻 Freelancing',
                 startups:      '🚀 Startup Jobs',
                 companies:     '🏢 Company Career Pages',
                 offcampus:     '🎯 Off-Campus Hiring',
@@ -493,7 +615,6 @@
             // Group by category (first 20 links per category)
             const grouped = {};
             uniqueLinks.slice(0, 200).forEach(link => {
-                // Determine category from the link
                 let cat = 'other';
                 for (const [key, value] of Object.entries(categoryLabels)) {
                     if (link.name.toLowerCase().includes(key.toLowerCase()) || 
