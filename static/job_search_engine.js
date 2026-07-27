@@ -1,7 +1,9 @@
 /**
  * Client-side Job Search Engine
- * Searches across multiple job platforms using fetch API
- * All searches run concurrently with Promise.allSettled
+ * 
+ * This engine uses a hybrid approach:
+ * 1. Automated search via free/public APIs (no auth required)
+ * 2. Direct search links for platforms that require login
  */
 
 const HEADERS = {
@@ -57,206 +59,15 @@ function buildQueries(skills, keywords, experienceLevel) {
 }
 
 /**
- * Search LinkedIn via guest API (no login required)
- */
-async function searchLinkedIn(query, location) {
-    const jobs = [];
-    const q = encodeURIComponent(query);
-    const loc = encodeURIComponent(location || '');
-
-    const endpoints = [
-        `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${q}&location=${loc}&start=0`,
-        `https://www.linkedin.com/jobs/search?keywords=${q}&location=${loc}&position=1&pageNum=0`,
-    ];
-
-    for (const url of endpoints) {
-        try {
-            const resp = await fetchWithCors(url, { headers: HEADERS, signal: AbortSignal.timeout(15000) });
-            if (resp.status !== 200) continue;
-            const html = await resp.text();
-            const doc = new DOMParser().parseFromString(html, 'text/html');
-
-            const cards = [...doc.querySelectorAll('li')].filter(li =>
-                li.querySelector('.base-search-card__title, h3.base-search-card__title')
-            );
-
-            for (const card of cards.slice(0, 50)) {
-                const titleEl = card.querySelector('.base-search-card__title, h3');
-                const companyEl = card.querySelector('.base-search-card__subtitle, h4');
-                const locEl = card.querySelector('.job-search-card__location, .base-search-card__metadata span');
-                const linkEl = card.querySelector('a.base-card__full-link, a[href*="/jobs/view/"]');
-                const dateEl = card.querySelector('time');
-
-                const title = titleEl ? titleEl.textContent.trim() : '';
-                const company = companyEl ? companyEl.textContent.trim() : '';
-                if (!title || !company) continue;
-
-                let href = linkEl ? linkEl.href : '';
-                href = href.split('?')[0] || 'https://www.linkedin.com/jobs';
-
-                jobs.push({
-                    title,
-                    company,
-                    location: locEl ? locEl.textContent.trim() : location,
-                    description: '',
-                    url: href,
-                    portal: 'LinkedIn',
-                    posted_date: dateEl ? dateEl.getAttribute('datetime') || '' : '',
-                });
-            }
-            if (jobs.length > 0) break;
-        } catch (e) {
-            console.warn('LinkedIn endpoint error:', e.message);
-        }
-    }
-    return { platform: 'LinkedIn', jobs, error: jobs.length === 0 ? 'No results or blocked' : null };
-}
-
-/**
- * Search Freshersworld (covers India fresher/junior roles)
- */
-async function searchFreshersworld(query, location) {
-    const jobs = [];
-    try {
-        const slug = encodeURIComponent(query.replace(/ /g, '-'));
-        for (let page = 1; page <= 2; page++) {
-            const url = `https://www.freshersworld.com/jobs/jobsearch/${slug}-jobs?page=${page}`;
-            const resp = await fetchWithCors(url, { signal: AbortSignal.timeout(15000) });
-            if (resp.status !== 200) break;
-            const html = await resp.text();
-            const doc = new DOMParser().parseFromString(html, 'text/html');
-
-            const cards = doc.querySelectorAll('.job-container');
-            if (cards.length === 0) break;
-
-            for (const card of cards) {
-                const titleEl = card.querySelector('.wrap-title, .seo_title, .job-new-title');
-                const companyEl = card.querySelector('.company-name, h3.latest-jobs-title');
-                const locEl = card.querySelector('.job-location');
-                const expEl = card.querySelector('.experience');
-                const salEl = card.querySelector('.qualifications');
-
-                let title = titleEl ? titleEl.textContent.trim().replace('More', '').replace('Less', '').trim() : '';
-                const company = companyEl ? companyEl.textContent.trim() : '';
-                if (!title || !company) continue;
-
-                const href = card.getAttribute('job_display_url') || '';
-
-                jobs.push({
-                    title,
-                    company,
-                    location: locEl ? locEl.textContent.trim() : location,
-                    description: '',
-                    url: href || `https://www.freshersworld.com/jobs/jobsearch/${slug}-jobs`,
-                    portal: 'Freshersworld',
-                    experience_required: expEl ? expEl.textContent.trim() : '',
-                    salary: salEl ? salEl.textContent.trim() : '',
-                });
-            }
-            if (jobs.length >= 50) break;
-        }
-    } catch (e) {
-        console.warn('Freshersworld error:', e.message);
-    }
-    return { platform: 'Naukri', jobs, error: jobs.length === 0 ? 'No results' : null };
-}
-
-/**
- * Search Internshala (India internships/jobs)
- */
-async function searchInternshala(query, location) {
-    const jobs = [];
-    try {
-        const slug = encodeURIComponent(query.replace(/ /g, '-'));
-        for (let page = 1; page <= 2; page++) {
-            const url = `https://internshala.com/jobs/keyword-${slug}/page-${page}/`;
-            const resp = await fetchWithCors(url, { signal: AbortSignal.timeout(15000) });
-            if (resp.status !== 200) break;
-            const html = await resp.text();
-            const doc = new DOMParser().parseFromString(html, 'text/html');
-
-            const cards = doc.querySelectorAll('.individual_internship');
-            if (cards.length === 0) break;
-
-            for (const card of cards) {
-                const href = card.getAttribute('data-href') || '';
-                const titleEl = card.querySelector('.job-internship-name');
-                const coEl = card.querySelector('.company-name p, .company_name p');
-                const locEl = card.querySelector('.locations span, .location_link');
-
-                const title = titleEl ? titleEl.textContent.trim() : '';
-                const company = coEl ? coEl.textContent.trim() : '';
-                if (!title) continue;
-
-                const fullUrl = href ? 'https://internshala.com' + href : 'https://internshala.com/jobs';
-
-                jobs.push({
-                    title,
-                    company,
-                    location: locEl ? locEl.textContent.trim() : location,
-                    description: '',
-                    url: fullUrl,
-                    portal: 'Internshala',
-                });
-            }
-            if (jobs.length >= 50) break;
-        }
-    } catch (e) {
-        console.warn('Internshala error:', e.message);
-    }
-    return { platform: 'Internshala', jobs, error: jobs.length === 0 ? 'No results' : null };
-}
-
-/**
- * Search Shine.com (India)
- */
-async function searchShine(query, location) {
-    const jobs = [];
-    try {
-        const q = encodeURIComponent(query);
-        const loc = encodeURIComponent(location || '');
-        const url = `https://www.shine.com/job-search/${q}-jobs${loc ? '/' + loc : ''}`;
-        const resp = await fetchWithCors(url, { signal: AbortSignal.timeout(15000) });
-        if (resp.status !== 200) return { platform: 'Shine', jobs: [], error: 'Blocked' };
-        const html = await resp.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-
-        for (const card of doc.querySelectorAll('.job-card, .joblist').slice(0, 50)) {
-            const titleEl = card.querySelector('.job-title, h2, h3');
-            const coEl = card.querySelector('.company-name, .company');
-            const locEl = card.querySelector('.location, .job-location');
-            const title = titleEl ? titleEl.textContent.trim() : '';
-            const company = coEl ? coEl.textContent.trim() : '';
-            if (!title) continue;
-
-            const hrefEl = card.querySelector('a[href*="/job/"]');
-            let href = hrefEl ? hrefEl.getAttribute('href') || '' : '';
-            if (href && !href.startsWith('http')) href = 'https://www.shine.com' + href;
-
-            jobs.push({
-                title,
-                company,
-                location: locEl ? locEl.textContent.trim() : location,
-                description: '',
-                url: href || `https://www.shine.com/job-search/${q}-jobs`,
-                portal: 'Shine',
-            });
-        }
-    } catch (e) {
-        console.warn('Shine error:', e.message);
-    }
-    return { platform: 'Shine', jobs, error: jobs.length === 0 ? 'No results' : null };
-}
-
-/**
- * Search Arbeitnow (free REST API — remote/international)
+ * Search Arbeitnow (free REST API — no auth required)
  */
 async function searchArbeitnow(query, location) {
     const jobs = [];
     try {
         const q = encodeURIComponent(query);
+        const loc = encodeURIComponent(location || '');
         for (let page = 1; page <= 3; page++) {
-            const url = `https://www.arbeitnow.com/api/job-board-api?search=${q}&page=${page}`;
+            const url = `https://www.arbeitnow.com/api/job-board-api?search=${q}&page=${page}${loc ? `&location=${loc}` : ''}`;
             const resp = await fetchWithCors(url, { headers: HEADERS, signal: AbortSignal.timeout(15000) });
             if (!resp.ok) break;
             const data = await resp.json();
@@ -285,40 +96,7 @@ async function searchArbeitnow(query, location) {
 }
 
 /**
- * Search RemoteOK (free JSON API — remote tech jobs)
- */
-async function searchRemoteOK(query, location) {
-    const jobs = [];
-    try {
-        const q = encodeURIComponent(query);
-        const resp = await fetchWithCors(`https://remoteok.com/remote-software-dev-jobs?page=1&search=${q}`, {
-            headers: { Accept: 'application/json' },
-            signal: AbortSignal.timeout(15000),
-        });
-        if (!resp.ok) return { platform: 'RemoteOK', jobs: [], error: 'Blocked' };
-        const data = await resp.json();
-
-        for (const item of data.slice(0, 50)) {
-            const desc = stripHtml(item.description || '');
-            jobs.push({
-                title: item.title || '',
-                company: item.company || '',
-                location: item.location || 'Remote',
-                description: desc.substring(0, 300),
-                url: item.url || 'https://remoteok.com',
-                portal: 'RemoteOK',
-                job_type: 'Remote',
-                posted_date: item.published_date || '',
-            });
-        }
-    } catch (e) {
-        console.warn('RemoteOK error:', e.message);
-    }
-    return { platform: 'RemoteOK', jobs, error: jobs.length === 0 ? 'No results' : null };
-}
-
-/**
- * Search Remotive (free JSON API — remote jobs, multiple categories)
+ * Search Remotive (free JSON API — no auth required)
  */
 async function searchRemotive(query, location) {
     const jobs = [];
@@ -353,7 +131,7 @@ async function searchRemotive(query, location) {
 }
 
 /**
- * Search Himalayas (free JSON API — remote jobs)
+ * Search Himalayas (free JSON API — no auth required)
  */
 async function searchHimalayas(query, location) {
     const jobs = [];
@@ -386,7 +164,7 @@ async function searchHimalayas(query, location) {
 }
 
 /**
- * Search We Work Remotely via RSS feed
+ * Search We Work Remotely via RSS feed (no auth required)
  */
 async function searchWeWorkRemotely(query, location) {
     const jobs = [];
@@ -433,48 +211,6 @@ async function searchWeWorkRemotely(query, location) {
         console.warn('WeWorkRemotely error:', e.message);
     }
     return { platform: 'We Work Remotely', jobs, error: jobs.length === 0 ? 'No results' : null };
-}
-
-/**
- * Search Indeed India (scrape)
- */
-async function searchIndeed(query, location) {
-    const jobs = [];
-    try {
-        const q = encodeURIComponent(query);
-        const loc = encodeURIComponent(location || '');
-        const url = `https://in.indeed.com/jobs?q=${q}&l=${loc}`;
-        const resp = await fetchWithCors(url, { signal: AbortSignal.timeout(15000) });
-        const html = await resp.text();
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-
-        for (const card of doc.querySelectorAll('div.job_seen_beacon, div[data-jk]')) {
-            const titleEl = card.querySelector('a[data-testid="jobTitle-link"]') || card.querySelector('h2 a');
-            const coEl = card.querySelector('span.companyName') || card.querySelector('a[data-testid="company-link"]');
-            const locEl = card.querySelector('div[data-testid="text-location"]') || card.querySelector('.job-location');
-            const salEl = card.querySelector('span.salary-snippet-text') || card.querySelector('.salary-snippet');
-
-            const title = titleEl ? titleEl.textContent.trim() : '';
-            const company = coEl ? coEl.textContent.trim() : '';
-            if (!title) continue;
-
-            let href = titleEl ? titleEl.getAttribute('href') || '' : '';
-            if (href && !href.startsWith('http')) href = 'https://in.indeed.com' + href;
-
-            jobs.push({
-                title,
-                company,
-                location: locEl ? locEl.textContent.trim() : location,
-                description: '',
-                url: href || `https://in.indeed.com/jobs?q=${q}`,
-                portal: 'Indeed',
-                salary: salEl ? salEl.textContent.trim() : '',
-            });
-        }
-    } catch (e) {
-        console.warn('Indeed error:', e.message);
-    }
-    return { platform: 'Indeed', jobs, error: jobs.length === 0 ? 'No results' : null };
 }
 
 /**
@@ -544,6 +280,290 @@ async function searchAIJobs(query, location) {
 }
 
 /**
+ * Generate direct search links for platforms that require authentication
+ * @param {string} query - Search query
+ * @param {string} location - Preferred location
+ * @param {string} experienceLevel - Experience level
+ * @param {Array} categories - Selected job categories
+ * @returns {Array} Array of {name, url} objects
+ */
+function generateSearchLinks(query, location, experienceLevel, categories) {
+    const q = encodeURIComponent(query);
+    const l = encodeURIComponent(location || '');
+    const links = [];
+
+    // Map categories to platforms
+    const categoryPlatforms = {
+        india: [
+            { name: 'Naukri', url: `https://www.naukri.com/jobs/data-science-engineer-jobs-in-${l.replace(/\s+/g, '-')}-bangalore?experience=0&k=${q}` },
+            { name: 'LinkedIn', url: `https://www.linkedin.com/jobs/search?keywords=${q}&location=${l}&f_E=1&f_TPR=r604800` },
+            { name: 'Indeed India', url: `https://in.indeed.com/jobs?q=${q}&l=${l}` },
+            { name: 'Freshersworld', url: `https://www.freshersworld.com/jobs/jobsearch/${q.replace(/ /g, '-')}-jobs` },
+            { name: 'Internshala', url: `https://internshala.com/jobs/keyword-${q.replace(/ /g, '-')}/page-1/` },
+            { name: 'Shine', url: `https://www.shine.com/job-search/${q.replace(/ /g, '-')}-jobs` },
+            { name: 'Foundit India', url: `https://www.monsterindia.com/jobs/${q.replace(/ /g, '-')}-jobs-in-${l.replace(/ /g, '-')}` },
+            { name: 'Cutshort', url: `https://www.cutshort.io/search?query=${q}&location=${l}` },
+            { name: 'Instahyre', url: `https://www.instahyre.com/search?q=${q}&location=${l}` },
+            { name: 'HirePro', url: `https://www.hirepro.in/jobs?q=${q}&location=${l}` },
+        ],
+        software: [
+            { name: 'Wellfound (AngelList)', url: `https://wellfound.com/jobs?search=${q}&location=${l}` },
+            { name: 'HackerEarth Jobs', url: `https://www.hackerearth.com/company/jobs/?q=${q}` },
+            { name: 'Cutshort', url: `https://www.cutshort.io/search?query=${q}&location=${l}` },
+            { name: 'Hirist', url: `https://www.hirist.com/jobs?q=${q}&location=${l}` },
+            { name: 'Cutshort.io', url: `https://www.cutshort.io/search?query=${q}` },
+            { name: 'HackerRank Jobs', url: `https://www.hackerrank.com/jobs/search?query=${q}&location=${l}` },
+            { name: 'Stack Overflow Jobs', url: `https://stackoverflow.com/jobs?q=${q}&l=${l}` },
+            { name: 'DevJobs', url: `https://devjobs.io/search?query=${q}&location=${l}` },
+            { name: 'CodeWithJobs', url: `https://codewithjobs.io/jobs?q=${q}` },
+            { name: 'RemoteOK', url: `https://remoteok.com/remote-software-dev-jobs?search=${q}` },
+        ],
+        ai_ml: [
+            { name: 'AI Jobs', url: `https://aijobs.net/jobs?q=${q}&location=${l}` },
+            { name: 'DataJobs', url: `https://datajobs.com/job-search/${q.replace(/ /g, '+')}-jobs` },
+            { name: 'Kaggle Jobs', url: `https://www.kaggle.com/jobs?query=${q}&location=${l}` },
+            { name: 'AI Jobs Board', url: `https://aijobsboard.com/jobs?q=${q}&location=${l}` },
+            { name: 'ML Jobs', url: `https://mljobs.xyz/?q=${q}&location=${l}` },
+            { name: 'AI Engineer Jobs', url: `https://www.linkedin.com/jobs/search?keywords=${q}+machine+learning&location=${l}` },
+            { name: 'Deep Learning Jobs', url: `https://www.linkedin.com/jobs/search?keywords=${q}+deep+learning&location=${l}` },
+            { name: 'Data Science Central', url: `https://datasciencecentral.com/jobs?query=${q}` },
+        ],
+        remote: [
+            { name: 'Remote OK', url: `https://remoteok.com/remote-software-dev-jobs?search=${q}` },
+            { name: 'We Work Remotely', url: `https://weworkremotely.com/remote-jobs?q=${q}` },
+            { name: 'Remotive', url: `https://remotive.com/remote-jobs?search=${q}` },
+            { name: 'Himalayas', url: `https://himalayas.app/jobs?q=${q}` },
+            { name: 'FlexJobs', url: `https://www.flexjobs.com/search?query=${q}&location=${l}` },
+            { name: 'Remote.co', url: `https://remote.co/remote-jobs?q=${q}` },
+            { name: 'Working Nomads', url: `https://www.wnomads.com/jobs?search=${q}` },
+            { name: 'Just Remote', url: `https://www.justremote.io/jobs?q=${q}` },
+            { name: 'Remotely.in', url: `https://remotely.in/jobs?q=${q}` },
+            { name: 'Dynamite Jobs', url: `https://dynamitejobs.com/jobs?q=${q}` },
+        ],
+        international: [
+            { name: 'Indeed Global', url: `https://www.indeed.com/jobs?q=${q}&l=${l}` },
+            { name: 'Glassdoor', url: `https://www.glassdoor.com/Job/jobs.htm?q=${q}&l=${l}` },
+            { name: 'ZipRecruiter', url: `https://www.ziprecruiter.com/jobs?q=${q}&l=${l}` },
+            { name: 'Monster', url: `https://www.monster.com/jobs/search/?q=${q}&where=${l}` },
+            { name: 'CareerBuilder', url: `https://www.careerbuilder.com/search?query=${q}&location=${l}` },
+            { name: 'Dice', url: `https://www.dice.com/jobs/search?q=${q}&l=${l}` },
+            { name: 'TotalJobs', url: `https://www.totaljobs.com/job-search/${q.replace(/ /g, '-')}-jobs?location=${l}` },
+            { name: 'Jobs2Careers', url: `https://www.jobs2careers.com/jobs?q=${q}&l=${l}` },
+            { name: 'SimplyHired', url: `https://www.simplyhired.com/search?q=${q}&l=${l}` },
+            { name: 'USAJobs', url: `https://www.usajobs.gov/Search/?query=${q}&Location=${l}` },
+        ],
+        internships: [
+            { name: 'Internshala', url: `https://internshala.com/internships/all-internships/keyword-${q.replace(/ /g, '-')}/page-1/` },
+            { name: 'LetsIntern', url: `https://www.letsintern.com/internships?q=${q}&location=${l}` },
+            { name: 'Unstop (HackerEarth)', url: `https://unstop.com/search?query=${q}&location=${l}` },
+            { name: 'Internship Monkey', url: `https://internshipmonkey.com/search?q=${q}&location=${l}` },
+            { name: 'WayUp', url: `https://www.wayup.com/search/internships?q=${q}&location=${l}` },
+            { name: 'Chegg Internships', url: `https://www.cheggindia.com/internships?q=${q}&location=${l}` },
+            { name: 'Shine Internships', url: `https://www.shine.com/internships/${q.replace(/ /g, '-')}-internships` },
+            { name: 'Freshersworld Internships', url: `https://www.freshersworld.com/internships/internshipsearch/${q.replace(/ /g, '-')}-internships` },
+        ],
+        freelancing: [
+            { name: 'Upwork', url: `https://www.upwork.com/freelance-jobs/search/?q=${q}` },
+            { name: 'Fiverr', url: `https://www.fiverr.com/search/gigs?q=${q}` },
+            { name: 'Freelancer', url: `https://www.freelancer.com/j?q=${q}` },
+            { name: 'Toptal', url: `https://www.toptal.com/freelance/${q.replace(/ /g, '-')}-jobs` },
+            { name: 'Guru', url: `https://www.guru.com/jobs?q=${q}` },
+            { name: 'PeoplePerHour', url: `https://www.peopleperhour.com/jobs?q=${q}` },
+            { name: 'Freelance.com', url: `https://www.freelance.com/search?q=${q}` },
+            { name: 'Gun.io', url: `https://gun.io/freelance-developers/jobs?q=${q}` },
+            { name: 'Arc.dev', url: `https://arc.dev/search?query=${q}` },
+            { name: 'Turing', url: `https://www.turing.com/freelance/jobs?q=${q}` },
+        ],
+        startups: [
+            { name: 'Wellfound (AngelList)', url: `https://wellfound.com/jobs?search=${q}&location=${l}` },
+            { name: 'Y Combinator Jobs', url: `https://www.ycombinator.com/jobs?search=${q}&location=${l}` },
+            { name: 'Hired', url: `https://hired.com/software-engineers/jobs?q=${q}&location=${l}` },
+            { name: 'Cutshort', url: `https://www.cutshort.io/search?query=${q}&location=${l}` },
+            { name: 'Instahyre', url: `https://www.instahyre.com/search?q=${q}&location=${l}` },
+            { name: 'Hiringify', url: `https://www.hiringify.com/jobs?q=${q}&location=${l}` },
+            { name: 'Hirect', url: `https://www.hirect.in/search?q=${q}&location=${l}` },
+            { name: 'Trakinn', url: `https://www.trakinn.com/jobs?q=${q}&location=${l}` },
+            { name: 'Hirist', url: `https://www.hirist.com/jobs?q=${q}&location=${l}` },
+            { name: 'HirePro', url: `https://www.hirepro.in/jobs?q=${q}&location=${l}` },
+        ],
+        companies: [
+            { name: 'Google Careers', url: `https://careers.google.com/jobs/results/?q=${q}&location=${l}` },
+            { name: 'Microsoft Careers', url: `https://careers.microsoft.com/us/en/search?query=${q}&location=${l}` },
+            { name: 'Amazon Jobs', url: `https://www.amazon.jobs/en/search?q=${q}&location=${l}` },
+            { name: 'Apple Careers', url: `https://jobs.apple.com/en-us/search?location=${l}&q=${q}` },
+            { name: 'Meta Careers', url: `https://www.metacareers.com/jobs?query=${q}&location=${l}` },
+            { name: 'Netflix Jobs', url: `https://jobs.netflix.com/jobs?search=${q}&location=${l}` },
+            { name: 'Tesla Careers', url: `https://www.tesla.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Adobe Careers', url: `https://careers.adobe.com/us/en/search?query=${q}&location=${l}` },
+            { name: 'Salesforce Jobs', url: `https://salesforce.wd1.myworkdayjobs.com/External_Career_Site/search?q=${q}&location=${l}` },
+            { name: 'Oracle Careers', url: `https://www.oracle.com/careers/jobsearch/?q=${q}&location=${l}` },
+            { name: 'Infosys Careers', url: `https://www.infosys.com/careers.html?q=${q}&location=${l}` },
+            { name: 'TCS Careers', url: `https://www.tcs.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Wipro Careers', url: `https://www.wipro.com/careers/jobs?q=${q}&location=${l}` },
+            { name: 'HCL Careers', url: `https://www.hcl.com/careers/jobs?q=${q}&location=${l}` },
+            { name: 'Accenture Careers', url: `https://www.accenture.com/in-en/careers/search?q=${q}&location=${l}` },
+            { name: 'Deloitte Careers', url: `https://www2.deloitte.com/in/en/careers.html?q=${q}&location=${l}` },
+            { name: 'Cognizant Careers', url: `https://www.cognizant.com/us/en/careers/search?q=${q}&location=${l}` },
+            { name: 'Capgemini Careers', url: `https://www.capgemini.com/in-en/careers/search?q=${q}&location=${l}` },
+            { name: 'IBM Careers', url: `https://www.ibm.com/ca-en/careers/search?q=${q}&location=${l}` },
+            { name: 'Intel Careers', url: `https://jobs.intel.com/global/en/search?q=${q}&location=${l}` },
+            { name: 'Qualcomm Careers', url: `https://careers-qualcomm.icims.com/jobs/search?q=${q}&location=${l}` },
+            { name: 'Samsung R&D India', url: `https://samsungsds.in/careers/jobs?q=${q}&location=${l}` },
+            { name: 'Flipkart Careers', url: `https://www.flipkartcareers.com/search?q=${q}&location=${l}` },
+            { name: 'Swiggy Careers', url: `https://www.swiggy.com/careers?q=${q}&location=${l}` },
+            { name: 'Zomato Careers', url: `https://www.zomato.com/careers?q=${q}&location=${l}` },
+            { name: 'Razorpay Careers', url: `https://razorpay.com/careers?q=${q}&location=${l}` },
+            { name: 'PhonePe Careers', url: `https://www.phonepe.com/careers?q=${q}&location=${l}` },
+            { name: 'Paytm Careers', url: `https://www.paytmmoney.com/careers?q=${q}&location=${l}` },
+            { name: 'Ola Careers', url: `https://www.olacabs.com/careers?q=${q}&location=${l}` },
+            { name: 'Uber Careers', url: `https://www.uber.com/careers/jobs/?q=${q}&location=${l}` },
+            { name: 'Airbnb Careers', url: `https://careers.airbnb.com/?q=${q}&location=${l}` },
+            { name: 'Netflix Careers', url: `https://jobs.netflix.com/jobs?search=${q}&location=${l}` },
+            { name: 'Spotify Careers', url: `https://www.spotify.com/us/jobs/?q=${q}&location=${l}` },
+            { name: 'Slack Careers', url: `https://slack.com/careers?q=${q}&location=${l}` },
+            { name: 'Shopify Careers', url: `https://www.shopify.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Stripe Careers', url: `https://stripe.com/jobs?q=${q}&location=${l}` },
+            { name: 'Twilio Careers', url: `https://www.twilio.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Atlassian Careers', url: `https://www.atlassian.com/company/careers?q=${q}&location=${l}` },
+            { name: 'Dropbox Careers', url: `https://www.dropbox.com/jobs?q=${q}&location=${l}` },
+            { name: 'Airtable Careers', url: `https://airtable.com/careers?q=${q}&location=${l}` },
+            { name: 'Notion Careers', url: `https://www.notion.so/careers?q=${q}&location=${l}` },
+            { name: 'Figma Careers', url: `https://www.figma.com/careers?q=${q}&location=${l}` },
+            { name: 'Canva Careers', url: `https://www.canva.com/careers?q=${q}&location=${l}` },
+            { name: 'Zoom Careers', url: `https://www.zoom.us/careers?q=${q}&location=${l}` },
+            { name: 'Snowflake Careers', url: `https://www.snowflake.com/careers/?q=${q}&location=${l}` },
+            { name: 'Databricks Careers', url: `https://www.databricks.com/careers?q=${q}&location=${l}` },
+            { name: 'MongoDB Careers', url: `https://www.mongodb.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Elastic Careers', url: `https://www.elastic.co/about/careers?q=${q}&location=${l}` },
+            { name: 'Confluent Careers', url: `https://www.confluent.io/careers/?q=${q}&location=${l}` },
+            { name: 'HashiCorp Careers', url: `https://www.hashicorp.com/careers?q=${q}&location=${l}` },
+            { name: 'Red Hat Careers', url: `https://www.redhat.com/en/about/careers?q=${q}&location=${l}` },
+            { name: 'VMware Careers', url: `https://www.vmware.com/careers/en/search?q=${q}&location=${l}` },
+            { name: 'Cisco Careers', url: `https://jobs.cisco.com/jobs/search?q=${q}&location=${l}` },
+            { name: 'Juniper Networks Careers', url: `https://www.juniper.net/us/en/careers/?q=${q}&location=${l}` },
+            { name: 'Arista Networks Careers', url: `https://www.arista.com/en/company/careers?q=${q}&location=${l}` },
+            { name: 'Broadcom Careers', url: `https://careers.broadcom.com/global/en/search?q=${q}&location=${l}` },
+            { name: 'NVIDIA Careers', url: `https://nvidia.wd1.myworkdayjobs.com/NVIDIAExternalCareerSite/search?q=${q}&location=${l}` },
+            { name: 'AMD Careers', url: `https://www.amd.com/en/careers/search?q=${q}&location=${l}` },
+            { name: 'Intel Careers', url: `https://jobs.intel.com/global/en/search?q=${q}&location=${l}` },
+            { name: 'Qualcomm Careers', url: `https://careers-qualcomm.icims.com/jobs/search?q=${q}&location=${l}` },
+            { name: 'MediaTek Careers', url: `https://www.mediatek.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Samsung Careers', url: `https://samsungsds.in/careers/jobs?q=${q}&location=${l}` },
+            { name: 'Sony Careers', url: `https://www.sony.com/en/E/Careers/Search?q=${q}&location=${l}` },
+            { name: 'Ericsson Careers', url: `https://www.ericsson.com/en/careers/search?q=${q}&location=${l}` },
+            { name: 'Huawei Careers', url: `https://career.huawei.com/recrecportal/portal5/gateway.html?q=${q}&location=${l}` },
+            { name: 'Siemens Careers', url: `https://www.siemens.com/global/en/careers/search.html?q=${q}&location=${l}` },
+            { name: 'Bosch Careers', url: `https://www.bosch.com/global/en/careers/jobs.html?q=${q}&location=${l}` },
+            { name: 'GE Careers', url: `https://www.ge.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Honeywell Careers', url: `https://www.honeywell.com/us/en/careers/search?q=${q}&location=${l}` },
+            { name: 'Schneider Electric Careers', url: `https://www.se.com/us/en/careers/search/?q=${q}&location=${l}` },
+            { name: 'ABB Careers', url: `https://careers.abb.com/global/en/search?q=${q}&location=${l}` },
+            { name: 'Rockwell Automation Careers', url: `https://www.rockwellautomation.com/en/careers/search.html?q=${q}&location=${l}` },
+            { name: 'Siemens Careers', url: `https://www.siemens.com/global/en/careers/search.html?q=${q}&location=${l}` },
+            { name: 'Philips Careers', url: `https://www.philips.com/a-w/careers/search.html?q=${q}&location=${l}` },
+            { name: 'Johnson & Johnson Careers', url: `https://www.jnj.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Pfizer Careers', url: `https://www.pfizer.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Roche Careers', url: `https://www.roche.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Novartis Careers', url: `https://www.novartis.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Sanofi Careers', url: `https://www.sanofi.com/en/about-us/careers/search?q=${q}&location=${l}` },
+            { name: 'GSK Careers', url: `https://www.gsk.com/en-gb/careers/search/?q=${q}&location=${l}` },
+            { name: 'AstraZeneca Careers', url: `https://www.astrazeneca.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Merck Careers', url: `https://www.merck.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Bayer Careers', url: `https://www.bayer.com/careers/search?q=${q}&location=${l}` },
+            { name: 'GlaxoSmithKline Careers', url: `https://www.gsk.com/en-gb/careers/search/?q=${q}&location=${l}` },
+            { name: 'Eli Lilly Careers', url: `https://www.lilly.com/careers/search?q=${q}&location=${l}` },
+            { name: 'AbbVie Careers', url: `https://www.abbvie.com/en/careers/search.html?q=${q}&location=${l}` },
+            { name: 'Bristol Myers Squibb Careers', url: `https://www.bms.com/careers/search.html?q=${q}&location=${l}` },
+            { name: 'Amgen Careers', url: `https://www.amgen.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Biogen Careers', url: `https://www.biogen.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Gilead Sciences Careers', url: `https://www.gilead.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Regeneron Careers', url: `https://www.regeneron.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Moderna Careers', url: `https://www.modernatx.com/careers/search?q=${q}&location=${l}` },
+            { name: 'BioNTech Careers', url: `https://www.biontech.com/en/careers/search?q=${q}&location=${l}` },
+            { name: 'Pfizer Careers', url: `https://www.pfizer.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Johnson & Johnson Careers', url: `https://www.jnj.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Roche Careers', url: `https://www.roche.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Novartis Careers', url: `https://www.novartis.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Sanofi Careers', url: `https://www.sanofi.com/en/about-us/careers/search?q=${q}&location=${l}` },
+            { name: 'GSK Careers', url: `https://www.gsk.com/en-gb/careers/search/?q=${q}&location=${l}` },
+            { name: 'AstraZeneca Careers', url: `https://www.astrazeneca.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Merck Careers', url: `https://www.merck.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Bayer Careers', url: `https://www.bayer.com/careers/search?q=${q}&location=${l}` },
+            { name: 'GlaxoSmithKline Careers', url: `https://www.gsk.com/en-gb/careers/search/?q=${q}&location=${l}` },
+            { name: 'Eli Lilly Careers', url: `https://www.lilly.com/careers/search?q=${q}&location=${l}` },
+            { name: 'AbbVie Careers', url: `https://www.abbvie.com/en/careers/search.html?q=${q}&location=${l}` },
+            { name: 'Bristol Myers Squibb Careers', url: `https://www.bms.com/careers/search.html?q=${q}&location=${l}` },
+            { name: 'Amgen Careers', url: `https://www.amgen.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Biogen Careers', url: `https://www.biogen.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Gilead Sciences Careers', url: `https://www.gilead.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Regeneron Careers', url: `https://www.regeneron.com/careers/search?q=${q}&location=${l}` },
+            { name: 'Moderna Careers', url: `https://www.modernatx.com/careers/search?q=${q}&location=${l}` },
+            { name: 'BioNTech Careers', url: `https://www.biontech.com/en/careers/search?q=${q}&location=${l}` },
+        ],
+        offcampus: [
+            { name: 'Unstop (HackerEarth)', url: `https://unstop.com/search?query=${q}&location=${l}` },
+            { name: 'Superset', url: `https://superset.co.in/jobs?q=${q}&location=${l}` },
+            { name: 'Mercer Mettl', url: `https://www.mercermettl.com/jobs?q=${q}&location=${l}` },
+            { name: 'CoCubes', url: `https://www.cocubes.com/jobs?q=${q}&location=${l}` },
+            { name: 'Amcat', url: `https://amcat.com/jobs?q=${q}&location=${l}` },
+            { name: 'eLitmus', url: `https://www.elitmus.com/off-campus-drives?q=${q}&location=${l}` },
+            { name: 'Cutshort', url: `https://www.cutshort.io/search?query=${q}&location=${l}` },
+            { name: 'Instahyre', url: `https://www.instahyre.com/search?q=${q}&location=${l}` },
+            { name: 'HirePro', url: `https://www.hirepro.in/jobs?q=${q}&location=${l}` },
+            { name: 'Apna', url: `https://www.apna.com/search/jobs?q=${q}&location=${l}` },
+            { name: 'Hirect', url: `https://www.hirect.in/search?q=${q}&location=${l}` },
+            { name: 'Hiringify', url: `https://www.hiringify.com/jobs?q=${q}&location=${l}` },
+            { name: 'MyGate Jobs', url: `https://www.mygate.com/jobs?q=${q}&location=${l}` },
+            { name: 'HireVue', url: `https://www.hirevue.com/jobs?q=${q}&location=${l}` },
+            { name: 'Cutshort.io', url: `https://www.cutshort.io/search?query=${q}` },
+            { name: 'Wellfound (AngelList)', url: `https://wellfound.com/jobs?search=${q}&location=${l}` },
+            { name: 'Hired', url: `https://hired.com/software-engineers/jobs?q=${q}&location=${l}` },
+            { name: 'Trakinn', url: `https://www.trakinn.com/jobs?q=${q}&location=${l}` },
+            { name: 'Hirist', url: `https://www.hirist.com/jobs?q=${q}&location=${l}` },
+            { name: 'Hiringify', url: `https://www.hiringify.com/jobs?q=${q}&location=${l}` },
+        ],
+        government: [
+            { name: 'NCS (Nielit)', url: `https://ncs.nic.in/jobs?q=${q}&location=${l}` },
+            { name: 'UPSC', url: `https://upsc.gov.in/examination-notice?q=${q}&location=${l}` },
+            { name: 'SSC', url: `https://ssc.nic.in/jobs?q=${q}&location=${l}` },
+            { name: 'Railway Jobs', url: `https://www.rrb.gov.in/jobs?q=${q}&location=${l}` },
+            { name: 'Banking Jobs', url: `https://www.ibps.in/jobs?q=${q}&location=${l}` },
+            { name: 'ISRO', url: `https://www.isro.gov.in/careers?q=${q}&location=${l}` },
+            { name: 'DRDO', url: `https://www.drdo.gov.in/careers?q=${q}&location=${l}` },
+            { name: 'GATE', url: `https://gate.iitk.ac.in/jobs?q=${q}&location=${l}` },
+            { name: 'PSU Jobs', url: `https://psu.gov.in/jobs?q=${q}&location=${l}` },
+            { name: 'Sarkari Naukri', url: `https://www.sarkarinaukri.com/jobs?q=${q}&location=${l}` },
+            { name: 'Employment News', url: `https://employmentnews.gov.in/jobs?q=${q}&location=${l}` },
+            { name: 'Sarkari Result', url: `https://www.sarkariresult.com/jobs?q=${q}&location=${l}` },
+            { name: 'FreeJobAlert', url: `https://freejobalert.com/jobs?q=${q}&location=${l}` },
+            { name: 'Sarkari Exam', url: `https://www.sarkariexam.com/jobs?q=${q}&location=${l}` },
+            { name: 'Result India', url: `https://resultindia.net/jobs?q=${q}&location=${l}` },
+        ],
+        quick_apply: [
+            { name: 'Instahyre', url: `https://www.instahyre.com/search?q=${q}&location=${l}` },
+            { name: 'Cutshort', url: `https://www.cutshort.io/search?query=${q}&location=${l}` },
+            { name: 'Hiredly', url: `https://hiredly.in/search?query=${q}&location=${l}` },
+            { name: 'Hirist', url: `https://www.hirist.com/jobs?q=${q}&location=${l}` },
+            { name: 'HirePro', url: `https://www.hirepro.in/jobs?q=${q}&location=${l}` },
+            { name: 'Apna', url: `https://www.apna.com/search/jobs?q=${q}&location=${l}` },
+            { name: 'Hirect', url: `https://www.hirect.in/search?q=${q}&location=${l}` },
+            { name: 'Hiringify', url: `https://www.hiringify.com/jobs?q=${q}&location=${l}` },
+            { name: 'MyGate Jobs', url: `https://www.mygate.com/jobs?q=${q}&location=${l}` },
+            { name: 'HireVue', url: `https://www.hirevue.com/jobs?q=${q}&location=${l}` },
+        ],
+    };
+
+    // Collect links for selected categories
+    for (const cat of categories) {
+        if (categoryPlatforms[cat]) {
+            links.push(...categoryPlatforms[cat]);
+        }
+    }
+
+    return links;
+}
+
+/**
  * Strip HTML tags from a string
  */
 function stripHtml(html) {
@@ -588,7 +608,7 @@ async function searchJobs(searchParams) {
     const categoryFns = {
         india:         [searchArbeitnow, searchRemotive, searchHimalayas],
         software:      [searchArbeitnow, searchRemotive, searchHimalayas],
-        ai_ml:         [searchRemotive, searchHimalayas],
+        ai_ml:         [searchRemotive, searchHimalayas, searchAIJobs],
         remote:        [searchArbeitnow, searchRemotive, searchHimalayas, searchWeWorkRemotely],
         international: [searchArbeitnow, searchRemotive, searchHimalayas],
         internships:   [searchRemotive, searchArbeitnow],
@@ -597,6 +617,7 @@ async function searchJobs(searchParams) {
         companies:     [searchRemotive, searchArbeitnow],
         offcampus:     [searchRemotive, searchArbeitnow],
         government:    [searchArbeitnow, searchRemotive],
+        quick_apply:   [searchRemotive, searchArbeitnow],
     };
 
     // Deduplicate search functions across categories
@@ -640,5 +661,5 @@ async function searchJobs(searchParams) {
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { searchJobs, buildQueries, removeDuplicates, stripHtml };
+    module.exports = { searchJobs, buildQueries, removeDuplicates, stripHtml, generateSearchLinks };
 }

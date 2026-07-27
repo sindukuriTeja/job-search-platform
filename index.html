@@ -221,8 +221,8 @@
 
         <div class="results-section" id="platformLinksSection" style="display:none;">
             <div class="upload-section">
-                <h4 class="mb-3"><i class="fas fa-external-link-alt"></i> Browse Jobs Directly on Platforms</h4>
-                <p class="text-muted mb-4">Click any platform below to search your skills directly on their website</p>
+                <h4 class="mb-3"><i class="fas fa-external-link-alt"></i> Browse Jobs on All Major Platforms</h4>
+                <p class="text-muted mb-4">The platforms below require login. Click any to search your skills directly on their site — your resume data will be used to pre-fill the search.</p>
                 <div id="skillQueryBadge" class="mb-3"></div>
                 <div class="platform-links" id="platformLinksGrid"></div>
             </div>
@@ -368,6 +368,7 @@
 
             const location = document.getElementById('location').value.trim();
             const experienceLevel = document.getElementById('experienceLevel').value;
+            const query = resumeData.skills.slice(0, 3).join(' ');
 
             showLoading('Searching for jobs...', 'Connecting to multiple job platforms');
             document.getElementById('searchBtn').disabled = true;
@@ -385,11 +386,14 @@
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
 
+                // Show direct search links for ALL platforms (always visible)
+                renderPlatformLinks(query, location, Array.from(selectedCategories));
+
                 if (results.jobs.length > 0) {
                     const matched = matchJobs(results.jobs, resumeData, location, experienceLevel);
                     renderResults(matched);
                 } else {
-                    renderPlatformLinks(resumeData.skills.slice(0, 3).join(' '), location, Array.from(selectedCategories));
+                    document.getElementById('resultsSection').style.display = 'none';
                 }
             } catch (error) {
                 hideLoading();
@@ -440,13 +444,17 @@
             section.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function renderPlatformLinks(platforms, query) {
+        function renderPlatformLinks(query, location, categories) {
             const section = document.getElementById('platformLinksSection');
             const grid    = document.getElementById('platformLinksGrid');
             const badge   = document.getElementById('skillQueryBadge');
 
             badge.innerHTML = `<span class="badge bg-primary fs-6"><i class="fas fa-search"></i> Searching for: "${escapeHtml(query)}"</span>`;
 
+            const experienceLevel = document.getElementById('experienceLevel').value;
+            const links = generateSearchLinks(query, location, experienceLevel, categories);
+
+            // Group links by category
             const categoryLabels = {
                 india:         '🇮🇳 India Job Portals',
                 software:      '💻 Software Engineering',
@@ -462,13 +470,37 @@
                 quick_apply:   '⚡ Quick Apply',
             };
 
+            // Deduplicate links by URL
+            const seen = new Set();
+            const uniqueLinks = links.filter(link => {
+                if (seen.has(link.url)) return false;
+                seen.add(link.url);
+                return true;
+            });
+
+            // Group by category (first 20 links per category)
+            const grouped = {};
+            uniqueLinks.slice(0, 200).forEach(link => {
+                // Determine category from the link
+                let cat = 'other';
+                for (const [key, value] of Object.entries(categoryLabels)) {
+                    if (link.name.toLowerCase().includes(key.toLowerCase()) || 
+                        link.url.toLowerCase().includes(key.toLowerCase())) {
+                        cat = key;
+                        break;
+                    }
+                }
+                if (!grouped[cat]) grouped[cat] = [];
+                grouped[cat].push(link);
+            });
+
             grid.innerHTML = '';
-            for (const [cat, links] of Object.entries(platforms)) {
+            for (const [cat, links] of Object.entries(grouped)) {
                 const block = document.createElement('div');
                 block.className = 'platform-category-block';
                 const label = categoryLabels[cat] || cat;
                 block.innerHTML = `
-                    <div class="platform-category-title">${label}</div>
+                    <div class="platform-category-title">${label} <span class="badge bg-secondary">${links.length}</span></div>
                     <div class="platform-links-row">
                         ${links.map(p => `
                             <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="platform-link-btn">
