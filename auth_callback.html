@@ -17,54 +17,64 @@
         <h3>Signing in...</h3>
         <p id="status">Connecting to Google...</p>
     </div>
+    <script src="static/supabase_client.js"></script>
     <script>
-        // This page handles the Google OAuth callback.
-        // Since we're backend-less, we use Google's JavaScript token endpoint
-        // which requires the client secret — not ideal for production.
-        // For production, use Google Identity Services (GIS) or a backend.
-        
-        const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'; // Replace with your client ID
-        const CLIENT_SECRET = 'YOUR_GOOGLE_CLIENT_SECRET'; // Replace with your client secret
-        const REDIRECT_URI = window.location.origin + '/auth_callback.html';
-
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        const state = params.get('state');
-
-        if (!code) {
-            document.getElementById('status').textContent = 'Error: No authorization code received';
-            setTimeout(() => window.location.href = '/', 3000);
-        } else {
-            // Exchange code for token
-            fetch('https://oauth2.googleapis.com/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `code=${code}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&grant_type=authorization_code`,
-            })
-            .then(resp => resp.json())
-            .then(tokenData => {
-                if (tokenData.error) throw new Error(tokenData.error_description || tokenData.error);
-                // Get user info
-                return fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-                    headers: { Authorization: `Bearer ${tokenData.access_token}` },
-                }).then(r => r.json());
-            })
-            .then(user => {
-                // Save session to localStorage
-                localStorage.setItem('pokee_session', JSON.stringify({
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    picture: user.picture,
-                }));
-                document.getElementById('status').textContent = 'Success! Redirecting...';
-                setTimeout(() => window.location.href = '/', 1000);
-            })
-            .catch(err => {
-                document.getElementById('status').textContent = 'Error: ' + err.message;
+        // Handle Supabase OAuth callback
+        // Supabase returns tokens in the URL hash after successful OAuth
+        async function handleCallback() {
+            const hash = window.location.hash;
+            
+            if (!hash || !hash.includes('access_token')) {
+                document.getElementById('status').textContent = 'Error: No token received';
                 setTimeout(() => window.location.href = '/', 3000);
-            });
+                return;
+            }
+
+            const params = new URLSearchParams(hash.substring(1));
+            const accessToken = params.get('access_token');
+            const refreshToken = params.get('refresh_token');
+            const expiresIn = params.get('expires_in');
+
+            if (!accessToken) {
+                document.getElementById('status').textContent = 'Error: Invalid token';
+                setTimeout(() => window.location.href = '/', 3000);
+                return;
+            }
+
+            // Save the Supabase session
+            localStorage.setItem('supabase_token', accessToken);
+            if (refreshToken) {
+                localStorage.setItem('supabase_refresh_token', refreshToken);
+            }
+
+            // Fetch user info from Supabase
+            try {
+                const resp = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+
+                if (resp.ok) {
+                    const user = await resp.json();
+                    localStorage.setItem('supabase_user', JSON.stringify(user));
+                    document.getElementById('status').textContent = 'Success! Redirecting...';
+                } else {
+                    throw new Error('Failed to fetch user info');
+                }
+            } catch (err) {
+                console.error('Error fetching user:', err);
+                document.getElementById('status').textContent = 'Signed in! Redirecting...';
+            }
+
+            // Clear the hash and redirect to home page
+            window.location.hash = '';
+            setTimeout(() => window.location.href = '/', 1000);
         }
+
+        handleCallback();
     </script>
 </body>
 </html>
