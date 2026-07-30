@@ -255,34 +255,54 @@
     <script src="static/resume_parser.js"></script>
     <script src="static/job_matcher.js"></script>
     <script src="static/search_engine.js"></script>
+    <script src="static/supabase_client.js"></script>
     <script>
         let selectedCategories = new Set();
         let resumeData = null;
         let currentUser = null;
 
-        // === AUTH (client-side with localStorage) ===
+        // === SUPABASE AUTH ===
         async function checkAuth() {
             try {
-                const session = localStorage.getItem('pokee_session');
-                if (session) {
-                    currentUser = JSON.parse(session);
-                    showLoggedInUI(currentUser);
-                    loadSearchHistory();
-                } else {
-                    currentUser = null;
-                    showLoggedOutUI();
+                // Check for Supabase session from URL hash (OAuth callback)
+                const hash = window.location.hash;
+                if (hash && hash.includes('access_token')) {
+                    const params = new URLSearchParams(hash.substring(1));
+                    const accessToken = params.get('access_token');
+                    if (accessToken) {
+                        localStorage.setItem('supabase_token', accessToken);
+                        window.location.hash = ''; // Clear hash
+                    }
                 }
+
+                // Try to get user from Supabase
+                const token = localStorage.getItem('supabase_token');
+                if (token) {
+                    const user = await supabase.getSession();
+                    if (user) {
+                        currentUser = user;
+                        showLoggedInUI(user);
+                        await loadSearchHistory();
+                        return;
+                    }
+                }
+                // No valid session
+                currentUser = null;
+                showLoggedOutUI();
             } catch (e) {
+                console.error('Auth check failed:', e);
                 currentUser = null;
                 showLoggedOutUI();
             }
         }
 
         function showLoggedInUI(user) {
+            const name = user.user_metadata?.name || user.email || 'User';
+            const avatar = user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff`;
             document.getElementById('authArea').innerHTML = `
                 <div class="nav-user">
-                    <img src="${user.picture || ''}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=2563eb&color=fff'">
-                    <span class="nav-user-name">${escapeHtml(user.name)}</span>
+                    <img src="${avatar}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name=U&background=2563eb&color=fff'">
+                    <span class="nav-user-name">${escapeHtml(name)}</span>
                     <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>`;
         }
@@ -295,18 +315,12 @@
         }
 
         function startLogin() {
-            // Google OAuth — redirect to Google, then come back to /auth_callback.html
-            const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'; // Replace with your client ID
-            const REDIRECT_URI = window.location.origin + '/auth_callback.html';
-            const scope = encodeURIComponent('https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email');
-            const state = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
-            localStorage.setItem('pokee_oauth_state', state);
-            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${scope}&state=${state}`;
+            // Use Supabase Google OAuth
+            supabase.signInWithGoogle();
         }
 
         async function logout() {
-            localStorage.removeItem('pokee_session');
-            localStorage.removeItem('pokee_user_data');
+            await supabase.signOut();
             currentUser = null;
             showLoggedOutUI();
             document.getElementById('searchHistorySection').style.display = 'none';
@@ -315,74 +329,75 @@
         async function loadSearchHistory() {
             if (!currentUser) return;
             try {
-                const data = JSON.parse(localStorage.getItem('pokee_user_data') || '{}');
-                const searches = data.searches || [];
-                if (searches.length > 0) {
+                const searches = await supabase.query('searches', {
+                    eq: { user_id: currentUser.id },
+                    limit: 5,
+                    order: 'created_at',
+                    orderBy: 'desc',
+                });
+                if (searches && searches.length > 0) {
                     const list = document.getElementById('searchHistoryList');
-                    list.innerHTML = searches.slice(0, 5).map(s => `
+                    list.innerHTML = searches.map(s => `
                         <div class="search-history-item">
                             <div>
-                                <strong>${escapeHtml(s.skills.join(', '))}</strong>
+                                <strong>${escapeHtml((s.skills || []).join(', '))}</strong>
                                 ${s.location ? ` in ${escapeHtml(s.location)}` : ''}
                             </div>
-                            <small>${new Date(s.timestamp).toLocaleDateString()} · ${s.results_count} results</small>
+                            <small>${new Date(s.created_at).toLocaleDateString()} · ${s.results_count} results</small>
                         </div>
                     `).join('');
                     document.getElementById('searchHistorySection').style.display = 'block';
                 }
-            } catch (e) { /* ignore */ }
+            } catch (e) {
+                console.error('Failed to load search history:', e);
+            }
         }
 
         async function saveSearch(skills, location, categories, resultsCount) {
             if (!currentUser) return;
             try {
-                const data = JSON.parse(localStorage.getItem('pokee_user_data') || '{}');
-                if (!data.searches) data.searches = [];
-                data.searches.unshift({
-                    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36),
-                    timestamp: new Date().toISOString(),
+                await supabase.insert('searches', {
+                    user_id: currentUser.id,
                     skills: skills || [],
                     location: location || '',
                     categories: categories || [],
+                    experience_level: document.getElementById('experienceLevel').value,
                     results_count: resultsCount || 0,
                 });
-                // Keep only last 20 searches
-                if (data.searches.length > 20) {
-                    data.searches = data.searches.slice(0, 20);
-                }
-                localStorage.setItem('pokee_user_data', JSON.stringify(data));
                 loadSearchHistory();
-            } catch (e) { /* ignore */ }
+            } catch (e) {
+                console.error('Failed to save search:', e);
+            }
+        }
+
+        async function saveJob(job) {
+            if (!currentUser) { alert('Please sign in to save jobs'); return; }
+            try {
+                await supabase.insert('saved_jobs', {
+                    user_id: currentUser.id,
+                    title: job.title,
+                    company: job.company,
+                    location: job.location,
+                    url: job.url,
+                    portal: job.portal,
+                    match_score: job.match_percentage || 0,
+                    description: job.description || '',
+                });
+                alert('Job saved!');
+            } catch (e) {
+                console.error('Failed to save job:', e);
+                alert('Failed to save job');
+            }
         }
 
         // === RESUME PARSING ===
         document.addEventListener('DOMContentLoaded', function() {
             checkAuth();
-            // If redirected from Google callback, handle it
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('code') && window.location.pathname === '/auth_callback.html') {
-                handleCallback(params.get('code'));
-                return;
-            }
             setupDragAndDrop();
             setupFileInput();
             setupPlatformSelection();
             setupSearchButton();
         });
-
-        async function handleCallback(code) {
-            try {
-                // Exchange code for token — this would normally go through a backend,
-                // but since we're backend-less, we store the code and use Google's
-                // token endpoint directly (requires exposing client secret, not ideal)
-                // For a truly backend-less app, use Google Sign-In JavaScript SDK instead.
-                // For now, we'll use a simpler approach: Google Identity Services (GIS)
-                alert('For a fully backend-less setup, please use the Google Sign-In button below instead of the redirect flow.');
-                window.history.replaceState({}, '', window.location.pathname);
-            } catch (e) {
-                alert('Login failed: ' + e.message);
-            }
-        }
 
         function setupDragAndDrop() {
             const dropZone = document.getElementById('dropZone');
