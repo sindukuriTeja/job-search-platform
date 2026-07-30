@@ -1,0 +1,6 @@
+# NexJobs - robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://nexjobs.in/sitemap.xml
