@@ -266,13 +266,13 @@ h1{font-size:48px;font-weight:800;line-height:1.1;letter-spacing:-.03em}h2{font-
     <div class="section-header"><div class="section-eyebrow">Job Search</div><h2>Find Your Next Role</h2><p>Upload your resume and search across 100+ platforms.</p></div>
     <div class="card" style="margin-bottom:32px;">
       <h3 style="margin-bottom:20px;"><i class="fas fa-file-lines" style="color:var(--primary);margin-right:8px;"></i> Upload Your Resume</h3>
-      <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-zone" id="dropZone">
         <div class="upload-zone-icon"><i class="fas fa-cloud-arrow-up"></i></div>
         <h3>Drop your resume here</h3><p>or click to browse</p>
         <div class="upload-formats"><span class="upload-format">PDF</span><span class="upload-format">DOCX</span><span class="upload-format">TXT</span></div>
-        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display:none;" onchange="handleFileUpload(this)">
+        <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" style="display:none;">
       </div>
-      <div id="resumeFile" style="display:none;">
+      <div id="resumeFileWrap" style="display:none;">
         <div id="resumeAnalysis" style="display:none;margin-top:20px;"><h4 style="margin-bottom:12px;"><i class="fas fa-brain" style="color:var(--accent-purple);margin-right:8px;"></i> Parsed Skills</h4><div id="analysisGrid" class="resume-skills"></div></div>
         <div id="resumePreview" style="display:none;margin-top:20px;"><div style="display:flex;justify-content:space-between;align-items:center;padding:16px;background:var(--bg-gray);border-radius:var(--radius-md);border:1px solid var(--border-light);"><div style="display:flex;align-items:center;gap:12px;"><i class="fas fa-file-lines" style="color:var(--primary);font-size:20px;"></i><div><div id="fileName" style="font-weight:600;font-size:14px;"></div><div id="fileInfo" style="font-size:12px;color:var(--text-muted);"></div></div></div><button class="btn btn-ghost btn-sm" onclick="clearResume()"><i class="fas fa-trash"></i> Remove</button></div></div>
       </div>
@@ -1027,6 +1027,7 @@ function navigateTo(view){
     window.scrollTo({top:0,behavior:'smooth'});
 }
 function saveSettings(){const n=document.getElementById('settingsName').value,e=document.getElementById('settingsEmail').value;if(n)localStorage.setItem('nexjobs_name',n);if(e)localStorage.setItem('nexjobs_email',e);alert('Settings saved!');}
+function clearResume(){const f=document.getElementById('resumeFile');if(f)f.value='';const w=document.getElementById('resumeFileWrap');if(w)w.style.display='none';const a=document.getElementById('resumeAnalysis');if(a)a.style.display='none';const p=document.getElementById('resumePreview');if(p)p.style.display='none';const s=document.getElementById('dashSkills');if(s)s.innerHTML='';const rt=document.getElementById('dashResumeTitle');if(rt)rt.textContent='No resume uploaded';const rx=document.getElementById('dashResumeText');if(rx)rx.textContent='Upload your resume to unlock personalized matches.';const ra=document.getElementById('dashResumeAction');if(ra)ra.textContent='Upload Resume';}
 function clearAllData(){if(confirm('Clear all saved data?')){localStorage.removeItem('nexjobs_search_history');localStorage.removeItem('nexjobs_resume');localStorage.removeItem('nexjobs_connected_platforms');localStorage.removeItem('nexjobs_last_match');alert('Cleared!');refreshDashboard();}}
 function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 const dashPlatforms=[['linkedin','LinkedIn','fab fa-linkedin'],['naukri','Naukri','fas fa-briefcase'],['indeed','Indeed','fas fa-magnifying-glass'],['glassdoor','Glassdoor','fas fa-building'],['github','GitHub','fab fa-github'],['wellfound','Wellfound','fas fa-rocket']];
