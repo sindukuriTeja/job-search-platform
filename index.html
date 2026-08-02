@@ -1027,7 +1027,47 @@ function navigateTo(view){
     window.scrollTo({top:0,behavior:'smooth'});
 }
 function saveSettings(){const n=document.getElementById('settingsName').value,e=document.getElementById('settingsEmail').value;if(n)localStorage.setItem('nexjobs_name',n);if(e)localStorage.setItem('nexjobs_email',e);alert('Settings saved!');}
+async function parseResume(file){
+    let text='';
+    const ext=file.name.split('.').pop().toLowerCase();
+    if(ext==='pdf'){
+        const buf=await file.arrayBuffer();
+        const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+        for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);text+=p.getTextContent().items.map(x=>x.str).join(' ')+'\n';}
+    }else if(ext==='docx'){
+        const buf=await file.arrayBuffer();
+        const result=await mammoth.extractRawText({arrayBuffer:buf});text=result.value;
+    }else{
+        text=await file.text();
+    }
+    const tl=text.toLowerCase();
+    const SKILLS=['python','java','javascript','typescript','c','c++','c#','go','rust','ruby','php','swift','kotlin','scala','r','react','angular','vue.js','node.js','django','flask','spring boot','express.js','rails','laravel','fastapi','nestjs','next.js','tensorflow','pytorch','keras','scikit-learn','pandas','numpy','bootstrap','tailwind','jquery','redux','graphql','rest api','microservices','docker','kubernetes','aws','azure','gcp','terraform','ansible','jenkins','git','github','gitlab','mongodb','mysql','postgresql','sqlite','redis','elasticsearch','firebase','supabase','machine learning','deep learning','artificial intelligence','data science','data analysis','data engineering','nlp','computer vision','web development','mobile development','cloud computing','cybersecurity','blockchain','full stack','frontend','backend','agile','scrum','leadership','communication','teamwork','problem solving','project management'];
+    const found=new Set();
+    SKILLS.forEach(s=>{const re=new RegExp('(?<![a-z])'+s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?![a-z])','i');if(re.test(text))found.add(s);});
+    const email=(text.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/)||[])[0]||'';
+    const phone=(text.match(/\+?\d[\d\s\-().]{9,14}\d/)||[])[0]||'';
+    const nameMatch=text.split('\n').filter(l=>l.trim()&&!l.match(/[@\d]/)&&l.trim().length<50&&l.trim().length>2).find(l=>l.trim().match(/^[A-Za-z\s.'-]+$/));
+    const yearsMatch=text.match(/(\d+)\s*(?:years?|yrs?)\s*(?:of\s*)?(?:experience|exp)/i);
+    const expYears=yearsMatch?parseInt(yearsMatch[1]):0;
+    const section=(...names)=>{const re=new RegExp('(?:'+names.join('|')+')\\s*\\n([\\s\\S]*?)(?=\\n\\s*(?:Experience|Work Experience|Education|Skills|Projects|Certifications|Languages|Interests|Hobbies|References|Achievements)\\s*\\n|$)','i');const m=text.match(re);return m?m[1].trim():''};
+    const splitEntries=s=>s.split(/\n\s*\n|\n\s*[-•*]\s*|\n\s*\d+\.\s*/).map(e=>e.trim()).filter(e=>e.length>15).slice(0,5);
+    const expSection=section('Experience','Work Experience','Professional Experience','Employment');
+    const eduSection=section('Education','Academic Background','Qualifications');
+    const projSection=section('Projects','Personal Projects','Key Projects','Portfolio');
+    const certSection=section('Certifications','Certificates','Licenses');
+    const langSection=section('Languages','Language Proficiency');
+    const summarySection=section('Summary','Professional Summary','Profile','About Me','Objective');
+    const summary=summarySection?summarySection.replace(/(?:Professional Summary|Summary|About Me|Profile|Career Objective|Objective)\s*[:.]?\s*/i,'').substring(0,500):'';
+    const langList=langSection?langSection.split(/[,•\n]+/).map(l=>l.trim()).filter(l=>l.length>3).slice(0,5):[];
+    const tokens=text.toLowerCase().match(/\b[a-z]{4,}\b/g)||[];
+    const STOP=new Set(['the','this','that','have','from','with','been','were','will','their','what','which','were','been','would','could','should','about','after','before','these','those','other','some','such','only','also','when','where','they','them','your','each','more','most','other','same','than','very','both','just','over','under','into','through','during','above','below','again','further','then','once','here','there','why','how','all','each','few','more','most','other','some','such','no','nor','not','only','own','same','so','than','too','very']);
+    const freq={};tokens.forEach(t=>{if(!STOP.has(t))freq[t]=(freq[t]||0)+1;});
+    const keywords=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,20).map(x=>x[0]);
+    return{name:nameMatch?nameMatch.trim():'Unknown',email,phone,skills:[...found],experience:splitEntries(expSection),education:splitEntries(eduSection),projects:splitEntries(projSection),certifications:splitEntries(certSection),languages:langList,summary:summary.length>20?summary:'',keywords,experience_years:expYears};
+}
 function clearResume(){const f=document.getElementById('resumeFile');if(f)f.value='';const w=document.getElementById('resumeFileWrap');if(w)w.style.display='none';const a=document.getElementById('resumeAnalysis');if(a)a.style.display='none';const p=document.getElementById('resumePreview');if(p)p.style.display='none';const s=document.getElementById('dashSkills');if(s)s.innerHTML='';const rt=document.getElementById('dashResumeTitle');if(rt)rt.textContent='No resume uploaded';const rx=document.getElementById('dashResumeText');if(rx)rx.textContent='Upload your resume to unlock personalized matches.';const ra=document.getElementById('dashResumeAction');if(ra)ra.textContent='Upload Resume';}
+// Show wrapper when analysis/preview become visible (original JS sets these inline)
+new MutationObserver(()=>{const w=document.getElementById('resumeFileWrap');if(w){const a=document.getElementById('resumeAnalysis'),p=document.getElementById('resumePreview');w.style.display=(a&&a.style.display!=='none')||(p&&p.style.display!=='none')?'block':'none';}}).observe(document.getElementById('resumeFileWrap')||document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});
 function clearAllData(){if(confirm('Clear all saved data?')){localStorage.removeItem('nexjobs_search_history');localStorage.removeItem('nexjobs_resume');localStorage.removeItem('nexjobs_connected_platforms');localStorage.removeItem('nexjobs_last_match');alert('Cleared!');refreshDashboard();}}
 function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 const dashPlatforms=[['linkedin','LinkedIn','fab fa-linkedin'],['naukri','Naukri','fas fa-briefcase'],['indeed','Indeed','fas fa-magnifying-glass'],['glassdoor','Glassdoor','fas fa-building'],['github','GitHub','fab fa-github'],['wellfound','Wellfound','fas fa-rocket']];
