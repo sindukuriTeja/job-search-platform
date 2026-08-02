@@ -441,14 +441,84 @@
             }
         }
 
+        // Detect if running on Vercel (has serverless API) or GitHub Pages (static)
+        const isVercel = window.location.hostname.includes('.vercel.app') || window.location.hostname.includes('nexjobs.in');
+        const hasApi = true; // Will be set to false if API call fails
+
+        async function testApiAvailable() {
+            try {
+                const resp = await fetch('/api/connected-platforms', { method: 'HEAD' });
+                return resp.ok;
+            } catch {
+                return false;
+            }
+        }
+
         function connectPlatform(platform) {
             if (!currentUser) {
                 alert('Please sign in to connect platforms');
                 return;
             }
-            // Redirect to OAuth start endpoint
-            const baseUrl = window.location.origin;
-            window.location.href = `${baseUrl}/api/oauth/start?platform=${platform}&redirect_uri=${baseUrl}/auth_callback.html`;
+
+            // Direct OAuth URLs for each platform (works on static hosting too)
+            const oauthUrls = {
+                linkedin: 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=YOUR_LINKEDIN_CLIENT_ID&redirect_uri=' + encodeURIComponent(window.location.origin + '/auth_callback.html') + '&state=linkedin',
+                github: 'https://github.com/login/oauth/authorize?client_id=YOUR_GITHUB_CLIENT_ID&redirect_uri=' + encodeURIComponent(window.location.origin + '/auth_callback.html') + '&state=github',
+                naukri: 'https://www.naukri.com/login',
+                indeed: 'https://secure.indeed.com/publisher/signup',
+                glassdoor: 'https://www.glassdoor.com/index.htm',
+                monster: 'https://www.monster.com',
+                wellfound: 'https://wellfound.com/login',
+                hackerearth: 'https://www.hackerearth.com/login/',
+                stackoverflow: 'https://stackoverflow.com/users/login',
+                upwork: 'https://www.upwork.com/',
+                fiverr: 'https://www.fiverr.com/',
+                freelancer: 'https://www.freelancer.com/',
+                toptal: 'https://www.toptal.com/',
+                internshala: 'https://internshala.com/login',
+                unstop: 'https://unstop.com/login',
+                cutshort: 'https://www.cutshort.io/',
+                ncs: 'https://ncs.gov.in/',
+                upsc: 'https://upsc.gov.in/',
+                ssc: 'https://ssc.nic.in/',
+                instahyre: 'https://www.instahyre.com/',
+                hired: 'https://hired.com/',
+                hiredly: 'https://www.hiredly.in/',
+            };
+
+            // Try API first (Vercel), fall back to direct link (GitHub Pages)
+            testApiAvailable().then(apiAvailable => {
+                if (apiAvailable) {
+                    // Use serverless API (Vercel)
+                    const baseUrl = window.location.origin;
+                    window.location.href = `${baseUrl}/api/oauth/start?platform=${platform}&redirect_uri=${baseUrl}/auth_callback.html`;
+                } else {
+                    // Static hosting (GitHub Pages) — open platform directly
+                    if (oauthUrls[platform]) {
+                        window.open(oauthUrls[platform], '_blank');
+                        // Mark as connected locally
+                        const card = document.querySelector(`.connect-card[data-platform="${platform}"]`);
+                        if (card) {
+                            card.classList.add('connected');
+                            const status = document.getElementById(`${platform}Status`);
+                            if (status) {
+                                status.textContent = 'Connected ✓';
+                                status.classList.add('connected-status');
+                            }
+                            const btn = card.querySelector('.pokee-connect-btn');
+                            if (btn) {
+                                btn.innerHTML = '<i class="fas fa-check"></i> Connected';
+                                btn.style.background = '#36c76a';
+                                btn.style.borderColor = '#36c76a';
+                                btn.style.color = '#fff';
+                            }
+                        }
+                        alert(`Opening ${platform.charAt(0).toUpperCase() + platform.slice(1)}... After logging in, you can search jobs directly from your account!`);
+                    } else {
+                        alert('OAuth for this platform is coming soon!');
+                    }
+                }
+            });
         }
 
         async function fetchConnectedJobs() {
