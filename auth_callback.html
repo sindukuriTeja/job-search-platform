@@ -19,11 +19,25 @@
     </div>
     <script src="static/supabase_client.js"></script>
     <script>
-        // Handle Supabase OAuth callback
-        // Supabase returns tokens in the URL hash after successful OAuth
+        // Handle Supabase OAuth callback AND platform OAuth callbacks
         async function handleCallback() {
             const hash = window.location.hash;
+            const urlParams = new URLSearchParams(window.location.search);
             
+            // Check if this is a platform OAuth callback (LinkedIn, GitHub, Indeed)
+            const platform = urlParams.get('platform');
+            const state = urlParams.get('state');
+            
+            if (platform) {
+                // This is a platform OAuth callback — redirect to serverless handler
+                document.getElementById('status').textContent = `Connecting to ${platform}...`;
+                const baseUrl = window.location.origin;
+                const redirectUri = encodeURIComponent(`${baseUrl}/auth_callback.html`);
+                window.location.href = `${baseUrl}/api/oauth/callback?platform=${platform}&redirect_uri=${redirectUri}&${window.location.search}`;
+                return;
+            }
+            
+            // Supabase auth callback
             if (!hash || !hash.includes('access_token')) {
                 document.getElementById('status').textContent = 'Error: No token received';
                 setTimeout(() => window.location.href = '/', 3000);

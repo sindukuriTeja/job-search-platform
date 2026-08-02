@@ -82,6 +82,11 @@
         .platform-card.selected { border-color: #2563eb; background: #eff6ff; }
         .platform-card i { font-size: 2rem; color: #2563eb; margin-bottom: 0.5rem; }
         
+        .connect-card { position: relative; }
+        .connect-card.connected { border-color: #16a34a; background: #f0fdf4; }
+        .connect-card.connected::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 10px; right: 10px; color: #16a34a; font-size: 1.2rem; }
+        .connect-card small.connected-status { color: #16a34a; }
+        
         .btn-primary { background: #2563eb; border: none; padding: 12px 32px; border-radius: 8px; font-weight: 600; }
         .btn-primary:hover { background: #1d4ed8; }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -175,6 +180,31 @@
                     <option value="all">All Levels</option>
                 </select>
             </div>
+        </div>
+
+        <div class="upload-section" id="connectPlatformsSection" style="display:none;">
+            <h3 class="mb-1"><i class="fas fa-plug"></i> Connect Your Accounts</h3>
+            <p class="text-muted mb-4">Connect your accounts to fetch jobs directly from your network — just like Pokee.ai</p>
+            <div class="platform-grid" id="connectPlatformGrid">
+                <div class="platform-card connect-card" data-platform="linkedin" onclick="connectPlatform('linkedin')">
+                    <i class="fab fa-linkedin" style="color:#0A66C2;"></i>
+                    <h5>LinkedIn</h5>
+                    <small class="text-muted" id="linkedinStatus">Connect to fetch jobs from your network</small>
+                </div>
+                <div class="platform-card connect-card" data-platform="github" onclick="connectPlatform('github')">
+                    <i class="fab fa-github" style="color:#333;"></i>
+                    <h5>GitHub</h5>
+                    <small class="text-muted" id="githubStatus">Connect to find open-source job opportunities</small>
+                </div>
+                <div class="platform-card connect-card" data-platform="indeed" onclick="connectPlatform('indeed')">
+                    <i class="fab fa-deezer" style="color:#004483;"></i>
+                    <h5>Indeed</h5>
+                    <small class="text-muted" id="indeedStatus">Connect to search Indeed with your profile</small>
+                </div>
+            </div>
+            <button id="fetchConnectedJobsBtn" class="btn btn-primary w-100 mt-3" onclick="fetchConnectedJobs()" disabled>
+                <i class="fas fa-sync-alt"></i> Fetch Jobs from Connected Accounts
+            </button>
         </div>
 
         <div class="upload-section">
@@ -325,6 +355,7 @@
                         currentUser = user;
                         showLoggedInUI(user);
                         await loadSearchHistory();
+                        await loadConnectedPlatforms(); // Load connected platforms
                         return;
                     }
                 }
@@ -347,6 +378,8 @@
                     <span class="nav-user-name">${escapeHtml(name)}</span>
                     <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>`;
+            // Show connect platforms section when logged in
+            document.getElementById('connectPlatformsSection').style.display = 'block';
         }
 
         function showLoggedOutUI() {
@@ -366,6 +399,94 @@
             currentUser = null;
             showLoggedOutUI();
             document.getElementById('searchHistorySection').style.display = 'none';
+            document.getElementById('connectPlatformsSection').style.display = 'none';
+        }
+
+        // === CONNECTED PLATFORMS (Pokee.ai style) ===
+        async function loadConnectedPlatforms() {
+            if (!currentUser) return;
+            try {
+                const response = await fetch('/api/connected-platforms', {
+                    headers: {
+                        'x-user-id': currentUser.id,
+                    },
+                });
+                if (!response.ok) return;
+                const data = await response.json();
+                
+                // Update UI for each platform
+                data.platforms.forEach(p => {
+                    const card = document.querySelector(`.connect-card[data-platform="${p.platform}"]`);
+                    const status = document.getElementById(`${p.platform}Status`);
+                    if (card && status) {
+                        if (p.is_active) {
+                            card.classList.add('connected');
+                            status.textContent = 'Connected ✓';
+                            status.classList.add('connected-status');
+                        }
+                    }
+                });
+                
+                // Enable fetch button if any platform is connected
+                const hasConnected = data.platforms.some(p => p.is_active);
+                document.getElementById('fetchConnectedJobsBtn').disabled = !hasConnected;
+            } catch (e) {
+                console.error('Failed to load connected platforms:', e);
+            }
+        }
+
+        function connectPlatform(platform) {
+            if (!currentUser) {
+                alert('Please sign in to connect platforms');
+                return;
+            }
+            // Redirect to OAuth start endpoint
+            const baseUrl = window.location.origin;
+            window.location.href = `${baseUrl}/api/oauth/start?platform=${platform}&redirect_uri=${baseUrl}/auth_callback.html`;
+        }
+
+        async function fetchConnectedJobs() {
+            if (!currentUser || !resumeData) {
+                alert('Please upload your resume first');
+                return;
+            }
+            
+            const location = document.getElementById('location').value.trim();
+            const experienceLevel = document.getElementById('experienceLevel').value;
+            
+            showLoading('Fetching jobs from connected accounts...', 'Searching your LinkedIn network, GitHub repos, and Indeed profile');
+            
+            try {
+                const response = await fetch('/api/jobs/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-id': currentUser.id,
+                    },
+                    body: JSON.stringify({
+                        skills: resumeData.skills,
+                        keywords: resumeData.keywords,
+                        location: location,
+                        experience_level: experienceLevel,
+                    }),
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch jobs');
+                
+                const data = await response.json();
+                hideLoading();
+                
+                if (data.jobs && data.jobs.length > 0) {
+                    const matched = matchJobs(data.jobs, resumeData, location, experienceLevel);
+                    renderResults(matched);
+                } else {
+                    alert('No jobs found from your connected accounts. Try connecting more platforms!');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Fetch connected jobs error:', error);
+                alert('Failed to fetch jobs from connected accounts. Please try again.');
+            }
         }
 
         async function loadSearchHistory() {
