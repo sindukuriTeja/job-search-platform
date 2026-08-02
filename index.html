@@ -569,35 +569,81 @@
             document.getElementById('searchBtn').disabled = true;
 
             try {
-                // Run client-side search
-                const results = await searchJobs({
-                    skills: resumeData.skills,
-                    keywords: resumeData.keywords,
-                    location: location,
-                    experience_level: experienceLevel,
-                    job_categories: Array.from(selectedCategories),
-                });
+                // Run client-side search (best-effort — CORS may block some APIs)
+                let results = null;
+                try {
+                    results = await searchJobs({
+                        skills: resumeData.skills,
+                        keywords: resumeData.keywords,
+                        location: location,
+                        experience_level: experienceLevel,
+                        job_categories: Array.from(selectedCategories),
+                    });
+                } catch (searchError) {
+                    console.warn('API search failed (CORS or network), showing direct links only:', searchError);
+                    results = { jobs: [], platforms_searched: [], failed_platforms: ['API blocked'], search_links: [] };
+                }
 
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
 
                 // Save search history if logged in
-                await saveSearch(resumeData.skills, location, Array.from(selectedCategories), results.jobs?.length || 0);
+                try { await saveSearch(resumeData.skills, location, Array.from(selectedCategories), results.jobs?.length || 0); } catch(e) {}
 
-                // Show direct search links for ALL platforms (always visible)
+                // ALWAYS show direct search links for ALL platforms (this is the main feature)
                 renderPlatformLinks(query, location, Array.from(selectedCategories));
 
+                // Show matched results if any API jobs were found
                 if (results.jobs && results.jobs.length > 0) {
                     const matched = matchJobs(results.jobs, resumeData, location, experienceLevel);
                     renderResults(matched);
                 } else {
+                    // Show a helpful message when no API results
                     document.getElementById('resultsSection').style.display = 'none';
                 }
+
+                // Show a message about direct links
+                showDirectLinksMessage(results.platforms_searched.length, results.search_links?.length || 0);
+
             } catch (error) {
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
-                alert('Search failed: ' + error.message);
+                console.error('Search error:', error);
+                // Still show platform links even on error
+                try {
+                    renderPlatformLinks(query, location, Array.from(selectedCategories));
+                } catch(e) {}
             }
+        }
+
+        function showDirectLinksMessage(apiResults, linkCount) {
+            // Always show platform links section — it's the main feature
+            const section = document.getElementById('platformLinksSection');
+            section.style.display = 'block';
+
+            // Add a helpful info banner at the top
+            let existingBanner = document.getElementById('directLinksBanner');
+            if (existingBanner) existingBanner.remove();
+
+            const banner = document.createElement('div');
+            banner.id = 'directLinksBanner';
+            banner.className = 'alert alert-info mb-4';
+
+            if (apiResults > 0) {
+                banner.innerHTML = `
+                    <h5><i class="fas fa-check-circle text-success"></i> Search Complete!</h5>
+                    <p class="mb-2">We found jobs from ${apiResults} platform(s) above. Below are <strong>${linkCount} direct search links</strong> to browse more jobs on every major platform — click any link to search your skills directly on their site.</p>
+                `;
+            } else {
+                banner.innerHTML = `
+                    <h5><i class="fas fa-info-circle"></i> Browse Jobs on ${linkCount} Platforms</h5>
+                    <p class="mb-2">Below are <strong>direct search links</strong> to every major job platform — click any link to search your skills directly on their site. Each link is pre-filled with your resume's top skills.</p>
+                `;
+            }
+
+            const grid = document.getElementById('platformLinksGrid');
+            grid.parentNode.insertBefore(banner, grid);
+            section.scrollIntoView({ behavior: 'smooth' });
         }
 
         function renderResults(jobs) {
