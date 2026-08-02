@@ -3,347 +3,357 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexJobs — AI-Powered Resume Job Search Platform in India</title>
-    <meta name="description" content="NexJobs is an AI-powered job search platform. Upload your resume and search across 100+ job portals instantly. Find jobs in India, remote jobs, software engineering, AI/ML, startups, internships and more.">
-    <meta name="keywords" content="NexJobs, job search, AI job search, resume job search, India jobs, remote jobs, software engineering jobs, AI ML jobs, data science jobs, startup jobs, internships, fresher jobs, off-campus hiring, government jobs, Naukri, LinkedIn jobs, Indeed jobs">
-    <meta name="author" content="NexJobs">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://nexjobs.in/">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://nexjobs.in/">
-    <meta property="og:title" content="NexJobs — AI-Powered Resume Job Search Platform">
-    <meta property="og:description" content="Upload your resume and search across 100+ job portals instantly. Find jobs in India, remote jobs, software engineering, AI/ML, startups and more.">
-    <meta property="og:image" content="https://nexjobs.in/og-image.png">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://nexjobs.in/">
-    <meta property="twitter:title" content="NexJobs — AI-Powered Resume Job Search Platform">
-    <meta property="twitter:description" content="Upload your resume and search across 100+ job portals instantly. Find jobs in India, remote jobs, software engineering, AI/ML, startups and more.">
-    <meta property="twitter:image" content="https://nexjobs.in/og-image.png">
-
-    <!-- Structured Data for SEO -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "NexJobs",
-      "url": "https://nexjobs.in",
-      "description": "AI-powered resume job search platform that searches across 100+ job portals instantly",
-      "applicationCategory": "JobSearch",
-      "operatingSystem": "Web Browser",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "INR"
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "NexJobs",
-        "url": "https://nexjobs.in"
-      }
-    }
-    </script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <title>NexJobs — AI-Powered Resume Job Search Platform</title>
+    <meta name="description" content="Upload your resume and search across 100+ job portals instantly.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #334155; }
-        
-        .navbar { background: white; padding: 1rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-        .navbar-brand { font-size: 1.5rem; font-weight: 800; color: #2563eb; }
-        .navbar-brand span { color: #7c3aed; }
-        .nav-user { display: flex; align-items: center; gap: 0.75rem; }
-        .nav-user img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #e2e8f0; }
-        .nav-user-name { font-weight: 600; font-size: 0.9rem; color: #1e293b; }
-        .btn-login { background: #2563eb; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; color: white; font-size: 0.9rem; }
-        .btn-login:hover { background: #1d4ed8; color: white; }
-        .btn-logout { background: none; border: 2px solid #e2e8f0; padding: 6px 16px; border-radius: 8px; font-weight: 600; color: #64748b; font-size: 0.85rem; }
-        .btn-logout:hover { border-color: #ef4444; color: #ef4444; }
+:root{--primary:#4f46e5;--primary-light:#6366f1;--primary-dark:#4338ca;--secondary:#06b6d4;--accent-green:#10b981;--accent-orange:#f59e0b;--accent-red:#ef4444;--accent-purple:#8b5cf6;--bg-white:#ffffff;--bg-light:#f8fafc;--bg-gray:#f1f5f9;--bg-dark:#0f172a;--text-primary:#0f172a;--text-secondary:#475569;--text-muted:#94a3b8;--text-on-dark:#f8fafc;--text-on-dark-muted:#94a3b8;--border-light:#e2e8f0;--border-medium:#cbd5e1;--shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,0.07),0 2px 4px -2px rgba(0,0,0,0.07);--shadow-lg:0 10px 15px -3px rgba(0,0,0,0.08),0 4px 6px -4px rgba(0,0,0,0.08);--shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1);--gradient-primary:linear-gradient(135deg,#4f46e5 0%,#06b6d4 100%);--gradient-hero:linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#4338ca 100%);--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text-primary);background:var(--bg-light);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1{font-size:48px;font-weight:800;line-height:1.1;letter-spacing:-.03em}h2{font-size:36px;font-weight:700;line-height:1.2;letter-spacing:-.02em}h3{font-size:24px;font-weight:600;line-height:1.3}h4{font-size:20px;font-weight:600;line-height:1.4}p{font-size:16px;line-height:1.6;color:var(--text-secondary)}small{font-size:14px;line-height:1.5}
+@media(max-width:768px){h1{font-size:32px}h2{font-size:28px}h3{font-size:20px}}
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-light);padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;transition:box-shadow .3s ease}
+.top-nav.scrolled{box-shadow:var(--shadow-md)}
+.nav-brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800;color:var(--primary);text-decoration:none;letter-spacing:-.02em}
+.nav-brand i{font-size:24px;background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-brand span{color:var(--accent-purple)}
+.nav-links{display:flex;align-items:center;gap:4px;list-style:none}
+.nav-links a{text-decoration:none;color:var(--text-secondary);font-size:14px;font-weight:500;padding:8px 16px;border-radius:var(--radius-sm);transition:all .2s ease}
+.nav-links a:hover,.nav-links a.active{color:var(--primary);background:rgba(79,70,229,.08)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.mobile-menu-btn{display:none;background:none;border:none;font-size:20px;color:var(--text-primary);cursor:pointer}
+@media(max-width:768px){.mobile-menu-btn{display:block}.nav-links{display:none}.top-nav{padding:0 16px}}
+.mobile-nav{display:none;position:fixed;top:64px;left:0;right:0;background:var(--bg-white);border-bottom:1px solid var(--border-light);box-shadow:var(--shadow-lg);padding:16px;z-index:999}
+.mobile-nav.open{display:block}
+.mobile-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;text-decoration:none;color:var(--text-secondary);font-size:14px;font-weight:500;border-radius:var(--radius-sm);transition:all .2s ease}
+.mobile-nav a:hover,.mobile-nav a.active{background:rgba(79,70,229,.08);color:var(--primary)}
+.mobile-nav a i{width:20px;text-align:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .25s ease;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--gradient-primary);color:#fff;box-shadow:0 4px 12px rgba(79,70,229,.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,70,229,.35)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.btn-outline:hover{background:var(--primary);color:#fff}
+.btn-ghost{background:transparent;color:var(--text-secondary)}
+.btn-ghost:hover{background:var(--bg-gray);color:var(--text-primary)}
+.btn-white{background:#fff;color:var(--primary);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.btn-sm{padding:8px 16px;font-size:13px}.btn-lg{padding:16px 32px;font-size:16px}
+.card{background:var(--bg-white);border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-md);border:1px solid var(--border-light);transition:all .3s ease}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-xl);border-color:var(--border-medium)}
+.section{padding:80px 0}.section-white{background:var(--bg-white)}.section-light{background:var(--bg-light)}.section-gray{background:var(--bg-gray)}
+.section-dark{background:var(--gradient-hero);color:var(--text-on-dark)}.section-dark p{color:var(--text-on-dark-muted)}
+.container{max-width:1200px;margin:0 auto;padding:0 40px}
+.section-header{text-align:center;margin-bottom:48px}.section-header h2{margin-bottom:12px}.section-header p{max-width:600px;margin:0 auto}
+.section-eyebrow{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--primary);background:rgba(79,70,229,.08);padding:6px 14px;border-radius:99px;margin-bottom:16px}
+.section-dark .section-eyebrow{color:#a5b4fc;background:rgba(165,180,252,.15)}
+@media(max-width:768px){.container{padding:0 16px}.section{padding:48px 0}}
+.hero{background:var(--gradient-hero);padding:160px 0 100px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(99,102,241,.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 50%,rgba(6,182,212,.1) 0%,transparent 50%)}
+.hero-content{position:relative;z-index:1}
+.hero h1{color:#fff;font-size:56px;font-weight:900;letter-spacing:-.04em;margin-bottom:20px;line-height:1.05}
+.hero h1 .gradient-text{background:linear-gradient(135deg,#a5b4fc 0%,#67e8f9 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:rgba(255,255,255,.8);font-size:20px;max-width:640px;margin:0 auto 40px;line-height:1.6}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.hero-stats{display:flex;justify-content:center;gap:48px;margin-top:64px;padding-top:48px;border-top:1px solid rgba(255,255,255,.1)}
+.hero-stat{text-align:center}.hero-stat-value{font-size:36px;font-weight:800;color:#fff;letter-spacing:-.02em}.hero-stat-label{font-size:14px;color:rgba(255,255,255,.6);margin-top:4px}
+@media(max-width:768px){.hero{padding:120px 0 60px}.hero h1{font-size:36px}.hero p{font-size:16px;padding:0 20px}.hero-stats{gap:24px;flex-wrap:wrap}.hero-stat-value{font-size:28px}}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.stat-card{background:var(--bg-white);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border-light);box-shadow:var(--shadow-sm);transition:all .3s ease;display:flex;align-items:flex-start;gap:16px}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary-light)}
+.stat-icon{width:48px;height:48px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.stat-icon.blue{background:rgba(79,70,229,.1);color:var(--primary)}.stat-icon.green{background:rgba(16,185,129,.1);color:var(--accent-green)}.stat-icon.cyan{background:rgba(6,182,212,.1);color:var(--secondary)}.stat-icon.orange{background:rgba(245,158,11,.1);color:var(--accent-orange)}
+.stat-value{font-size:32px;font-weight:800;color:var(--text-primary);letter-spacing:-.02em;line-height:1}
+.stat-label{font-size:13px;color:var(--text-muted);margin-top:6px;font-weight:500}
+@media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:640px){.stats-grid{grid-template-columns:1fr}}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.quick-card{background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);border-radius:var(--radius-lg);padding:36px;border:1px solid var(--border-light);box-shadow:var(--shadow-sm);transition:all .3s ease;cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:16px}
+.quick-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-xl);border-color:var(--primary-light)}
+.quick-card-icon{width:56px;height:56px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--gradient-primary);color:#fff}
+.quick-card h3{font-size:18px;font-weight:700;color:var(--text-primary)}.quick-card p{font-size:14px;color:var(--text-secondary);line-height:1.5}
+.quick-card-arrow{margin-top:auto;font-size:14px;font-weight:600;color:var(--primary);display:flex;align-items:center;gap:6px}
+@media(max-width:768px){.quick-grid{grid-template-columns:1fr}}
+.upload-zone{border:2px dashed var(--border-medium);border-radius:var(--radius-xl);padding:60px 40px;text-align:center;background:var(--bg-white);transition:all .3s ease;cursor:pointer}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--primary);background:rgba(79,70,229,.03)}
+.upload-zone-icon{width:72px;height:72px;border-radius:50%;background:rgba(79,70,229,.08);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;color:var(--primary)}
+.upload-zone h3{margin-bottom:8px}.upload-zone p{margin-bottom:20px}
+.upload-formats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.upload-format{padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600;background:var(--bg-gray);color:var(--text-muted);border:1px solid var(--border-light)}
+.search-bar{background:var(--bg-white);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-lg);border:1px solid var(--border-light);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search-input-wrap{flex:1;min-width:200px;position:relative}
+.search-input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px}
+.search-input-wrap input,.search-bar select{width:100%;height:48px;border:1px solid var(--border-light);border-radius:var(--radius-md);padding:0 14px 0 40px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-primary);background:var(--bg-light);outline:none;transition:all .2s ease}
+.search-input-wrap input:focus,.search-bar select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.search-bar select{padding:0 14px;min-width:160px;cursor:pointer}
+@media(max-width:768px){.search-bar{flex-direction:column}.search-input-wrap{min-width:100%}.search-bar select{width:100%}}
+.job-card{background:var(--bg-white);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border-light);box-shadow:var(--shadow-sm);transition:all .3s ease;margin-bottom:16px}
+.job-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--primary-light)}
+.job-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px}
+.job-title{font-size:18px;font-weight:700;color:var(--text-primary)}.job-company{font-size:14px;color:var(--text-secondary);margin-top:2px}
+.job-location{font-size:13px;color:var(--text-muted);margin-top:4px}
+.match-badge{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap}
+.match-high{background:rgba(16,185,129,.1);color:#059669}.match-medium{background:rgba(245,158,11,.1);color:#d97706}.match-low{background:rgba(239,68,68,.1);color:#dc2626}
+.job-skills{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.skill-tag{padding:4px 10px;border-radius:99px;font-size:12px;font-weight:500}
+.skill-tag.match{background:rgba(16,185,129,.1);color:#059669}.skill-tag.missing{background:rgba(239,68,68,.08);color:#dc2626}
+.job-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-light)}
+.job-portal{font-size:12px;font-weight:600;color:var(--text-muted);background:var(--bg-gray);padding:4px 10px;border-radius:99px}
+.platform-category{margin-bottom:32px}
+.platform-category-title{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border-light);display:flex;align-items:center;gap:8px}
+.platform-category-title .count{font-size:12px;font-weight:600;background:var(--bg-gray);color:var(--text-muted);padding:2px 10px;border-radius:99px}
+.platform-links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.platform-link{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--bg-white);border:1px solid var(--border-light);border-radius:var(--radius-md);text-decoration:none;color:var(--text-secondary);font-size:13px;font-weight:500;transition:all .2s ease}
+.platform-link:hover{border-color:var(--primary);color:var(--primary);background:rgba(79,70,229,.03)}
+.platform-link i{font-size:12px;color:var(--text-muted)}.platform-link:hover i{color:var(--primary)}
+.auth-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.auth-card{background:var(--bg-white);border-radius:var(--radius-lg);padding:24px;border:1px solid var(--border-light);display:flex;align-items:center;gap:16px;transition:all .25s ease}
+.auth-card:hover{border-color:var(--primary-light);box-shadow:var(--shadow-md)}
+.auth-card.connected{border-color:var(--accent-green);background:rgba(16,185,129,.02)}
+.auth-icon{width:48px;height:48px;border-radius:var(--radius-md);background:var(--bg-gray);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.auth-info{flex:1}.auth-info h4{font-size:15px;font-weight:650;margin-bottom:2px}.auth-info p{font-size:12px;color:var(--text-muted)}
+@media(max-width:768px){.auth-grid{grid-template-columns:1fr}}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border-light)}
+.history-item:last-child{border-bottom:none}
+.history-query{font-size:14px;font-weight:600;color:var(--text-primary)}.history-meta{font-size:12px;color:var(--text-muted);margin-top:2px}
+.history-results{font-size:12px;font-weight:600;padding:4px 12px;border-radius:99px;background:rgba(16,185,129,.1);color:#059669}
+.resume-card{background:var(--bg-white);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border-light);box-shadow:var(--shadow-sm)}
+.resume-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.resume-card-icon{width:48px;height:48px;border-radius:var(--radius-md);background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff}
+.resume-skills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.resume-skill{padding:4px 12px;border-radius:99px;font-size:12px;font-weight:500;background:rgba(139,92,246,.08);color:var(--accent-purple);border:1px solid rgba(139,92,246,.2)}
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.8);backdrop-filter:blur(4px);z-index:9999;justify-content:center;align-items:center}
+.loading-box{background:var(--bg-white);padding:48px;border-radius:var(--radius-xl);text-align:center;max-width:440px;width:90%;box-shadow:var(--shadow-xl)}
+.spinner{width:48px;height:48px;border:3px solid var(--border-light);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:4px}.loading-status{font-size:13px;color:var(--text-muted)}
+.progress-bar-wrap{width:100%;height:6px;background:var(--bg-gray);border-radius:99px;margin-top:20px;overflow:hidden}
+.progress-bar{height:100%;border-radius:99px;background:var(--gradient-primary);transition:width .3s ease}
+.info-banner{background:rgba(79,70,229,.05);border:1px solid rgba(79,70,229,.15);border-radius:var(--radius-md);padding:20px 24px;margin-bottom:24px}
+.info-banner h5{font-size:15px;font-weight:650;color:var(--primary);margin-bottom:6px}.info-banner p{font-size:13px;color:var(--text-secondary);margin:0}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600}
+.badge-primary{background:rgba(79,70,229,.1);color:var(--primary)}.badge-success{background:rgba(16,185,129,.1);color:#059669}.badge-muted{background:var(--bg-gray);color:var(--text-muted)}
+.dashboard-view{padding-top:64px;animation:fadeIn .4s ease}
+.search-view{padding-top:64px;display:none}.search-view.active{display:block}
+.auth-view{padding-top:64px;display:none}.auth-view.active{display:block}
+.saved-view{padding-top:64px;display:none}.saved-view.active{display:block}
+.settings-view{padding-top:64px;display:none}.settings-view.active{display:block}
+.settings-group{background:var(--bg-white);border-radius:var(--radius-lg);padding:28px;border:1px solid var(--border-light);margin-bottom:20px}
+.settings-group h3{font-size:16px;font-weight:700;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border-light)}
+.form-row{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}.form-group{flex:1;min-width:200px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.form-input,.form-select{width:100%;height:44px;border:1px solid var(--border-light);border-radius:var(--radius-md);padding:0 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text-primary);background:var(--bg-light);outline:none;transition:all .2s ease}
+.form-input:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-light)}
+.toggle-wrap:last-child{border-bottom:none}.toggle-label{font-size:14px;font-weight:500}.toggle-desc{font-size:12px;color:var(--text-muted);margin-top:2px}
+.toggle{width:44px;height:24px;background:var(--border-medium);border-radius:99px;position:relative;cursor:pointer;transition:background .2s ease}
+.toggle.active{background:var(--primary)}.toggle::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .2s ease;box-shadow:var(--shadow-sm)}
+.toggle.active::after{transform:translateX(20px)}
+.empty-state{text-align:center;padding:60px 20px}
+.empty-state-icon{width:72px;height:72px;border-radius:50%;background:var(--bg-gray);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;color:var(--text-muted)}
+.empty-state h3{margin-bottom:8px}.empty-state p{margin-bottom:24px}
+.mini-platforms{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.mini-platform{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--border-light);border-radius:var(--radius-sm);font-size:13px;color:var(--text-secondary);transition:all .2s ease}
+.mini-platform.on{border-color:var(--accent-green);color:var(--text-primary);background:rgba(16,185,129,.03)}
+.mini-platform i:first-child{font-size:14px}.mini-platform .check{margin-left:auto;font-size:12px}
+.mini-platform.on .check{color:var(--accent-green)}.mini-platform .check{color:var(--text-muted)}
+@media(max-width:768px){.mini-platforms{grid-template-columns:1fr}}
+.site-footer{background:var(--bg-dark);color:var(--text-on-dark-muted);padding:48px 0 24px;margin-top:80px}
+.footer-grid{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:40px;margin-bottom:40px}
+.footer-brand{font-size:20px;font-weight:800;color:#fff;margin-bottom:12px}.footer-brand span{color:var(--accent-purple)}
+.footer-desc{font-size:14px;color:var(--text-on-dark-muted);line-height:1.6}
+.footer-col h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fff;margin-bottom:16px}
+.footer-col a{display:block;font-size:14px;color:var(--text-on-dark-muted);text-decoration:none;padding:4px 0;transition:color .2s ease}.footer-col a:hover{color:#fff}
+.footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.08);text-align:center;font-size:13px}
+@media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr;gap:24px}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body><!-- TOP NAVIGATION -->
+<nav class="top-nav" id="topNav">
+  <a href="#" class="nav-brand"><i class="fas fa-bolt"></i>Nex<span>Jobs</span></a>
+  <ul class="nav-links pokee-nav">
+    <li><a href="#" class="active" data-view="dashboard"><i class="fas fa-house"></i> Dashboard</a></li>
+    <li><a href="#" data-view="search"><i class="fas fa-magnifying-glass"></i> Search Jobs</a></li>
+    <li><a href="#" data-view="auth"><i class="fas fa-key"></i> Platforms</a></li>
+    <li><a href="#" data-view="saved"><i class="fas fa-bookmark"></i> Saved</a></li>
+    <li><a href="#" data-view="settings"><i class="fas fa-gear"></i> Settings</a></li>
+  </ul>
+  <div class="nav-right">
+    <div id="pokeeAuth"><button class="btn btn-primary btn-sm" onclick="startLogin()"><i class="fab fa-google"></i> Sign In</button></div>
+    <button class="mobile-menu-btn" onclick="document.getElementById('mobileNav').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#" class="active" data-view="dashboard"><i class="fas fa-house"></i> Dashboard</a>
+  <a href="#" data-view="search"><i class="fas fa-magnifying-glass"></i> Search Jobs</a>
+  <a href="#" data-view="auth"><i class="fas fa-key"></i> Platforms</a>
+  <a href="#" data-view="saved"><i class="fas fa-bookmark"></i> Saved</a>
+  <a href="#" data-view="settings"><i class="fas fa-gear"></i> Settings</a>
+</div>
+<main class="pokee-main">
 
-        .hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #2563eb 100%); padding: 120px 0 80px; color: white; text-align: center; }
-        .hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; }
-        .hero p { font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 0 auto 2rem; }
-        
-        .upload-section { background: white; border-radius: 16px; padding: 40px; margin: -40px auto 40px; max-width: 800px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .upload-box { border: 2px dashed #e2e8f0; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; }
-        .upload-box:hover { border-color: #2563eb; background: #f8fafc; }
-        .upload-box i { font-size: 3rem; color: #2563eb; margin-bottom: 1rem; }
-        
-        .platform-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0; }
-        .platform-card { background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 0.3s; }
-        .platform-card:hover { border-color: #2563eb; transform: translateY(-2px); }
-        .platform-card.selected { border-color: #2563eb; background: #eff6ff; }
-        .platform-card i { font-size: 2rem; color: #2563eb; margin-bottom: 0.5rem; }
-        
-        .connect-card { position: relative; }
-        .connect-card.connected { border-color: #16a34a; background: #f0fdf4; }
-        .connect-card.connected::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; top: 10px; right: 10px; color: #16a34a; font-size: 1.2rem; }
-        .connect-card small.connected-status { color: #16a34a; }
-        
-        .btn-primary { background: #2563eb; border: none; padding: 12px 32px; border-radius: 8px; font-weight: 600; }
-        .btn-primary:hover { background: #1d4ed8; }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-        .results-section { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-        .job-card { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.3s; }
-        .job-card:hover { box-shadow: 0 4px 6px rgba(0,0,0,0.1); transform: translateY(-2px); }
-        .job-title { font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
-        .job-company { color: #64748b; font-weight: 500; }
-        .match-score { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.875rem; font-weight: 600; }
-        .match-high { background: #dcfce7; color: #166534; }
-        .match-medium { background: #fef9c3; color: #854d0e; }
-        .match-low { background: #fee2e2; color: #991b1b; }
-        
-        .loading-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; }
-        .loading-box { background: white; padding: 40px; border-radius: 16px; text-align: center; max-width: 500px; }
-        .spinner { border: 4px solid #f3f4f6; border-top: 4px solid #2563eb; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .platform-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem; }
-        .platform-link { background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 1rem; text-align: center; text-decoration: none; color: #334155; transition: all 0.3s; }
-        .platform-link:hover { border-color: #2563eb; background: #eff6ff; color: #2563eb; }
-        
-        .platform-category-block { margin-bottom: 2rem; }
-        .platform-category-title { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
-        .platform-links-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; }
-        .platform-link-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; background: white; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #334155; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
-        .platform-link-btn:hover { border-color: #2563eb; color: #2563eb; background: #eff6ff; }
-        .platform-link-btn i { font-size: 0.8rem; }
-        
-        .badge { font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; }
-        
-        .search-history { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
-        .search-history-item { padding: 0.75rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
-        .search-history-item:last-child { border-bottom: none; }
-        .search-history-item small { color: #94a3b8; }
-
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .upload-section { margin: -20px 1rem 2rem; padding: 20px; }
-        }
-    </style>
-<style id="pokee-redesign">:root {--bg-primary:#0a0a0a;--bg-secondary:#111111;--bg-card:#161616;--bg-card-hover:#1c1c1c;--bg-elevated:#1e1e1e;--border-subtle:#222222;--border-default:#2a2a2a;--border-hover:#3a3a3a;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#666666;--accent-purple:#927cff;--accent-purple-light:#a58fff;--accent-purple-dark:#7558e0;--accent-green:#36c76a;--accent-green-light:#58dc83;--accent-blue:#4f8cff;--accent-orange:#ff8c42;--accent-red:#ff4f4f;--accent-yellow:#ffc857;--gradient-primary:linear-gradient(135deg,#927cff 0%,#4f8cff 100%);--gradient-card:linear-gradient(180deg,#1a1a1a 0%,#141414 100%);--shadow-sm:0 1px 2px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);--shadow-lg:0 8px 24px rgba(0,0,0,.5);--shadow-glow-purple:0 0 20px rgba(146,124,255,.15);--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:20px}body{background:var(--bg-primary)!important;color:var(--text-primary)!important}.pokee-sidebar{width:260px;background:#0d0d0d;border-color:var(--border-subtle)}.pokee-main{margin-left:260px;width:calc(100% - 260px);padding:48px 56px;background:var(--bg-primary)}.pokee-nav a{transition:.2s}.pokee-nav a:hover{background:#1a1a1a}.pokee-nav a.active{background:linear-gradient(90deg,rgba(146,124,255,.18),transparent);border-left:2px solid var(--accent-purple)}.pokee-title{font-size:36px;font-weight:800;letter-spacing:-1.6px}.dashboard-head .pokee-title{background:var(--gradient-primary);-webkit-background-clip:text;color:transparent}.dash-stat,.dash-panel,.resume-status,.pokee-card,.legacy-search .upload-section,.legacy-search .search-history,.legacy-search .job-card{background:var(--gradient-card)!important;border-color:var(--border-default)!important;box-shadow:var(--shadow-sm)}.dash-stat:hover,.dash-panel:hover,.resume-status:hover,.pokee-card:hover,.quick-action:hover{border-color:#635799!important;box-shadow:var(--shadow-glow-purple)}.quick-action{background:var(--gradient-card)!important;border-color:var(--border-default)!important}.quick-action:hover{transform:translateY(-2px)}.pokee-connect,.dashboard-refresh{border-color:var(--border-default);background:var(--bg-card);color:var(--text-primary)}.pokee-connect:hover,.dashboard-refresh:hover{border-color:var(--accent-purple);box-shadow:var(--shadow-glow-purple)}.legacy-search .upload-box{border-color:#4a426d;background:#121116}.legacy-search .upload-box:hover{border-color:var(--accent-purple);box-shadow:var(--shadow-glow-purple)}.legacy-search .form-control,.legacy-search .form-select,.form-control,.form-select{background:#141414!important;border-color:var(--border-default)!important;color:var(--text-primary)!important}.legacy-search .btn-primary,.resume-action{background:var(--accent-purple-dark)!important;border-color:var(--accent-purple)!important}.legacy-search .platform-card{background:var(--bg-card)!important;border-color:var(--border-default)!important}.legacy-search .platform-card.selected{background:#25203a!important;border-color:var(--accent-purple)!important}.settings-grid{display:grid;grid-template-columns:1fr 300px;gap:16px}.settings-section{padding:24px}.saved-empty{padding:70px 20px;text-align:center}.saved-empty i{font-size:22px;color:var(--accent-purple-light)}@media(max-width:1050px){.settings-grid{grid-template-columns:1fr}}@media(max-width:760px){.pokee-sidebar{width:64px}.pokee-main{margin-left:64px;width:calc(100% - 64px);padding:32px 22px}}@media(max-width:540px){.pokee-sidebar{display:none}.pokee-main{margin:0;width:100%;padding:26px 16px}}
-</style></head>
-<body>
-<style id="pokee-theme">
-:root{--bg:#121212;--card:#1e1e1e;--border:#393939;--text:#f5f5f5;--muted:#929292;--purple:#927cff;--green:#36c76a}body{background:var(--bg)!important;color:var(--text)!important;font-family:Inter,sans-serif}.pokee-shell{display:flex;min-height:100vh}.pokee-sidebar{position:fixed;inset:0 auto 0 0;width:252px;background:#171717;border-right:1px solid #292929;padding:27px 16px 18px;display:flex;flex-direction:column;z-index:20}.pokee-brand{font-size:20px;font-weight:800;padding:0 10px 37px;letter-spacing:-.7px}.pokee-brand i{color:#a58fff;margin-right:8px}.pokee-brand span{color:#a58fff}.pokee-side-label{color:#666;font-size:11px;font-weight:700;letter-spacing:.08em;padding:0 10px 10px;text-transform:uppercase}.pokee-nav{display:grid;gap:5px}.pokee-nav a{color:#aaa;text-decoration:none;padding:11px 12px;border-radius:8px;font-size:14px;font-weight:500}.pokee-nav a i{width:20px;margin-right:10px}.pokee-nav a:hover,.pokee-nav a.active{background:#2a2738;color:#fff}.pokee-nav a.active i{color:#aa98ff}.pokee-user{margin-top:auto;border-top:1px solid #2c2c2c;padding:17px 7px 0}.pokee-login{width:100%;background:#292929;border:1px solid #414141;color:#eee;border-radius:8px;padding:9px;font-size:12px}.pokee-main{margin-left:252px;width:calc(100% - 252px);padding:49px 54px;max-width:1550px}.pokee-page-top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:36px}.pokee-eyebrow{color:#9b85ff;text-transform:uppercase;font-weight:700;letter-spacing:.08em;font-size:11px;margin-bottom:11px}.pokee-title{font-size:31px;letter-spacing:-1px;font-weight:750;margin:0 0 10px}.pokee-subtitle{color:var(--muted);margin:0}.pokee-controls{display:flex;gap:10px;min-width:430px}.pokee-search{position:relative;flex:1}.pokee-search i{position:absolute;left:14px;top:13px;color:#777}.pokee-search input,.pokee-controls select{height:42px;border:1px solid #393939;background:#1e1e1e;color:#eee;border-radius:8px;padding:0 13px;outline:0}.pokee-search input{padding-left:37px;width:100%}.pokee-controls select{width:160px}.pokee-category{margin-bottom:37px}.pokee-category h2{font-size:16px;font-weight:650;margin:0 0 14px}.pokee-category h2 span{color:#777;font-size:13px;font-weight:500}.pokee-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pokee-card{background:var(--card);border:1px solid var(--border);min-height:90px;border-radius:10px;padding:16px;display:flex;align-items:center;gap:13px}.pokee-card:hover{background:#242424;border-color:#4a4a4a}.pokee-card.connected{border-color:#337149}.pokee-icon{height:42px;width:42px;background:#292929;border-radius:10px;display:grid;place-items:center;font-size:21px;flex:0 0 auto}.pokee-info{flex:1}.pokee-info h3{font-size:14px;font-weight:650;margin:0 0 5px}.pokee-info p{font-size:11px;color:#858585;margin:0}.pokee-connect{border:1px solid #ddd;background:transparent;color:#f4f4f4;border-radius:7px;padding:9px 11px;font:600 12px Inter;white-space:nowrap}.pokee-connect:hover{background:white;color:#161616}.pokee-connect.is-connected{background:#194f2e;border-color:var(--green);color:#8af0ae}.pokee-card .connected-status{color:#78e29b}.legacy-search{display:none}.legacy-search.active{display:block}.legacy-search .navbar,.legacy-search .hero{display:none}.legacy-search .container{max-width:1100px}.legacy-search .upload-section,.legacy-search .search-history,.legacy-search .job-card{background:#1e1e1e;color:#eee;border:1px solid #393939;box-shadow:none}.legacy-search .upload-box{background:#181818;border-color:#555}.legacy-search .text-muted{color:#969696!important}.legacy-search .form-control,.legacy-search .form-select{background:#181818;color:#eee;border-color:#444}.legacy-search .platform-card{background:#222;border-color:#414141}.legacy-search .platform-card.selected{background:#2a263b;border-color:#9b85ff}.legacy-search .job-title,.legacy-search .platform-category-title{color:#fff}.legacy-search .platform-link,.legacy-search .platform-link-btn{background:#222;color:#eee;border-color:#444}.legacy-search .btn-primary{background:#7358ea;border:0}.legacy-search .bg-light{background:#292929!important}.loading-box{background:#222!important;color:#fff!important}@media(max-width:850px){.pokee-sidebar{width:64px;padding:22px 8px}.pokee-brand{padding:0 8px 30px;font-size:0}.pokee-brand i{font-size:20px}.pokee-side-label,.pokee-nav span,.pokee-user{display:none}.pokee-nav a{padding:12px;text-align:center}.pokee-nav a i{margin:0}.pokee-main{margin-left:64px;width:calc(100% - 64px);padding:35px 26px}.pokee-page-top{flex-direction:column;align-items:stretch}.pokee-controls{min-width:0}.pokee-grid{grid-template-columns:1fr}}@media(max-width:540px){.pokee-sidebar{display:none}.pokee-main{margin:0;width:100%;padding:28px 16px}.pokee-title{font-size:27px}.pokee-connect{font-size:10px;padding:8px}.pokee-card{padding:12px}}
-
-/* Pokee AI dashboard */
-.dashboard-view{animation:dashIn .35s ease}.dashboard-head,.dash-panel header,.resume-status header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.dashboard-head{align-items:flex-end;margin-bottom:30px}.dashboard-refresh,.dash-link,.resume-action{font:600 13px Inter;border-radius:8px;transition:.2s}.dashboard-refresh{padding:10px 14px;background:#242424;color:#ddd;border:1px solid var(--border)}.dashboard-refresh:hover,.dash-panel:hover,.dash-stat:hover,.resume-status:hover{border-color:#7566c8;background:#25222f}.dashboard-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}.dash-stat,.dash-panel,.resume-status{background:var(--card);border:1px solid var(--border);border-radius:12px;transition:.2s}.dash-stat{padding:18px;min-height:130px;display:flex;gap:13px}.dash-stat>i,.quick-action>i,.resume-status>i{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;background:#30294f;color:#a58fff;font-size:16px;flex:none}.dash-stat:nth-child(2)>i{background:#173d28;color:#58dc83}.dash-stat:nth-child(3)>i{background:#1e3348;color:#72b8f5}.dash-stat:nth-child(4)>i{background:#49381c;color:#f4c868}.dash-stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:7px}.dash-stat strong{display:block;font-size:26px;line-height:1}.dash-stat small{display:block;color:#777;font-size:11px;margin-top:9px}.dash-section{margin-bottom:32px}.dash-section h2,.dash-panel h2,.resume-status h2{font-size:16px;font-weight:650;margin:0 0 5px}.dash-section p,.dash-panel p,.resume-status p{margin:0;color:var(--muted);font-size:12px}.dash-section>p{margin-bottom:14px}.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.quick-action{min-height:130px;text-align:left;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:center;gap:13px;transition:.2s}.quick-action:hover{transform:translateY(-2px);border-color:#7566c8;background:#25222f}.quick-action b,.quick-action small{display:block}.quick-action b{font-size:14px;margin-bottom:6px}.quick-action small{font-size:11px;color:var(--muted)}.quick-action em{margin-left:auto;color:#a58fff;font-style:normal}.dashboard-lower{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-bottom:14px}.dash-panel{padding:20px;min-height:245px}.dash-panel header,.resume-status header{margin-bottom:17px}.dash-link{border:0;background:transparent;color:#a58fff;padding:2px 0;white-space:nowrap}.dash-history-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #303030}.dash-query{font-size:13px;font-weight:600}.dash-date{font-size:11px;color:#858585;margin-top:4px}.dash-results{font-size:11px;color:#69d78b;background:#183824;border:1px solid #285c3a;border-radius:20px;padding:5px 8px;white-space:nowrap}.dash-empty{color:#858585;font-size:13px;padding:30px 0;text-align:center}.dash-platforms{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.dash-platform{border:1px solid #353535;border-radius:8px;padding:10px;display:flex;align-items:center;gap:8px;color:#aaa;font-size:12px}.dash-platform .check{margin-left:auto;color:#777}.dash-platform.on{border-color:#2d7246;color:#f0f0f0;background:#1b2920}.dash-platform.on .check{color:var(--green)}.resume-status{padding:21px;display:flex;gap:16px}.resume-status>i{font-size:18px}.resume-status>div{flex:1}.resume-action{background:#8d78ef;color:#fff;border:1px solid #a58fff;padding:9px 12px}.dash-skills{display:flex;flex-wrap:wrap;gap:6px}.dash-skill{font-size:11px;color:#c5baff;background:#2b2742;border:1px solid #4a426d;border-radius:99px;padding:5px 9px}@keyframes dashIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}@media(max-width:1100px){.dashboard-stats{grid-template-columns:repeat(2,1fr)}.quick-actions,.dashboard-lower{grid-template-columns:1fr}.quick-action{min-height:95px}}@media(max-width:540px){.dashboard-head,.resume-status header{flex-direction:column}.dashboard-stats,.dash-platforms{grid-template-columns:1fr}.resume-status{padding:16px}.dash-panel{padding:16px}}
-</style><div class="pokee-shell"><aside class="pokee-sidebar"><div class="pokee-brand"><i class="fas fa-bolt"></i>Nex<span>Jobs</span></div><div class="pokee-side-label">Workspace</div><nav class="pokee-nav"><a class="active" href="#" data-view="dashboard"><i class="fas fa-house"></i><span>Dashboard</span></a><a href="#" data-view="search"><i class="fas fa-magnifying-glass"></i><span>Search Jobs</span></a><a href="#" data-view="auth"><i class="fas fa-key"></i><span>Your Authorizations</span></a><a href="#" data-view="saved"><i class="fas fa-bookmark"></i><span>Saved Jobs</span></a><a href="#" data-view="settings"><i class="fas fa-gear"></i><span>Settings</span></a></nav><div id="pokeeAuth" class="pokee-user"><button class="pokee-login" onclick="startLogin()"><i class="fab fa-google"></i> Sign in with Google</button></div></aside><main class="pokee-main"><section id="pokeeAuthView" style="display:none"><div class="pokee-page-top"><div><div class="pokee-eyebrow">Integrations</div><h1 class="pokee-title">Your Authorizations</h1><p class="pokee-subtitle">Connect your accounts to make your job search work harder for you.</p></div><div class="pokee-controls"><div class="pokee-search"><i class="fas fa-search"></i><input id="authSearch" placeholder="Search platforms"></div><select id="authFilter"><option value="">All categories</option><option value="job-portals">Job Portals</option><option value="tech">Tech & Developer</option><option value="remote">Remote & Freelance</option><option value="campus">Internships & Campus</option><option value="government">Government & PSUs</option><option value="quick">Quick Apply</option></select></div></div><section class="pokee-category" data-category="job-portals"><h2>Job Portals <span>(5)</span></h2><div class="pokee-grid"><article class="pokee-card connect-card" data-platform="linkedin"><div class="pokee-icon"><i class="fab fa-linkedin" style="color:#0A66C2"></i></div><div class="pokee-info"><h3>LinkedIn</h3><p id="linkedinStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('linkedin')">Connect with LinkedIn</button></article><article class="pokee-card connect-card" data-platform="naukri"><div class="pokee-icon"><i class="fas fa-briefcase" style="color:#f58220"></i></div><div class="pokee-info"><h3>Naukri.com</h3><p id="naukriStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('naukri')">Connect with Naukri.com</button></article><article class="pokee-card connect-card" data-platform="indeed"><div class="pokee-icon"><i class="fas fa-search" style="color:#004483"></i></div><div class="pokee-info"><h3>Indeed</h3><p id="indeedStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('indeed')">Connect with Indeed</button></article><article class="pokee-card connect-card" data-platform="glassdoor"><div class="pokee-icon"><i class="fas fa-building" style="color:#0caa74"></i></div><div class="pokee-info"><h3>Glassdoor</h3><p id="glassdoorStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('glassdoor')">Connect with Glassdoor</button></article><article class="pokee-card connect-card" data-platform="monster"><div class="pokee-icon"><i class="fas fa-paw" style="color:#60a741"></i></div><div class="pokee-info"><h3>Monster</h3><p id="monsterStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('monster')">Connect with Monster</button></article></div></section><section class="pokee-category" data-category="tech"><h2>Tech & Developer <span>(4)</span></h2><div class="pokee-grid"><article class="pokee-card connect-card" data-platform="github"><div class="pokee-icon"><i class="fab fa-github" style="color:#fff"></i></div><div class="pokee-info"><h3>GitHub</h3><p id="githubStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('github')">Connect with GitHub</button></article><article class="pokee-card connect-card" data-platform="wellfound"><div class="pokee-icon"><i class="fas fa-rocket" style="color:#38b36b"></i></div><div class="pokee-info"><h3>Wellfound</h3><p id="wellfoundStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('wellfound')">Connect with Wellfound</button></article><article class="pokee-card connect-card" data-platform="hackerearth"><div class="pokee-icon"><i class="fab fa-hackerrank" style="color:#aaa"></i></div><div class="pokee-info"><h3>HackerEarth</h3><p id="hackerearthStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('hackerearth')">Connect with HackerEarth</button></article><article class="pokee-card connect-card" data-platform="stackoverflow"><div class="pokee-icon"><i class="fab fa-stack-overflow" style="color:#f48024"></i></div><div class="pokee-info"><h3>Stack Overflow</h3><p id="stackoverflowStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('stackoverflow')">Connect with Stack Overflow</button></article></div></section><section class="pokee-category" data-category="remote"><h2>Remote & Freelance <span>(4)</span></h2><div class="pokee-grid"><article class="pokee-card connect-card" data-platform="upwork"><div class="pokee-icon"><i class="fab fa-upwork" style="color:#14a800"></i></div><div class="pokee-info"><h3>Upwork</h3><p id="upworkStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('upwork')">Connect with Upwork</button></article><article class="pokee-card connect-card" data-platform="fiverr"><div class="pokee-icon"><i class="fas fa-f" style="color:#1dbf73"></i></div><div class="pokee-info"><h3>Fiverr</h3><p id="fiverrStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('fiverr')">Connect with Fiverr</button></article><article class="pokee-card connect-card" data-platform="freelancer"><div class="pokee-icon"><i class="fas fa-laptop-code" style="color:#29b2fe"></i></div><div class="pokee-info"><h3>Freelancer</h3><p id="freelancerStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('freelancer')">Connect with Freelancer</button></article><article class="pokee-card connect-card" data-platform="toptal"><div class="pokee-icon"><i class="fas fa-user-tie" style="color:#aaa"></i></div><div class="pokee-info"><h3>Toptal</h3><p id="toptalStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('toptal')">Connect with Toptal</button></article></div></section><section class="pokee-category" data-category="campus"><h2>Internships & Campus <span>(3)</span></h2><div class="pokee-grid"><article class="pokee-card connect-card" data-platform="internshala"><div class="pokee-icon"><i class="fas fa-graduation-cap" style="color:#2685d9"></i></div><div class="pokee-info"><h3>Internshala</h3><p id="internshalaStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('internshala')">Connect with Internshala</button></article><article class="pokee-card connect-card" data-platform="unstop"><div class="pokee-icon"><i class="fas fa-bullseye" style="color:#e74c3c"></i></div><div class="pokee-info"><h3>Unstop</h3><p id="unstopStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('unstop')">Connect with Unstop</button></article><article class="pokee-card connect-card" data-platform="cutshort"><div class="pokee-icon"><i class="fas fa-bolt" style="color:#a66cff"></i></div><div class="pokee-info"><h3>Cutshort</h3><p id="cutshortStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('cutshort')">Connect with Cutshort</button></article></div></section><section class="pokee-category" data-category="government"><h2>Government & PSUs <span>(3)</span></h2><div class="pokee-grid"><article class="pokee-card connect-card" data-platform="ncs"><div class="pokee-icon"><i class="fas fa-landmark" style="color:#4385c5"></i></div><div class="pokee-info"><h3>NCS</h3><p id="ncsStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('ncs')">Connect with NCS</button></article><article class="pokee-card connect-card" data-platform="upsc"><div class="pokee-icon"><i class="fas fa-university" style="color:#4ba85a"></i></div><div class="pokee-info"><h3>UPSC</h3><p id="upscStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('upsc')">Connect with UPSC</button></article><article class="pokee-card connect-card" data-platform="ssc"><div class="pokee-icon"><i class="fas fa-flag" style="color:#3b82c4"></i></div><div class="pokee-info"><h3>SSC</h3><p id="sscStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('ssc')">Connect with SSC</button></article></div></section><section class="pokee-category" data-category="quick"><h2>Quick Apply <span>(3)</span></h2><div class="pokee-grid"><article class="pokee-card connect-card" data-platform="instahyre"><div class="pokee-icon"><i class="fas fa-paper-plane" style="color:#3389d7"></i></div><div class="pokee-info"><h3>Instahyre</h3><p id="instahyreStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('instahyre')">Connect with Instahyre</button></article><article class="pokee-card connect-card" data-platform="hired"><div class="pokee-icon"><i class="fas fa-handshake" style="color:#9d6ae8"></i></div><div class="pokee-info"><h3>Hired</h3><p id="hiredStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('hired')">Connect with Hired</button></article><article class="pokee-card connect-card" data-platform="hiredly"><div class="pokee-icon"><i class="fas fa-fire" style="color:#f07c31"></i></div><div class="pokee-info"><h3>Hiredly</h3><p id="hiredlyStatus">Authorize to search and apply</p></div><button class="pokee-connect" onclick="connectPlatform('hiredly')">Connect with Hiredly</button></article></div></section></section><section id="pokeeBlank" class="dashboard-view">
-  <div class="dashboard-head"><div><div class="pokee-eyebrow">Overview</div><h1 class="pokee-title">Find your next role</h1><p class="pokee-subtitle">Upload your resume, connect platforms, and search 100+ job sites at once</p></div><button class="dashboard-refresh" onclick="refreshDashboard()"><i class="fas fa-rotate-right"></i> Refresh</button></div>
-  <div class="dashboard-stats"><article class="dash-stat"><i class="fas fa-magnifying-glass"></i><div><span>Total Searches</span><strong id="dashSearches">0</strong><small>All time searches</small></div></article><article class="dash-stat"><i class="fas fa-briefcase"></i><div><span>Jobs Found</span><strong id="dashJobs">0</strong><small>Across your searches</small></div></article><article class="dash-stat"><i class="fas fa-plug"></i><div><span>Platforms Connected</span><strong id="dashPlatforms">0</strong><small>Ready to search</small></div></article><article class="dash-stat"><i class="fas fa-chart-line"></i><div><span>Resume Match Score</span><strong id="dashMatch">—</strong><small>Average from last search</small></div></article></div>
-  <section class="dash-section"><h2>Quick actions</h2><p>Get started with your next opportunity.</p><div class="quick-actions"><button class="quick-action" onclick="dashboardNavigate('upload')"><i class="fas fa-cloud-arrow-up"></i><span><b>Upload Resume</b><small>Parse your skills and experience</small></span><em>→</em></button><button class="quick-action" onclick="dashboardNavigate('search')"><i class="fas fa-magnifying-glass"></i><span><b>Search Jobs</b><small>Find roles tailored to you</small></span><em>→</em></button><button class="quick-action" onclick="dashboardNavigate('auth')"><i class="fas fa-plug"></i><span><b>Connect Platforms</b><small>Unlock more job sources</small></span><em>→</em></button></div></section>
-  <div class="dashboard-lower"><section class="dash-panel"><header><div><h2>Recent search history</h2><p>Your latest searches and results.</p></div><button class="dash-link" id="dashHistoryToggle" onclick="toggleDashboardHistory()">View All →</button></header><div id="dashboardHistoryList"></div></section><section class="dash-panel"><header><div><h2>Connected platforms</h2><p>Expand your reach across job boards.</p></div><button class="dash-link" onclick="dashboardNavigate('auth')">Manage →</button></header><div id="dashboardPlatforms" class="dash-platforms"></div></section></div>
-  <section class="resume-status"><i class="fas fa-file-lines"></i><div><header><div><h2 id="dashResumeTitle">No resume uploaded</h2><p id="dashResumeText">Upload your resume to unlock personalised job matches.</p></div><button class="resume-action" id="dashResumeAction" onclick="dashboardNavigate('upload')">Upload Resume</button></header><div id="dashSkills" class="dash-skills"></div></div></section>
-</section><section id="pokeeSavedView" class="pokee-page" style="display:none"><div class="pokee-page-top"><div><div class="pokee-eyebrow">Opportunities</div><h1 class="pokee-title">Saved jobs</h1><p class="pokee-subtitle">Keep the roles you want to revisit in one focused place.</p></div></div><div class="pokee-surface saved-empty"><i class="fas fa-bookmark"></i><h2>No saved jobs yet</h2><p>Save a role while searching and it will appear here.</p><button class="resume-action" onclick="dashboardNavigate('search')">Search jobs</button></div></section><section id="pokeeSettingsView" class="pokee-page" style="display:none"><div class="pokee-page-top"><div><div class="pokee-eyebrow">Workspace</div><h1 class="pokee-title">Settings</h1><p class="pokee-subtitle">Manage your search preferences and account experience.</p></div></div><div class="settings-grid"><section class="pokee-surface settings-section"><h2>Search preferences</h2><p>Set the defaults used for every new job search.</p><label class="mt-3">Preferred location</label><input class="form-control" placeholder="e.g. Bengaluru or Remote"><label class="mt-3">Job notifications</label><select class="form-select"><option>Weekly digest</option><option>Daily digest</option><option>Off</option></select></section><aside class="pokee-surface settings-section"><h2>Privacy</h2><p>Your resume is used only to personalise your matches and search queries.</p></aside></div></section><div id="pokeeSearchWrap" class="legacy-search">
-    <nav class="navbar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="navbar-brand">Nex<span>Jobs</span></div>
-            <div id="authArea">
-                <button class="btn btn-login" onclick="startLogin()">
-                    <i class="fab fa-google"></i> Sign in with Google
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <section class="hero">
-        <div class="container">
-            <h1>Find Your Dream Job with AI</h1>
-            <p>Upload your resume and search across 100+ job platforms instantly. Get matched with the best opportunities.</p>
-        </div>
-    </section>
-
-    <div class="container">
-        <div class="upload-section">
-            <h3 class="mb-4"><i class="fas fa-cloud-upload-alt"></i> Upload Your Resume</h3>
-            <div class="upload-box" id="dropZone">
-                <i class="fas fa-file-alt"></i>
-                <h5>Drop your resume here or click to upload</h5>
-                <p class="text-muted">Supports PDF, DOCX, and TXT files</p>
-                <input type="file" id="resumeFile" class="d-none" accept=".pdf,.docx,.txt">
-            </div>
-            <div id="fileInfo" class="mt-3" style="display:none;">
-                <div class="alert alert-success"><i class="fas fa-check-circle"></i> <span id="fileName"></span></div>
-            </div>
-        </div>
-
-        <div class="upload-section">
-            <h3 class="mb-4"><i class="fas fa-search"></i> Search Settings</h3>
-            <div class="mb-3">
-                <label class="form-label">Preferred Location</label>
-                <input type="text" id="location" class="form-control" placeholder="e.g., Bangalore, Remote, Mumbai">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Experience Level</label>
-                <select id="experienceLevel" class="form-select">
-                    <option value="fresher">Fresher (No Experience)</option>
-                    <option value="0-1 years">0-1 Years Experience</option>
-                    <option value="junior">Junior (1-3 years)</option>
-                    <option value="mid">Mid-Level (3-7 years)</option>
-                    <option value="senior">Senior (7+ years)</option>
-                    <option value="all">All Levels</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="upload-section" id="connectPlatformsSection" style="display:none;">
-            <h3 class="mb-1"><i class="fas fa-plug"></i> Connect Your Accounts</h3>
-            <p class="text-muted mb-4">Connect your accounts to fetch jobs directly from your network — just like Pokee.ai</p>
-            <div class="platform-grid" id="connectPlatformGrid">
-                <div class="platform-card connect-card" data-platform="linkedin" onclick="connectPlatform('linkedin')">
-                    <i class="fab fa-linkedin" style="color:#0A66C2;"></i>
-                    <h5>LinkedIn</h5>
-                    <small class="text-muted" id="linkedinStatus">Connect to fetch jobs from your network</small>
-                </div>
-                <div class="platform-card connect-card" data-platform="github" onclick="connectPlatform('github')">
-                    <i class="fab fa-github" style="color:#333;"></i>
-                    <h5>GitHub</h5>
-                    <small class="text-muted" id="githubStatus">Connect to find open-source job opportunities</small>
-                </div>
-                <div class="platform-card connect-card" data-platform="indeed" onclick="connectPlatform('indeed')">
-                    <i class="fab fa-deezer" style="color:#004483;"></i>
-                    <h5>Indeed</h5>
-                    <small class="text-muted" id="indeedStatus">Connect to search Indeed with your profile</small>
-                </div>
-            </div>
-            <button id="fetchConnectedJobsBtn" class="btn btn-primary w-100 mt-3" onclick="fetchConnectedJobs()" disabled>
-                <i class="fas fa-sync-alt"></i> Fetch Jobs from Connected Accounts
-            </button>
-        </div>
-
-        <div class="upload-section">
-            <h3 class="mb-4"><i class="fas fa-briefcase"></i> Select Job Categories</h3>
-            <div class="platform-grid">
-                <div class="platform-card" data-category="india">
-                    <i class="fas fa-flag"></i>
-                    <h5>India Job Portals</h5>
-                    <small class="text-muted">Naukri, LinkedIn, Indeed India</small>
-                </div>
-                <div class="platform-card" data-category="software">
-                    <i class="fas fa-code"></i>
-                    <h5>Software Engineering</h5>
-                    <small class="text-muted">Wellfound, HackerEarth, Cutshort</small>
-                </div>
-                <div class="platform-card" data-category="ai_ml">
-                    <i class="fas fa-brain"></i>
-                    <h5>AI / ML & Data Science</h5>
-                    <small class="text-muted">AI Jobs, DataJobs, Kaggle</small>
-                </div>
-                <div class="platform-card" data-category="remote">
-                    <i class="fas fa-globe"></i>
-                    <h5>Remote Jobs</h5>
-                    <small class="text-muted">Remote OK, We Work Remotely</small>
-                </div>
-                <div class="platform-card" data-category="international">
-                    <i class="fas fa-plane"></i>
-                    <h5>International Portals</h5>
-                    <small class="text-muted">Indeed USA, Glassdoor, ZipRecruiter</small>
-                </div>
-                <div class="platform-card" data-category="internships">
-                    <i class="fas fa-graduation-cap"></i>
-                    <h5>Internships</h5>
-                    <small class="text-muted">Internshala, LetsIntern, Unstop</small>
-                </div>
-                <div class="platform-card" data-category="freelancing">
-                    <i class="fas fa-laptop-code"></i>
-                    <h5>Freelancing</h5>
-                    <small class="text-muted">Upwork, Fiverr, Freelancer</small>
-                </div>
-                <div class="platform-card" data-category="startups">
-                    <i class="fas fa-rocket"></i>
-                    <h5>Startup Jobs</h5>
-                    <small class="text-muted">Wellfound, Y Combinator, AngelList</small>
-                </div>
-                <div class="platform-card" data-category="companies">
-                    <i class="fas fa-building"></i>
-                    <h5>Company Career Pages</h5>
-                    <small class="text-muted">Google, Microsoft, Amazon, etc.</small>
-                </div>
-                <div class="platform-card" data-category="offcampus">
-                    <i class="fas fa-bullseye"></i>
-                    <h5>Off-Campus Hiring</h5>
-                    <small class="text-muted">Unstop, Superset, Mercer Mettl</small>
-                </div>
-                <div class="platform-card" data-category="government">
-                    <i class="fas fa-landmark"></i>
-                    <h5>Government Jobs</h5>
-                    <small class="text-muted">NCS, UPSC, SSC, Railway, ISRO</small>
-                </div>
-                <div class="platform-card" data-category="quick_apply">
-                    <i class="fas fa-bolt"></i>
-                    <h5>Quick Apply</h5>
-                    <small class="text-muted">Instahyre, Cutshort, Hiredly</small>
-                </div>
-            </div>
-            <button id="selectAllBtn" class="btn btn-outline-primary w-100 mb-4">
-                <i class="fas fa-check-double"></i> Select All
-            </button>
-        </div>
-
-        <div class="text-center mb-5">
-            <button id="searchBtn" class="btn btn-primary btn-lg" disabled>
-                <i class="fas fa-search"></i> Search Jobs Across All Platforms
-            </button>
-        </div>
-
-        <!-- Search History (shown when logged in) -->
-        <div id="searchHistorySection" class="search-history" style="display:none;">
-            <h4><i class="fas fa-clock-rotate-left"></i> Recent Searches</h4>
-            <div id="searchHistoryList"></div>
-        </div>
-
-        <div id="resumeAnalysis" class="upload-section" style="display:none;">
-            <h4 class="mb-4"><i class="fas fa-chart-bar"></i> Resume Analysis</h4>
-            <div class="row" id="analysisGrid"></div>
-        </div>
-
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="loading-box">
-                <div class="spinner"></div>
-                <h4 id="loadingText">Searching for jobs...</h4>
-                <p class="text-muted" id="loadingStatus">Connecting to job platforms via API</p>
-                <div class="progress mt-3" style="height: 8px;">
-                    <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
-                </div>
-                <p id="progressText">Searching platforms...</p>
-                <div class="platform-status" id="platformStatus"></div>
-            </div>
-        </div>
-
-        <div class="results-section" id="resultsSection" style="display:none;">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4><i class="fas fa-briefcase"></i> Job Results</h4>
-                <span class="badge bg-primary" id="resultsCount">0 jobs found</span>
-            </div>
-            <div id="resultsGrid"></div>
-        </div>
-
-        <div class="results-section" id="platformLinksSection" style="display:none;">
-            <div class="upload-section">
-                <h4 class="mb-3"><i class="fas fa-external-link-alt"></i> Browse Jobs on All Major Platforms</h4>
-                <p class="text-muted mb-4">The platforms below require login. Click any to search your skills directly on their site — your resume data will be used to pre-fill the search.</p>
-                <div id="skillQueryBadge" class="mb-3"></div>
-                <div class="platform-links" id="platformLinksGrid"></div>
-            </div>
-        </div>
+<!-- DASHBOARD VIEW -->
+<section id="pokeeBlank" class="dashboard-view">
+  <section class="hero">
+    <div class="container hero-content">
+      <h1>Find Your Next <span class="gradient-text">Dream Role</span></h1>
+      <p>Upload your resume, connect your accounts, and search across 100+ job platforms simultaneously.</p>
+      <div class="hero-actions">
+        <button class="btn btn-white btn-lg" onclick="navigateTo('search')"><i class="fas fa-upload"></i> Upload Resume</button>
+        <button class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,0.3);color:white" onclick="navigateTo('search')"><i class="fas fa-search"></i> Search Jobs</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-value">100+</div><div class="hero-stat-label">Job Platforms</div></div>
+        <div class="hero-stat"><div class="hero-stat-value">AI</div><div class="hero-stat-label">Smart Matching</div></div>
+        <div class="hero-stat"><div class="hero-stat-value">Free</div><div class="hero-stat-label">Zero Cost</div></div>
+        <div class="hero-stat"><div class="hero-stat-value">100%</div><div class="hero-stat-label">Client-Side</div></div>
+      </div>
     </div>
+  </section>
+  <section class="section section-white">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-magnifying-glass"></i></div><div><div class="stat-value" id="dashSearches">0</div><div class="stat-label">Total Searches</div></div></div>
+        <div class="stat-card"><div class="stat-icon green"><i class="fas fa-briefcase"></i></div><div><div class="stat-value" id="dashJobs">0</div><div class="stat-label">Jobs Found</div></div></div>
+        <div class="stat-card"><div class="stat-icon cyan"><i class="fas fa-plug"></i></div><div><div class="stat-value" id="dashPlatforms">0</div><div class="stat-label">Platforms Connected</div></div></div>
+        <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-chart-line"></i></div><div><div class="stat-value" id="dashMatch">—</div><div class="stat-label">Avg Match Score</div></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="section section-light">
+    <div class="container">
+      <div class="section-header"><div class="section-eyebrow">Get Started</div><h2>Quick Actions</h2><p>Everything you need to find your next role.</p></div>
+      <div class="quick-grid">
+        <div class="quick-card" onclick="navigateTo('search')"><div class="quick-card-icon"><i class="fas fa-upload"></i></div><h3>Upload Resume</h3><p>Upload PDF, DOCX, or TXT. AI extracts your skills automatically.</p><div class="quick-card-arrow">Get started <i class="fas fa-arrow-right"></i></div></div>
+        <div class="quick-card" onclick="navigateTo('search')"><div class="quick-card-icon"><i class="fas fa-search"></i></div><h3>Search Jobs</h3><p>Search 100+ platforms. Get AI-powered matches ranked by relevance.</p><div class="quick-card-arrow">Start searching <i class="fas fa-arrow-right"></i></div></div>
+        <div class="quick-card" onclick="navigateTo('auth')"><div class="quick-card-icon"><i class="fas fa-plug"></i></div><h3>Connect Platforms</h3><p>Link LinkedIn, Naukri, Indeed and more for better results.</p><div class="quick-card-arrow">Connect now <i class="fas fa-arrow-right"></i></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="section section-white">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><div><h3>Recent Searches</h3><p style="font-size:14px;">Your latest job searches.</p></div><button class="btn btn-ghost btn-sm" id="dashHistoryToggle" onclick="toggleDashboardHistory()">View All <i class="fas fa-arrow-right"></i></button></div>
+          <div class="card" style="padding:0;overflow:hidden;"><div id="dashboardHistoryList" data-all="0" class="history-list"><div class="empty-state" style="padding:40px 20px;"><div class="empty-state-icon"><i class="fas fa-search"></i></div><h3>No searches yet</h3><p>Start with a role or skill you love.</p></div></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div class="resume-card"><div class="resume-card-header"><div style="display:flex;align-items:center;gap:14px;"><div class="resume-card-icon"><i class="fas fa-file-lines"></i></div><div><h4 id="dashResumeTitle">No resume uploaded</h4><p id="dashResumeText" style="font-size:13px;">Upload your resume to unlock personalized matches.</p></div></div></div><div id="dashSkills" class="resume-skills"></div><div style="margin-top:16px;"><button class="btn btn-primary btn-sm" id="dashResumeAction" onclick="navigateTo('search')">Upload Resume</button></div></div>
+          <div class="card" style="padding:24px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h4>Connected Platforms</h4><button class="btn btn-ghost btn-sm" onclick="navigateTo('auth')">Manage</button></div><div id="dashboardPlatforms" class="mini-platforms"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section section-dark">
+    <div class="container">
+      <div class="section-header"><div class="section-eyebrow">How It Works</div><h2 style="color:white;">Four Steps to Your Next Role</h2><p>From resume upload to job application.</p></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+        <div style="text-align:center;padding:20px;"><div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#a5b4fc;"><i class="fas fa-upload"></i></div><h4 style="color:white;margin-bottom:8px;">1. Upload Resume</h4><p style="font-size:14px;color:rgba(255,255,255,0.6);">Upload PDF, DOCX, or TXT.</p></div>
+        <div style="text-align:center;padding:20px;"><div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#a5b4fc;"><i class="fas fa-brain"></i></div><h4 style="color:white;margin-bottom:8px;">2. AI Parses Skills</h4><p style="font-size:14px;color:rgba(255,255,255,0.6);">Extract skills &amp; experience.</p></div>
+        <div style="text-align:center;padding:20px;"><div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#a5b4fc;"><i class="fas fa-search"></i></div><h4 style="color:white;margin-bottom:8px;">3. Search 100+ Sites</h4><p style="font-size:14px;color:rgba(255,255,255,0.6);">Search platforms simultaneously.</p></div>
+        <div style="text-align:center;padding:20px;"><div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#a5b4fc;"><i class="fas fa-trophy"></i></div><h4 style="color:white;margin-bottom:8px;">4. Get Matched</h4><p style="font-size:14px;color:rgba(255,255,255,0.6);">AI-ranked jobs for your profile.</p></div>
+      </div>
+    </div>
+  </section>
+  <footer class="site-footer"><div class="container"><div class="footer-grid"><div><div class="footer-brand"><i class="fas fa-bolt"></i> Nex<span>Jobs</span></div><p class="footer-desc">AI-powered job search across 100+ platforms.</p></div><div class="footer-col"><h4>Product</h4><a href="#">Resume Parser</a><a href="#">Job Matching</a></div><div class="footer-col"><h4>Platforms</h4><a href="#">LinkedIn</a><a href="#">Naukri</a><a href="#">Indeed</a></div><div class="footer-col"><h4>Company</h4><a href="#">About</a><a href="#">GitHub</a></div></div><div class="footer-bottom">© 2025 NexJobs. All rights reserved.</div></div></footer>
+</section><!-- SEARCH JOBS VIEW -->
+<div id="pokeeSearchWrap" class="search-view">
+  <section class="section section-light"><div class="container">
+    <div class="section-header"><div class="section-eyebrow">Job Search</div><h2>Find Your Next Role</h2><p>Upload your resume and search across 100+ platforms.</p></div>
+    <div class="card" style="margin-bottom:32px;">
+      <h3 style="margin-bottom:20px;"><i class="fas fa-file-lines" style="color:var(--primary);margin-right:8px;"></i> Upload Your Resume</h3>
+      <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-zone-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+        <h3>Drop your resume here</h3><p>or click to browse</p>
+        <div class="upload-formats"><span class="upload-format">PDF</span><span class="upload-format">DOCX</span><span class="upload-format">TXT</span></div>
+        <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display:none;" onchange="handleFileUpload(this)">
+      </div>
+      <div id="resumeFile" style="display:none;">
+        <div id="resumeAnalysis" style="display:none;margin-top:20px;"><h4 style="margin-bottom:12px;"><i class="fas fa-brain" style="color:var(--accent-purple);margin-right:8px;"></i> Parsed Skills</h4><div id="analysisGrid" class="resume-skills"></div></div>
+        <div id="resumePreview" style="display:none;margin-top:20px;"><div style="display:flex;justify-content:space-between;align-items:center;padding:16px;background:var(--bg-gray);border-radius:var(--radius-md);border:1px solid var(--border-light);"><div style="display:flex;align-items:center;gap:12px;"><i class="fas fa-file-lines" style="color:var(--primary);font-size:20px;"></i><div><div id="fileName" style="font-weight:600;font-size:14px;"></div><div id="fileInfo" style="font-size:12px;color:var(--text-muted);"></div></div></div><button class="btn btn-ghost btn-sm" onclick="clearResume()"><i class="fas fa-trash"></i> Remove</button></div></div>
+      </div>
+    </div>
+    <div class="search-bar" style="margin-bottom:32px;">
+      <div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" id="searchQuery" placeholder="Job title, skill, or keyword"></div>
+      <div class="search-input-wrap" style="max-width:240px;"><i class="fas fa-location-dot"></i><input type="text" id="location" placeholder="Location (optional)"></div>
+      <select id="experienceLevel"><option value="">All Levels</option><option value="fresher">Fresher</option><option value="junior">Junior (1-3 yrs)</option><option value="mid">Mid (3-7 yrs)</option><option value="senior">Senior (7+ yrs)</option></select>
+      <button class="btn btn-primary" onclick="performSearch()" id="searchBtn"><i class="fas fa-search"></i> Search Jobs</button>
+    </div>
+    <div id="searchHistorySection" style="display:none;margin-bottom:32px;"><div class="card"><h4 style="margin-bottom:16px;"><i class="fas fa-clock-rotate-left" style="color:var(--primary);margin-right:8px;"></i> Recent Searches</h4><div id="searchHistoryList"></div></div></div>
+    <div id="resultsSection" style="display:none;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><h3 id="resultsCount">0 jobs found</h3></div><div id="resultsGrid"></div></div>
+    <div id="connectPlatformsSection" style="display:none;margin-top:48px;"><div class="section-header"><div class="section-eyebrow">Boost Results</div><h2>Connect Your Accounts</h2><p>Link accounts for better results.</p></div><button class="btn btn-outline" id="fetchConnectedJobsBtn" onclick="navigateTo('auth')"><i class="fas fa-plug"></i> Connect Platforms</button></div>
+    <div id="platformLinksSection" style="display:none;margin-top:48px;"><div class="section-header"><div class="section-eyebrow">Browse More</div><h2>Direct Search Links</h2><p id="skillQueryBadge"></p><div id="directLinksBanner" style="display:none;"></div></div><button class="btn btn-ghost btn-sm" id="selectAllBtn" style="margin-bottom:16px;"><i class="fas fa-check-double"></i> Select All</button><div id="platformLinksGrid"></div></div>
+  </div></section>
+</div>
 
-</div></main></div>
-    <script src="static/resume_parser.js"></script>
-    <script src="static/job_matcher.js"></script>
-    <script src="static/search_engine.js"></script>
-    <script src="static/supabase_client.js"></script>
-    <script>
-        let selectedCategories = new Set();
+<!-- AUTHORIZATIONS VIEW -->
+<section id="pokeeAuthView" class="auth-view">
+  <section class="section section-light"><div class="container">
+    <div class="section-header"><div class="section-eyebrow">Integrations</div><h2>Your Authorizations</h2><p>Connect your accounts to make your job search work harder.</p></div>
+    <div class="search-bar" style="margin-bottom:40px;box-shadow:var(--shadow-md);">
+      <div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" id="authSearch" placeholder="Search platforms..."></div>
+      <select id="authFilter"><option value="">All categories</option><option value="job-portals">Job Portals</option><option value="tech">Tech &amp; Developer</option><option value="remote">Remote &amp; Freelance</option><option value="campus">Internships</option><option value="government">Government</option><option value="quick">Quick Apply</option></select>
+    </div>
+    <div class="pokee-category" data-category="job-portals" style="margin-bottom:40px;">
+      <h3 style="margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border-light);">Job Portals <span class="badge badge-muted">5</span></h3>
+      <div class="auth-grid">
+        <div class="pokee-card connect-card platform-card" data-platform="linkedin"><div class="auth-icon" style="color:#0A66C2;"><i class="fab fa-linkedin"></i></div><div class="auth-info"><h4>LinkedIn</h4><p>Professional roles</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="linkedin">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="naukri"><div class="auth-icon" style="color:#f58220;"><i class="fas fa-briefcase"></i></div><div class="auth-info"><h4>Naukri.com</h4><p>India's largest portal</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="naukri">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="indeed"><div class="auth-icon" style="color:#004483;"><i class="fas fa-search"></i></div><div class="auth-info"><h4>Indeed</h4><p>Global job engine</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="indeed">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="glassdoor"><div class="auth-icon" style="color:#0caa74;"><i class="fas fa-building"></i></div><div class="auth-info"><h4>Glassdoor</h4><p>Reviews &amp; salaries</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="glassdoor">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="monster"><div class="auth-icon" style="color:#60a741;"><i class="fas fa-paw"></i></div><div class="auth-info"><h4>Monster</h4><p>Global careers</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="monster">Connect</button></div>
+      </div>
+    </div>
+    <div class="pokee-category" data-category="tech" style="margin-bottom:40px;">
+      <h3 style="margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border-light);">Tech &amp; Developer <span class="badge badge-muted">4</span></h3>
+      <div class="auth-grid">
+        <div class="pokee-card connect-card platform-card" data-platform="github"><div class="auth-icon" style="color:#333;"><i class="fab fa-github"></i></div><div class="auth-info"><h4>GitHub</h4><p>Developer jobs</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="github">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="wellfound"><div class="auth-icon" style="color:#38b36b;"><i class="fas fa-rocket"></i></div><div class="auth-info"><h4>Wellfound</h4><p>Startup jobs</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="wellfound">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="hackerearth"><div class="auth-icon" style="color:#555;"><i class="fab fa-hackerrank"></i></div><div class="auth-info"><h4>HackerEarth</h4><p>Technical hiring</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="hackerearth">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="stackoverflow"><div class="auth-icon" style="color:#f48024;"><i class="fab fa-stack-overflow"></i></div><div class="auth-info"><h4>Stack Overflow</h4><p>Dev community jobs</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="stackoverflow">Connect</button></div>
+      </div>
+    </div>
+    <div class="pokee-category" data-category="remote" style="margin-bottom:40px;">
+      <h3 style="margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border-light);">Remote &amp; Freelance <span class="badge badge-muted">4</span></h3>
+      <div class="auth-grid">
+        <div class="pokee-card connect-card platform-card" data-platform="remoteok"><div class="auth-icon" style="color:#00b8a9;"><i class="fas fa-globe"></i></div><div class="auth-info"><h4>Remote OK</h4><p>Remote job board</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="remoteok">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="flexjobs"><div class="auth-icon" style="color:#2b9348;"><i class="fas fa-clock"></i></div><div class="auth-info"><h4>FlexJobs</h4><p>Screened remote jobs</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="flexjobs">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="upwork"><div class="auth-icon" style="color:#6fda44;"><i class="fas fa-laptop-code"></i></div><div class="auth-info"><h4>Upwork</h4><p>Freelance projects</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="upwork">Connect</button></div>
+        <div class="pokee-card connect-card platform-card" data-platform="fiverr"><div class="auth-icon" style="color:#1dbf73;"><i class="fas fa-handshake"></i></div><div class="auth-info"><h4>Fiverr</h4><p>Gig marketplace</p></div><button class="btn btn-primary btn-sm pokee-connect pokee-connect-btn" data-platform="fiverr">Connect</button></div>
+      </div>
+    </div>
+  </div></section>
+</section>
+
+<!-- SAVED JOBS VIEW -->
+<section id="pokeeSavedView" class="saved-view">
+  <section class="section section-light"><div class="container">
+    <div class="section-header"><div class="section-eyebrow">Bookmarks</div><h2>Saved Jobs</h2><p>Jobs you've bookmarked for later.</p></div>
+    <div id="savedJobsList"><div class="empty-state"><div class="empty-state-icon"><i class="fas fa-bookmark"></i></div><h3>No saved jobs yet</h3><p>Search for jobs and bookmark the ones you're interested in.</p><button class="btn btn-primary" onclick="navigateTo('search')"><i class="fas fa-search"></i> Search Jobs</button></div></div>
+  </div></section>
+</section>
+
+<!-- SETTINGS VIEW -->
+<section id="pokeeSettingsView" class="settings-view">
+  <section class="section section-light"><div class="container" style="max-width:720px;">
+    <div class="section-header" style="text-align:left;"><div class="section-eyebrow">Preferences</div><h2>Settings</h2><p>Manage your preferences.</p></div>
+    <div class="settings-group"><h3><i class="fas fa-user" style="color:var(--primary);margin-right:8px;"></i> Account</h3><div class="form-row"><div class="form-group"><label class="form-label">Display Name</label><input type="text" class="form-input" id="settingsName" placeholder="Your name"></div><div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="settingsEmail" placeholder="your@email.com"></div></div><button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-check"></i> Save</button></div>
+    <div class="settings-group"><h3><i class="fas fa-bell" style="color:var(--primary);margin-right:8px;"></i> Notifications</h3><div class="toggle-wrap"><div><div class="toggle-label">Email Notifications</div><div class="toggle-desc">Get email updates about new matches</div></div><div class="toggle" onclick="this.classList.toggle('active')"></div></div><div class="toggle-wrap"><div><div class="toggle-label">Weekly Digest</div><div class="toggle-desc">Weekly summary of opportunities</div></div><div class="toggle" onclick="this.classList.toggle('active')"></div></div></div>
+    <div class="settings-group"><h3><i class="fas fa-shield-halved" style="color:var(--primary);margin-right:8px;"></i> Data</h3><div style="margin-top:16px;"><button class="btn btn-ghost btn-sm" style="color:var(--accent-red);" onclick="clearAllData()"><i class="fas fa-trash"></i> Clear All Local Data</button></div></div>
+  </div></section>
+</section>
+
+</main>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box"><div class="spinner"></div><div class="loading-text" id="loadingText">Searching for jobs...</div><div class="loading-status" id="loadingStatus">Connecting to platforms</div><div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div><div style="margin-top:8px;font-size:12px;color:var(--text-muted);" id="progressText"></div></div>
+</div><script>
+let selectedCategories = new Set();
         let resumeData = null;
         let currentUser = null;
 
@@ -1002,7 +1012,45 @@
             refreshDashboard();
             const filter=()=>{const q=document.getElementById('authSearch').value.toLowerCase(), f=document.getElementById('authFilter').value;document.querySelectorAll('.pokee-category').forEach(c=>{let any=false;c.querySelectorAll('.pokee-card').forEach(x=>{const show=(!q||x.textContent.toLowerCase().includes(q));x.style.display=show?'':'none';any||=show});c.style.display=(!f||c.dataset.category===f)&&any?'':'none'})};document.getElementById('authSearch').addEventListener('input',filter);document.getElementById('authFilter').addEventListener('change',filter);
         });
-
-    </script>
+</script>
+<script>
+function navigateTo(view){
+    document.getElementById('mobileNav').classList.remove('open');
+    document.querySelectorAll('.nav-links a, .mobile-nav a').forEach(a=>{a.classList.toggle('active',a.dataset.view===view)});
+    const d=document.getElementById('pokeeBlank'),s=document.getElementById('pokeeSearchWrap'),a=document.getElementById('pokeeAuthView'),sv=document.getElementById('pokeeSavedView'),st=document.getElementById('pokeeSettingsView');
+    d.style.display='none';s.style.display='none';s.classList.remove('active');a.style.display='none';sv.style.display='none';st.style.display='none';
+    if(view==='dashboard'){d.style.display='block';refreshDashboard()}
+    else if(view==='search'){s.style.display='block';s.classList.add('active')}
+    else if(view==='auth'){a.style.display='block'}
+    else if(view==='saved'){sv.style.display='block'}
+    else if(view==='settings'){st.style.display='block'}
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+function saveSettings(){const n=document.getElementById('settingsName').value,e=document.getElementById('settingsEmail').value;if(n)localStorage.setItem('nexjobs_name',n);if(e)localStorage.setItem('nexjobs_email',e);alert('Settings saved!');}
+function clearAllData(){if(confirm('Clear all saved data?')){localStorage.removeItem('nexjobs_search_history');localStorage.removeItem('nexjobs_resume');localStorage.removeItem('nexjobs_connected_platforms');localStorage.removeItem('nexjobs_last_match');alert('Cleared!');refreshDashboard();}}
+function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+const dashPlatforms=[['linkedin','LinkedIn','fab fa-linkedin'],['naukri','Naukri','fas fa-briefcase'],['indeed','Indeed','fas fa-magnifying-glass'],['glassdoor','Glassdoor','fas fa-building'],['github','GitHub','fab fa-github'],['wellfound','Wellfound','fas fa-rocket']];
+const dashGet=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+function refreshDashboard(){
+    const h=dashGet('nexjobs_search_history',[]),r=dashGet('nexjobs_resume',null),c=dashGet('nexjobs_connected_platforms',[]);
+    const all=document.getElementById('dashboardHistoryList')?.dataset.all==='1',shown=all?h:h.slice(0,5);
+    document.getElementById('dashSearches').textContent=h.length;
+    document.getElementById('dashJobs').textContent=h.reduce((a,x)=>a+(+x.results||0),0);
+    document.getElementById('dashPlatforms').textContent=c.length;
+    let m=localStorage.getItem('nexjobs_last_match');
+    document.getElementById('dashMatch').textContent=m&&m>0?m+'%':'\u2014';
+    const hl=document.getElementById('dashboardHistoryList');
+    if(hl)hl.innerHTML=shown.length?shown.map(x=>'<div class="history-item"><div><div class="history-query">'+escapeHtml(x.query)+(x.location?' \u00b7 '+escapeHtml(x.location):'')+'</div><div class="history-meta">'+new Date(x.date).toLocaleDateString()+'</div></div><span class="history-results">'+(x.results||0)+' results</span></div>').join(''):'<div class="empty-state" style="padding:40px 20px;"><div class="empty-state-icon"><i class="fas fa-search"></i></div><h3>No searches yet</h3><p>Start with a role or skill you love.</p></div>';
+    const tg=document.getElementById('dashHistoryToggle');if(tg)tg.textContent=all?'Show Recent \u2191':'View All \u2192';
+    const dp=document.getElementById('dashboardPlatforms');
+    if(dp)dp.innerHTML=dashPlatforms.map(p=>'<div class="mini-platform '+(c.includes(p[0])?'on':'')+'"><i class="'+p[2]+'"></i>'+p[1]+'</div>').join('');
+    const rt=document.getElementById('dashResumeTitle'),rx=document.getElementById('dashResumeText'),ra=document.getElementById('dashResumeAction'),sk=document.getElementById('dashSkills');
+    if(r){rt.textContent='Resume ready';rx.textContent=r.skills.length+' skills parsed.';ra.textContent='Update Resume';if(sk)sk.innerHTML=r.skills.slice(0,8).map(x=>'<span class="resume-skill">'+escapeHtml(x)+'</span>').join('');}
+    else{rt.textContent='No resume uploaded';rx.textContent='Upload your resume to unlock personalized matches.';ra.textContent='Upload Resume';if(sk)sk.innerHTML='';}
+}
+function toggleDashboardHistory(){const x=document.getElementById('dashboardHistoryList');if(x)x.dataset.all=x.dataset.all==='1'?'':'1';refreshDashboard();}
+window.addEventListener('scroll',()=>{const n=document.getElementById('topNav');if(n)n.classList.toggle('scrolled',window.scrollY>10);});
+document.addEventListener('DOMContentLoaded',()=>{navigateTo('dashboard');document.querySelectorAll('.nav-links a, .mobile-nav a').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();navigateTo(a.dataset.view)})});});
+</script>
 </body>
 </html>
