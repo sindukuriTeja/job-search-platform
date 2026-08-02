@@ -475,13 +475,13 @@
             
             showLoading('Parsing your resume...', 'Extracting skills, experience, and qualifications');
             try {
-                const parser = new ResumeParser();
-                resumeData = await parser.parseResume(file);
+                resumeData = await parseResume(file);
                 hideLoading();
                 document.getElementById('searchBtn').disabled = false;
                 showResumeSummary(resumeData);
             } catch (error) {
                 hideLoading();
+                console.error('Resume parse error:', error);
                 alert('Error parsing resume: ' + error.message);
             }
         }
