@@ -688,26 +688,28 @@ let selectedCategories = new Set();
             let text='';
             const ext=file.name.split('.').pop().toLowerCase();
             if(ext==='pdf'){
-                const buf=await file.arrayBuffer();
-                const pdf=await pdfjsLib.getDocument({data:buf}).promise;
-                for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);text+=p.getTextContent().items.map(x=>x.str).join(' ')+'\n';}
+                try{
+                    const buf=await file.arrayBuffer();
+                    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+                    for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const tc=await p.getTextContent();const items=tc?.items||[];text+=items.map(x=>x.str).join(' ')+'\n';}
+                }catch(e){console.error('PDF parse error:',e);text='';}
             }else if(ext==='docx'){
-                const buf=await file.arrayBuffer();
-                const result=await mammoth.extractRawText({arrayBuffer:buf});text=result.value;
+                try{const buf=await file.arrayBuffer();const result=await mammoth.extractRawText({arrayBuffer:buf});text=result.value||'';}catch(e){console.error('DOCX parse error:',e);text='';}
             }else{
-                text=await file.text();
+                try{text=await file.text();}catch(e){console.error('Text parse error:',e);text='';}
             }
+            if(!text.trim()){alert('Could not extract text from this file. Please try a different resume.');return null;}
             const tl=text.toLowerCase();
             const SKILLS=['python','java','javascript','typescript','c','c++','c#','go','rust','ruby','php','swift','kotlin','scala','r','react','angular','vue.js','node.js','django','flask','spring boot','express.js','rails','laravel','fastapi','nestjs','next.js','tensorflow','pytorch','keras','scikit-learn','pandas','numpy','bootstrap','tailwind','jquery','redux','graphql','rest api','microservices','docker','kubernetes','aws','azure','gcp','terraform','ansible','jenkins','git','github','gitlab','mongodb','mysql','postgresql','sqlite','redis','elasticsearch','firebase','supabase','machine learning','deep learning','artificial intelligence','data science','data analysis','data engineering','nlp','computer vision','web development','mobile development','cloud computing','cybersecurity','blockchain','full stack','frontend','backend','agile','scrum','leadership','communication','teamwork','problem solving','project management'];
             const found=new Set();
             SKILLS.forEach(s=>{try{const re=new RegExp('\\b'+s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i');if(re.test(text))found.add(s);}catch(e){}});
             const email=(text.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/)||[])[0]||'';
             const phone=(text.match(/\+?\d[\d\s\-().]{9,14}\d/)||[])[0]||'';
-            const nameMatch=text.split('\n').filter(l=>l.trim()&&!l.match(/[@\d]/)&&l.trim().length<50&&l.trim().length>2).find(l=>l.trim().match(/^[A-Za-z\s.'-]+$/));
+            const nameMatch=(text.split('\n').filter(l=>l.trim()&&!l.match(/[@\d]/)&&l.trim().length<50&&l.trim().length>2).find(l=>l.trim().match(/^[A-Za-z\s.'-]+$/))||'').trim();
             const yearsMatch=text.match(/(\d+)\s*(?:years?|yrs?)\s*(?:of\s*)?(?:experience|exp)/i);
             const expYears=yearsMatch?parseInt(yearsMatch[1]):0;
-            const section=(...names)=>{const re=new RegExp('(?:'+names.join('|')+')\\s*\\n([\\s\\S]*?)(?=\\n\\s*(?:Experience|Work Experience|Education|Skills|Projects|Certifications|Languages|Interests|Hobbies|References|Achievements)\\s*\\n|$)','i');const m=text.match(re);return m?m[1].trim():''};
-            const splitEntries=s=>s.split(/\n\s*\n|\n\s*[-•*]\s*|\n\s*\d+\.\s*/).map(e=>e.trim()).filter(e=>e.length>15).slice(0,5);
+            const section=(...names)=>{try{const re=new RegExp('(?:'+names.join('|')+')\\s*\\n([\\s\\S]*?)(?=\\n\\s*(?:Experience|Work Experience|Education|Skills|Projects|Certifications|Languages|Interests|Hobbies|References|Achievements)\\s*\\n|$)','i');const m=text.match(re);return m?m[1].trim():'';}catch(e){return '';}};
+            const splitEntries=s=>{if(!s)return[];return s.split(/\n\s*\n|\n\s*[-•*]\s*|\n\s*\d+\.\s*/).map(e=>e.trim()).filter(e=>e.length>15).slice(0,5);};
             const expSection=section('Experience','Work Experience','Professional Experience','Employment');
             const eduSection=section('Education','Academic Background','Qualifications');
             const projSection=section('Projects','Personal Projects','Key Projects','Portfolio');
@@ -716,11 +718,11 @@ let selectedCategories = new Set();
             const summarySection=section('Summary','Professional Summary','Profile','About Me','Objective');
             const summary=summarySection?summarySection.replace(/(?:Professional Summary|Summary|About Me|Profile|Career Objective|Objective)\s*[:.]?\s*/i,'').substring(0,500):'';
             const langList=langSection?langSection.split(/[,•\n]+/).map(l=>l.trim()).filter(l=>l.length>3).slice(0,5):[];
-            const tokens=text.toLowerCase().match(/\b[a-z]{4,}\b/g)||[];
+            const tokens=(text.toLowerCase().match(/\b[a-z]{4,}\b/g)||[]);
             const STOP=new Set(['the','this','that','have','from','with','been','were','will','their','what','which','would','could','should','about','after','before','these','those','other','some','such','only','also','when','where','they','them','your','each','more','most','same','than','very','both','just','over','under','into','through','during','above','below','again','further','then','once','here','there','why','how','all']);
             const freq={};tokens.forEach(t=>{if(!STOP.has(t))freq[t]=(freq[t]||0)+1;});
             const keywords=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,20).map(x=>x[0]);
-            return{name:nameMatch?nameMatch.trim():'Unknown',email,phone,skills:[...found],experience:splitEntries(expSection),education:splitEntries(eduSection),projects:splitEntries(projSection),certifications:splitEntries(certSection),languages:langList,summary:summary.length>20?summary:'',keywords,experience_years:expYears};
+            return{name:nameMatch||'Unknown',email,phone,skills:[...found],experience:splitEntries(expSection),education:splitEntries(eduSection),projects:splitEntries(projSection),certifications:splitEntries(certSection),languages:langList,summary:summary.length>20?summary:'',keywords,experience_years:expYears};
         }
 
         async function handleFileSelect(file) {
@@ -734,6 +736,7 @@ let selectedCategories = new Set();
             try {
                 resumeData = await parseResume(file);
                 hideLoading();
+                if(!resumeData){return;}
                 document.getElementById('searchBtn').disabled = false;
                 showResumeSummary(resumeData);
                 persistDashboardResume(resumeData, file.name);
