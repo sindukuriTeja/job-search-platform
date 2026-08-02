@@ -2,10 +2,28 @@
  * Client-side Job Search Engine
  * 
  * Searches multiple job platforms directly from the browser.
- * Uses CORS-friendly APIs and generates direct search links for platforms that require login.
+ * Uses a CORS proxy to bypass browser restrictions and fetch jobs from all platforms.
  */
 
 const JOOBLE_API_KEY = ''; // Set this if you have a Jooble API key
+const CORS_PROXY = 'https://corsproxy.io/?'; // Bypass CORS restrictions for browser-based API calls
+
+/**
+ * Fetch with CORS proxy fallback
+ */
+async function fetchWithProxy(url, options = {}) {
+    try {
+        // Try direct fetch first (faster if CORS allows)
+        const direct = await fetch(url, { ...options, signal: AbortSignal.timeout(10000) });
+        if (direct.ok) return direct;
+    } catch (e) { /* ignore, try proxy */ }
+
+    // Fallback to CORS proxy
+    const proxyUrl = CORS_PROXY + encodeURIComponent(url);
+    const resp = await fetch(proxyUrl, { ...options, signal: AbortSignal.timeout(15000) });
+    if (!resp.ok) throw new Error(`Proxy fetch failed: ${resp.status}`);
+    return resp;
+}
 
 /**
  * Search Arbeitnow (free, no auth)
@@ -17,7 +35,7 @@ async function searchArbeitnow(query, location) {
         const loc = encodeURIComponent(location || '');
         for (let page = 1; page <= 3; page++) {
             const url = `https://www.arbeitnow.com/api/job-board-api?search=${q}&page=${page}${loc ? `&location=${loc}` : ''}`;
-            const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+            const resp = await fetchWithProxy(url);
             if (!resp.ok) break;
             const data = await resp.json();
             const items = data.data || [];
@@ -49,7 +67,7 @@ async function searchRemotive(query, location) {
     const jobs = [];
     try {
         const q = encodeURIComponent(query);
-        const resp = await fetch(`https://remotive.com/api/remote-jobs?search=${q}`, { signal: AbortSignal.timeout(15000) });
+        const resp = await fetchWithProxy(`https://remotive.com/api/remote-jobs?search=${q}`);
         if (!resp.ok) return { platform: 'Remotive', jobs: [], error: 'API error' };
         const data = await resp.json();
         for (const item of (data.jobs || []).slice(0, 50)) {
@@ -77,7 +95,7 @@ async function searchRemoteOK(query, location) {
     const jobs = [];
     try {
         const q = encodeURIComponent(query);
-        const resp = await fetch(`https://remoteok.com/remote-software-dev-jobs?page=1&search=${q}`, { signal: AbortSignal.timeout(15000) });
+        const resp = await fetchWithProxy(`https://remoteok.com/remote-software-dev-jobs?page=1&search=${q}`);
         if (!resp.ok) return { platform: 'Remote OK', jobs: [], error: 'API error' };
         const data = await resp.json();
         for (const item of data.slice(0, 50)) {
@@ -99,46 +117,13 @@ async function searchRemoteOK(query, location) {
 }
 
 /**
- * Search Jooble (requires API key — skip if not set)
- */
-async function searchJooble(query, location) {
-    if (!JOOBLE_API_KEY) return { platform: 'Jooble', jobs: [], error: 'No API key configured' };
-    const jobs = [];
-    try {
-        const resp = await fetch(`https://jooble.org/api/${JOOBLE_API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ keywords: query, location: location }),
-            signal: AbortSignal.timeout(15000),
-        });
-        if (!resp.ok) return { platform: 'Jooble', jobs: [], error: 'API error' };
-        const data = await resp.json();
-        for (const item of (data.jobs || []).slice(0, 20)) {
-            jobs.push({
-                title: item.title || '',
-                company: item.company || '',
-                location: item.location || '',
-                description: stripHtml(item.snippet || '').substring(0, 300),
-                url: item.link || 'https://jooble.org',
-                portal: 'Jooble',
-                salary: item.salary || '',
-                posted_date: item.updated || '',
-            });
-        }
-    } catch (e) {
-        console.warn('Jooble error:', e.message);
-    }
-    return { platform: 'Jooble', jobs, error: jobs.length === 0 ? 'No results' : null };
-}
-
-/**
  * Search Himalayas (free, no auth)
  */
 async function searchHimalayas(query, location) {
     const jobs = [];
     try {
         const q = encodeURIComponent(query);
-        const resp = await fetch(`https://himalayas.app/api/v1/jobs?q=${q}`, { signal: AbortSignal.timeout(15000) });
+        const resp = await fetchWithProxy(`https://himalayas.app/api/v1/jobs?q=${q}`);
         if (!resp.ok) return { platform: 'Himalayas', jobs: [], error: 'API error' };
         const data = await resp.json();
         for (const item of (data.results || []).slice(0, 50)) {
@@ -161,7 +146,6 @@ async function searchHimalayas(query, location) {
 
 /**
  * Search We Work Remotely via RSS (free, no auth)
- * Uses a CORS proxy since RSS feeds don't allow cross-origin requests
  */
 async function searchWeWorkRemotely(query, location) {
     const jobs = [];
@@ -174,7 +158,7 @@ async function searchWeWorkRemotely(query, location) {
 
     try {
         for (const feedUrl of feeds) {
-            const resp = await fetch(feedUrl, { signal: AbortSignal.timeout(15000) });
+            const resp = await fetchWithProxy(feedUrl);
             if (!resp.ok) continue;
             const text = await resp.text();
             const parser = new DOMParser();
@@ -214,39 +198,6 @@ async function searchWeWorkRemotely(query, location) {
 }
 
 /**
- * Search Adzuna (free with API key)
- */
-async function searchAdzuna(query, location) {
-    const ADZUNA_APP_ID = ''; // Set your Adzuna API credentials
-    const ADZUNA_APP_KEY = '';
-    if (!ADZUNA_APP_ID || !ADZUNA_APP_KEY) return { platform: 'Adzuna', jobs: [], error: 'No API key configured' };
-
-    const jobs = [];
-    try {
-        const q = encodeURIComponent(query);
-        const loc = encodeURIComponent(location || 'India');
-        const resp = await fetch(`https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_APP_KEY}&what=${q}&where=${loc}&results_per_page=50`, { signal: AbortSignal.timeout(15000) });
-        if (!resp.ok) return { platform: 'Adzuna', jobs: [], error: 'API error' };
-        const data = await resp.json();
-        for (const item of (data.results || []).slice(0, 50)) {
-            jobs.push({
-                title: item.title || '',
-                company: item.company && item.company.display ? item.company.display : '',
-                location: item.location && item.location.display ? item.location.display : '',
-                description: stripHtml(item.description || '').substring(0, 300),
-                url: item.redirect_url || 'https://www.adzuna.com',
-                portal: 'Adzuna',
-                salary: item.salary_min ? `₹${item.salary_min.toLocaleString()}` : '',
-                posted_date: item.created || '',
-            });
-        }
-    } catch (e) {
-        console.warn('Adzuna error:', e.message);
-    }
-    return { platform: 'Adzuna', jobs, error: jobs.length === 0 ? 'No results' : null };
-}
-
-/**
  * Search USAJOBS (free, no auth)
  */
 async function searchUSAJobs(query, location) {
@@ -255,7 +206,7 @@ async function searchUSAJobs(query, location) {
         const q = encodeURIComponent(query);
         const loc = encodeURIComponent(location || '');
         const url = `https://data.usajobs.gov/search?query=${q}&pg=1&pp=50${loc ? `&location=${loc}` : ''}`;
-        const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+        const resp = await fetchWithProxy(url);
         if (!resp.ok) return { platform: 'USAJOBS', jobs: [], error: 'API error' };
         const data = await resp.json();
         for (const item of (data.Results || []).slice(0, 50)) {
@@ -277,43 +228,83 @@ async function searchUSAJobs(query, location) {
 }
 
 /**
- * Search JSearch API (free tier: 5000 requests/month)
+ * Search GitHub Jobs (free RSS, no auth)
  */
-async function searchJSearch(query, location) {
-    const JOBS_API_KEY = ''; // Set your JSearch API key
-    if (!JOBS_API_KEY) return { platform: 'JSearch', jobs: [], error: 'No API key configured' };
-
+async function searchGitHubJobs(query, location) {
     const jobs = [];
     try {
         const q = encodeURIComponent(query);
-        const loc = encodeURIComponent(location || '');
-        const url = `https://jsearch.p.rapidapi.com/search?query=${q}&page=1&num_pages=3&date_posted=all&distance=100${loc ? `&location=${loc}` : ''}`;
-        const resp = await fetch(url, {
-            headers: {
-                'X-RapidAPI-Key': JOBS_API_KEY,
-                'X-RapidAPI-Host': 'jsearch.p.rapidapi.com',
-            },
-            signal: AbortSignal.timeout(15000),
-        });
-        if (!resp.ok) return { platform: 'JSearch', jobs: [], error: 'API error' };
-        const data = await resp.json();
-        for (const item of (data.data || []).slice(0, 50)) {
+        const url = `https://github.com/jobs/feed`;
+        const resp = await fetchWithProxy(url);
+        if (!resp.ok) return { platform: 'GitHub Jobs', jobs: [], error: 'API error' };
+        const text = await resp.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/xml');
+        const items = doc.querySelectorAll('item');
+        const terms = query.toLowerCase().split(' ');
+
+        for (const item of items) {
+            const title = (item.querySelector('title')?.textContent || '').trim();
+            const link = (item.querySelector('link')?.textContent || '').trim();
+            const desc = stripHtml(item.querySelector('description')?.textContent || '');
+            const pubDate = (item.querySelector('pubDate')?.textContent || '').trim();
+
+            if (!terms.some(t => title.toLowerCase().includes(t) || desc.toLowerCase().includes(t))) continue;
+
             jobs.push({
-                title: item.job_title || '',
-                company: item.employer_name || '',
-                location: item.job_city || item.job_country || '',
-                description: stripHtml(item.job_description || '').substring(0, 300),
-                url: item.job_apply_link || 'https://www.google.com/search?q=' + encodeURIComponent(query),
-                portal: 'JSearch',
-                salary: item.job_min_salary || item.job_max_salary ? `$${item.job_min_salary || ''}-${item.job_max_salary || ''}` : '',
-                job_type: item.job_employment_type || '',
-                posted_date: item.job_posted_at_datetime_utc || '',
+                title,
+                company: '',
+                location: 'Remote',
+                description: desc.substring(0, 300),
+                url: link,
+                portal: 'GitHub Jobs',
+                job_type: 'Remote',
+                posted_date: pubDate,
             });
         }
     } catch (e) {
-        console.warn('JSearch error:', e.message);
+        console.warn('GitHubJobs error:', e.message);
     }
-    return { platform: 'JSearch', jobs, error: jobs.length === 0 ? 'No results' : null };
+    return { platform: 'GitHub Jobs', jobs, error: jobs.length === 0 ? 'No results' : null };
+}
+
+/**
+ * Search Greenhouse Jobs (free RSS, no auth)
+ */
+async function searchGreenhouse(query, location) {
+    const jobs = [];
+    try {
+        const q = encodeURIComponent(query);
+        const url = `https://boards.greenhouse.io/jobs/open_search.xml?title=${q}`;
+        const resp = await fetchWithProxy(url);
+        if (!resp.ok) return { platform: 'Greenhouse', jobs: [], error: 'API error' };
+        const text = await resp.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/xml');
+        const items = doc.querySelectorAll('job');
+
+        for (const item of items) {
+            const title = (item.querySelector('title')?.textContent || '').trim();
+            const link = (item.querySelector('absolute_url')?.textContent || '').trim();
+            const city = (item.querySelector('city')?.textContent || '').trim();
+            const company = (item.querySelector('company_name')?.textContent || '').trim();
+            const pubDate = (item.querySelector('published_date')?.textContent || '').trim();
+
+            jobs.push({
+                title,
+                company,
+                location: city || 'Remote',
+                description: '',
+                url: link,
+                portal: 'Greenhouse',
+                job_type: '',
+                posted_date: pubDate,
+            });
+        }
+    } catch (e) {
+        console.warn('Greenhouse error:', e.message);
+    }
+    return { platform: 'Greenhouse', jobs, error: jobs.length === 0 ? 'No results' : null };
 }
 
 /**
@@ -584,19 +575,19 @@ async function searchJobs(searchParams) {
     const platformsSearched = [];
     const failedPlatforms = [];
 
-    // Map categories to search functions using only CORS-friendly or public API sources
+    // Map categories to search functions using CORS proxy for all external APIs
     const categoryFns = {
-        india: [searchArbeitnow, searchRemotive, searchHimalayas],
-        software: [searchArbeitnow, searchRemotive, searchHimalayas],
-        ai_ml: [searchRemotive, searchHimalayas],
-        remote: [searchArbeitnow, searchRemotive, searchHimalayas, searchRemoteOK],
-        international: [searchArbeitnow, searchRemotive, searchHimalayas],
-        internships: [searchRemotive, searchArbeitnow],
+        india: [searchArbeitnow, searchRemotive, searchHimalayas, searchWeWorkRemotely, searchGreenhouse],
+        software: [searchArbeitnow, searchRemotive, searchHimalayas, searchGitHubJobs, searchGreenhouse],
+        ai_ml: [searchRemotive, searchHimalayas, searchGreenhouse],
+        remote: [searchArbeitnow, searchRemotive, searchHimalayas, searchRemoteOK, searchWeWorkRemotely],
+        international: [searchArbeitnow, searchRemotive, searchHimalayas, searchUSAJobs],
+        internships: [searchRemotive, searchArbeitnow, searchGreenhouse],
         freelancing: [searchRemotive, searchRemoteOK],
-        startups: [searchRemotive, searchArbeitnow],
-        companies: [searchRemotive, searchArbeitnow],
-        offcampus: [searchRemotive, searchArbeitnow],
-        government: [searchArbeitnow, searchRemotive],
+        startups: [searchRemotive, searchArbeitnow, searchGreenhouse],
+        companies: [searchRemotive, searchArbeitnow, searchGreenhouse],
+        offcampus: [searchRemotive, searchArbeitnow, searchGreenhouse],
+        government: [searchArbeitnow, searchRemotive, searchUSAJobs],
         quick_apply: [searchRemotive, searchArbeitnow],
     };
 
