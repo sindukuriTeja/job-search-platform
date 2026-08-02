@@ -71,7 +71,19 @@
 
             // Clear the hash and redirect to home page
             window.location.hash = '';
-            setTimeout(() => window.location.href = '/', 1000);
+
+            // Send token back to opener (popup flow) or redirect
+            if (window.opener && !window.opener.closed) {
+                window.opener.postMessage({
+                    type: 'supabase-auth-token',
+                    token: accessToken,
+                    user: localStorage.getItem('supabase_user') ? JSON.parse(localStorage.getItem('supabase_user')) : null
+                }, '*');
+                window.close();
+            } else {
+                // Normal redirect flow (production)
+                setTimeout(() => window.location.href = '/', 1000);
+            }
         }
 
         handleCallback();
