@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In / Sign Up - Pokee Job Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pokee-primary: #6366f1;
+            --pokee-primary-dark: #4f46e5;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 440px;
+            width: 100%;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--pokee-primary) 0%, var(--pokee-primary-dark) 100%);
+            color: white;
+            padding: 2rem 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .auth-header img {
+            height: 48px;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .auth-header p {
+            margin: 0.25rem 0 0;
+            opacity: 0.85;
+            font-size: 0.9rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-size: 1rem;
+        }
+
+        .auth-tab:hover {
+            color: var(--pokee-primary);
+            background: #f9fafb;
+        }
+
+        .auth-tab.active {
+            color: var(--pokee-primary);
+            border-bottom-color: var(--pokee-primary);
+        }
+
+        .auth-body {
+            padding: 2rem;
+        }
+
+        .auth-panel {
+            display: none;
+        }
+
+        .auth-panel.active {
+            display: block;
+        }
+
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            color: #374151;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-google:hover {
+            border-color: var(--pokee-primary);
+            background: #f9fafb;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: #9ca3af;
+            font-size: 0.85rem;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .auth-divider span {
+            padding: 0 1rem;
+            white-space: nowrap;
+        }
+
+        .form-floating > .form-control {
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+            padding: 1rem 0.75rem;
+        }
+
+        .form-floating > .form-control:focus {
+            border-color: var(--pokee-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .btn-auth-primary {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--pokee-primary) 0%, var(--pokee-primary-dark) 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-auth-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .auth-footer {
+            text-align: center;
+            padding: 0 2rem 1.5rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .auth-footer a {
+            color: var(--pokee-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-alert {
+            display: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .auth-alert.show {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auth-alert.alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .auth-alert.alert-success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            opacity: 0.85;
+            transition: opacity 0.2s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <img src="static/images/pokee-logo.png" alt="Pokee Logo">
+            <h1>Welcome to Pokee Job Search</h1>
+            <p>Find your dream job today</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="signin" onclick="switchTab('signin')">Sign In</button>
+            <button class="auth-tab" data-tab="signup" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+
+        <div class="auth-body">
+            <div id="authAlert" class="auth-alert">
+                <i class="fas fa-info-circle"></i>
+                <span id="authAlertText"></span>
+            </div>
+
+            <!-- Sign In Panel -->
+            <div id="signin-panel" class="auth-panel active">
+                <button class="btn-google" onclick="signInWithGoogle()" id="googleSignInBtn">
+                    <svg width="22" height="22" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Sign in with Google
+                </button>
+
+                <div class="auth-divider"><span>or continue with email</span></div>
+
+                <form id="signinForm" onsubmit="signInWithEmail(event)">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="signinEmail" placeholder="Email address" required>
+                        <label for="signinEmail"><i class="fas fa-envelope me-2"></i>Email address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="signinPassword" placeholder="Password" required minlength="6">
+                        <label for="signinPassword"><i class="fas fa-lock me-2"></i>Password</label>
+                    </div>
+                    <button type="submit" class="btn-auth-primary" id="signinBtn">
+                        <span>Sign In</span>
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <a href="#" onclick="forgotPassword(event)">Forgot password?</a>
+                </div>
+            </div>
+
+            <!-- Sign Up Panel -->
+            <div id="signup-panel" class="auth-panel">
+                <button class="btn-google" onclick="signUpWithGoogle()" id="googleSignUpBtn">
+                    <svg width="22" height="22" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Sign up with Google
+                </button>
+
+                <div class="auth-divider"><span>or continue with email</span></div>
+
+                <form id="signupForm" onsubmit="signUpWithEmail(event)">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="signupName" placeholder="Full name" required>
+                        <label for="signupName"><i class="fas fa-user me-2"></i>Full name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="signupEmail" placeholder="Email address" required>
+                        <label for="signupEmail"><i class="fas fa-envelope me-2"></i>Email address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="signupPassword" placeholder="Password" required minlength="6">
+                        <label for="signupPassword"><i class="fas fa-lock me-2"></i>Password (min. 6 characters)</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Confirm password" required minlength="6">
+                        <label for="signupConfirmPassword"><i class="fas fa-lock me-2"></i>Confirm password</label>
+                    </div>
+                    <button type="submit" class="btn-auth-primary" id="signupBtn">
+                        <span>Create Account</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="static/supabase_client.js"></script>
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`${tab}-panel`).classList.add('active');
+            hideAlert();
+        }
+
+        function showAlert(message, type = 'error') {
+            const alert = document.getElementById('authAlert');
+            const text = document.getElementById('authAlertText');
+            alert.className = `auth-alert show alert-${type}`;
+            alert.querySelector('i').className = type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+            text.textContent = message;
+        }
+
+        function hideAlert() {
+            document.getElementById('authAlert').classList.remove('show');
+        }
+
+        function setLoading(btnId, loading) {
+            const btn = document.getElementById(btnId);
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><span>Please wait...</span>';
+            } else {
+                btn.disabled = false;
+            }
+        }
+
+        function postAuthRedirect(user) {
+            hideAlert();
+            showAlert('Authentication successful! Redirecting...', 'success');
+            setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+        }
+
+        async function signInWithGoogle() {
+            setLoading('googleSignInBtn', true);
+            try {
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: window.location.origin + '/index.html' }
+                });
+                if (error) throw error;
+            } catch (err) {
+                setLoading('googleSignInBtn', false);
+                showAlert(err.message || 'Google sign-in failed. Please try again.');
+            }
+        }
+
+        async function signUpWithGoogle() {
+            setLoading('googleSignUpBtn', true);
+            try {
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: window.location.origin + '/index.html' }
+                });
+                if (error) throw error;
+            } catch (err) {
+                setLoading('googleSignUpBtn', false);
+                showAlert(err.message || 'Google sign-up failed. Please try again.');
+            }
+        }
+
+        async function signInWithEmail(e) {
+            e.preventDefault();
+            hideAlert();
+            const email = document.getElementById('signinEmail').value.trim();
+            const password = document.getElementById('signinPassword').value;
+            setLoading('signinBtn', true);
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                postAuthRedirect(data.user);
+            } catch (err) {
+                setLoading('signinBtn', false);
+                showAlert(err.message || 'Sign-in failed. Check your credentials.');
+            }
+        }
+
+        async function signUpWithEmail(e) {
+            e.preventDefault();
+            hideAlert();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            if (password !== confirmPassword) { showAlert('Passwords do not match.'); return; }
+            setLoading('signupBtn', true);
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email, password,
+                    options: {
+                        data: { full_name: name },
+                        emailRedirectTo: window.location.origin + '/index.html'
+                    }
+                });
+                if (error) throw error;
+                if (data?.user?.identities?.length === 0) {
+                    showAlert('An account with this email already exists. Try signing in.');
+                    setLoading('signupBtn', false);
+                    return;
+                }
+                showAlert('Account created! Please check your email to verify.', 'success');
+                setLoading('signupBtn', false);
+                setTimeout(() => switchTab('signin'), 2000);
+            } catch (err) {
+                setLoading('signupBtn', false);
+                showAlert(err.message || 'Sign-up failed. Please try again.');
+            }
+        }
+
+        async function forgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('signinEmail').value.trim();
+            if (!email) { showAlert('Please enter your email address first, then click Forgot Password.'); return; }
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/auth.html'
+                });
+                if (error) throw error;
+                showAlert('Password reset email sent! Check your inbox.', 'success');
+            } catch (err) {
+                showAlert(err.message || 'Failed to send reset email.');
+            }
+        }
+
+        (async function checkOAuthCallback() {
+            const hash = window.location.hash;
+            if (hash && hash.includes('access_token')) {
+                try {
+                    const { data } = await supabase.auth.getSession();
+                    if (data?.session) postAuthRedirect(data.session.user);
+                } catch (err) {
+                    showAlert('Session error. Please try signing in again.');
+                }
+            }
+        })();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('signinBtn').innerHTML = '<span>Sign In</span>';
+            document.getElementById('signupBtn').innerHTML = '<span>Create Account</span>';
+        });
+    </script>
+</body>
+</html>
