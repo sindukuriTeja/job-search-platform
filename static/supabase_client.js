@@ -121,6 +121,127 @@ class SupabaseClient {
         return !!this._session;
     }
 
+    // ---- Auth namespace (compatible with Supabase JS client API) ----
+    // This lets auth.html call supabase.auth.signInWithOAuth(), etc.
+
+    get auth() {
+        const self = this;
+        return {
+            async signInWithOAuth({ provider, options: { redirectTo } = {} } = {}) {
+                const width = 500;
+                const height = 600;
+                const left = (window.screen.width - width) / 2;
+                const top = (window.screen.height - height) / 2;
+                const redirectUri = redirectTo || (typeof window !== 'undefined'
+                    ? window.location.origin + '/index.html'
+                    : 'https://nexjobs.in/index.html');
+
+                const authUrl = `${self.url}/auth/v1/authorize?provider=${provider}&redirect_to=${encodeURIComponent(redirectUri)}&scope=openid%20email%20profile`;
+
+                const popup = window.open(
+                    authUrl,
+                    'google-signin',
+                    `width=${width},height=${height},left=${left},top=${top},popup=yes`
+                );
+
+                if (!popup) {
+                    return { error: { message: 'Please allow popups for this site to sign in.' } };
+                }
+
+                return new Promise((resolve) => {
+                    const checkPopup = setInterval(() => {
+                        if (popup.closed) {
+                            clearInterval(checkPopup);
+                            const token = localStorage.getItem('supabase_token');
+                            if (token) {
+                                resolve({ data: { user: null }, error: null });
+                            } else {
+                                resolve({ data: null, error: { message: 'Sign-in was cancelled.' } });
+                            }
+                        }
+                    }, 500);
+
+                    window.addEventListener('message', function handler(event) {
+                        if (event.data && event.data.type === 'supabase-auth-token') {
+                            localStorage.setItem('supabase_token', event.data.token);
+                            localStorage.setItem('supabase_user', JSON.stringify(event.data.user));
+                            clearInterval(checkPopup);
+                            if (popup && !popup.closed) popup.close();
+                            resolve({ data: { user: event.data.user }, error: null });
+                        }
+                    });
+                });
+            },
+
+            async signInWithPassword({ email, password }) {
+                const resp = await fetch(`${self.url}/auth/v1/token?grant_type=password`, {
+                    method: 'POST',
+                    headers: { 'apikey': self.key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.message || `Sign-in failed: ${resp.status}`);
+                }
+                const data = await resp.json();
+                self._setToken(data.access_token);
+                self._session = data.user;
+                return { data: { user: data.user, session: data }, error: null };
+            },
+
+            async signUp({ email, password, options: { data: metadata, emailRedirectTo } = {} } = {}) {
+                const body = { email, password };
+                if (metadata) body.data = metadata;
+                if (emailRedirectTo) body.email_redirect_to = emailRedirectTo;
+
+                const resp = await fetch(`${self.url}/auth/v1/signup`, {
+                    method: 'POST',
+                    headers: { 'apikey': self.key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.message || `Sign-up failed: ${resp.status}`);
+                }
+                const result = await resp.json();
+                if (result.access_token) {
+                    self._setToken(result.access_token);
+                    self._session = result.user;
+                }
+                return { data: result, error: null };
+            },
+
+            async resetPasswordForEmail(email, { redirectTo } = {}) {
+                const resp = await fetch(`${self.url}/auth/v1/recover`, {
+                    method: 'POST',
+                    headers: { 'apikey': self.key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, redirect_to: redirectTo }),
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    throw new Error(err.message || `Failed to send reset email: ${resp.status}`);
+                }
+                return { error: null };
+            },
+
+            async getSession() {
+                const token = self._getToken();
+                if (!token) return { data: { session: null }, error: null };
+                try {
+                    const resp = await fetch(`${self.url}/auth/v1/user`, {
+                        headers: { ...self.headers, Authorization: `Bearer ${token}` },
+                    });
+                    if (resp.ok) {
+                        const user = await resp.json();
+                        self._session = user;
+                        return { data: { session: { user, access_token: token } }, error: null };
+                    }
+                } catch (e) { /* ignore */ }
+                return { data: { session: null }, error: null };
+            },
+        };
+    }
+
     // ---- REST API helpers ----
 
     async query(table, options = {}) {
