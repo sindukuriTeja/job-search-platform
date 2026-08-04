@@ -1007,11 +1007,70 @@
         function buildDashJobCard(j){const pct=j.match_percentage||0,cls=pct>=70?'dash-match-high':pct>=40?'dash-match-medium':'dash-match-low',loc=j.location?`<span><i class="fas fa-location-dot"></i>${escapeHtml(j.location)}</span>`:'',sal=j.salary?`<span><i class="fas fa-indian-rupee-sign"></i>${escapeHtml(j.salary)}</span>`:'',tags=j.tags&&j.tags.length?`<div class="dash-job-tags">${j.tags.slice(0,4).map(t=>`<span class="dash-job-tag">${escapeHtml(t)}</span>`).join('')}</div>`:'';return`<div class="dash-job-card"><div class="dash-job-top"><div><div class="dash-job-title">${escapeHtml(j.title)}</div><div class="dash-job-company">${escapeHtml(j.company)}</div></div><span class="dash-match-badge ${cls}"><i class="fas fa-bolt"></i>${pct}% match</span></div>${loc?`<div class="dash-job-meta">${loc}${sal}</div>`:''}${tags}<div class="dash-job-footer"><span class="dash-job-portal">${escapeHtml(j.portal)}</span><a href="${j.url}" target="_blank" rel="noopener" class="dash-job-apply"><i class="fas fa-external-link-alt"></i>View & Apply</a></div></div>`}
         function toggleDashboardHistory(){let x=document.getElementById('dashboardHistoryList');x.dataset.all=x.dataset.all==='1'?'':'1';refreshDashboard()}
         function dashboardNavigate(v){let a=document.querySelector(`.pokee-nav a[data-view="${v==='upload'?'search':v}"]`);a&&a.click();if(v==='upload')setTimeout(()=>document.getElementById('dropZone').scrollIntoView({behavior:'smooth'}),80)}
+        function showView(viewName) {
+            const authView = document.getElementById('pokeeAuthView');
+            const search   = document.getElementById('pokeeSearchWrap');
+            const blank    = document.getElementById('pokeeBlank');
+            const saved    = document.getElementById('pokeeSavedView');
+            const settings = document.getElementById('pokeeSettingsView');
+            const imp = 'important';
+
+            // Hide everything with !important to override CSS
+            [authView, blank, saved, settings].forEach(el => {
+                if (el) el.style.setProperty('display', 'none', imp);
+            });
+            if (search) search.classList.remove('active');
+
+            // Show the requested view
+            if (viewName === 'dashboard' && blank) {
+                blank.style.setProperty('display', 'block', imp);
+                refreshDashboard();
+            } else if (viewName === 'search' && search) {
+                search.classList.add('active');
+            } else if (viewName === 'auth' && authView) {
+                authView.style.setProperty('display', 'block', imp);
+            } else if (viewName === 'saved' && saved) {
+                saved.style.setProperty('display', 'block', imp);
+            } else if (viewName === 'settings' && settings) {
+                settings.style.setProperty('display', 'block', imp);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            const authView=document.getElementById('pokeeAuthView'), search=document.getElementById('pokeeSearchWrap'), blank=document.getElementById('pokeeBlank'), saved=document.getElementById('pokeeSavedView'), settings=document.getElementById('pokeeSettingsView');
-            document.querySelectorAll('.pokee-nav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelectorAll('.pokee-nav a').forEach(x=>x.classList.remove('active'));a.classList.add('active');const v=a.dataset.view;authView.style.display=v==='auth'?'':'none';search.classList.toggle('active',v==='search');blank.style.display=v==='dashboard'?'':'none';saved.style.display=v==='saved'?'':'none';settings.style.display=v==='settings'?'':'none';if(v==='dashboard')refreshDashboard();if(v==='search') document.querySelector('.pokee-main').scrollTo?.(0,0)}));
-            refreshDashboard();
-            const filter=()=>{const q=document.getElementById('authSearch').value.toLowerCase(), f=document.getElementById('authFilter').value;document.querySelectorAll('.pokee-category').forEach(c=>{let any=false;c.querySelectorAll('.pokee-card').forEach(x=>{const show=(!q||x.textContent.toLowerCase().includes(q));x.style.display=show?'':'none';any||=show});c.style.display=(!f||c.dataset.category===f)&&any?'':'none'})};document.getElementById('authSearch').addEventListener('input',filter);document.getElementById('authFilter').addEventListener('change',filter);
+            // Wire up navigation
+            document.querySelectorAll('.pokee-nav a').forEach(a => {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    document.querySelectorAll('.pokee-nav a').forEach(x => x.classList.remove('active'));
+                    a.classList.add('active');
+                    const v = a.dataset.view;
+                    showView(v);
+                    if (v === 'search') {
+                        const main = document.querySelector('.pokee-main');
+                        if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Show dashboard on load
+            showView('dashboard');
+
+            // Auth page filter
+            const filter = () => {
+                const q = document.getElementById('authSearch').value.toLowerCase();
+                const f = document.getElementById('authFilter').value;
+                document.querySelectorAll('.pokee-category').forEach(c => {
+                    let any = false;
+                    c.querySelectorAll('.pokee-card').forEach(x => {
+                        const show = !q || x.textContent.toLowerCase().includes(q);
+                        x.style.display = show ? '' : 'none';
+                        any = any || show;
+                    });
+                    c.style.display = (!f || c.dataset.category === f) && any ? '' : 'none';
+                });
+            };
+            document.getElementById('authSearch').addEventListener('input', filter);
+            document.getElementById('authFilter').addEventListener('change', filter);
         });
 
     </script>
