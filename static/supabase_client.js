@@ -33,8 +33,11 @@ class SupabaseClient {
         const left = (window.screen.width - width) / 2;
         const top = (window.screen.height - height) / 2;
 
-        // Use the live site as redirect target for reliability
-        const redirectUri = 'https://nexjobs.in/auth_callback.html';
+        // Use dynamic redirect URI so it works on any deployment
+        const redirectUri = typeof window !== 'undefined'
+            ? window.location.origin + '/auth_callback.html'
+            : 'https://nexjobs.in/auth_callback.html';
+
         const authUrl = `${this.url}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUri)}&scope=openid%20email%20profile`;
 
         const popup = window.open(

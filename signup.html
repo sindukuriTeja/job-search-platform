@@ -12,8 +12,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg-primary);scroll-behavior:smooth}
 body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F0FC 0%,#EBE6FA 50%,#F0EDFC 100%);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column}
-
-/* === Header Nav === */
 .auth-nav{position:fixed;top:14px;left:0;right:0;z-index:1000;display:flex;justify-content:center}
 .auth-nav-inner{width:min(1160px,calc(100% - 32px));height:64px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;background:#F8F7FF;border:1px solid rgba(46,28,91,.06);border-radius:32px;box-shadow:0 2px 16px rgba(46,28,91,.06)}
 .auth-nav-brand{display:flex;align-items:center;gap:0;text-decoration:none}
@@ -22,12 +20,8 @@ body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F
 .auth-nav-links a{padding:8px 18px;border-radius:20px;text-decoration:none;color:#1a1a2e;font-size:14px;font-weight:600;transition:all .2s;white-space:nowrap}
 .auth-nav-links a:hover{background:var(--accent-purple);color:#fff}
 .auth-nav-links a i{display:none}
-
-/* === Main Container === */
 .auth-container{flex:1;display:flex;align-items:center;justify-content:center;padding:120px 20px 60px;width:100%;max-width:1160px;margin:0 auto}
 .auth-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;width:100%;max-width:960px}
-
-/* === Left Panel — Branding === */
 .auth-brand{text-align:left;padding-right:20px}
 .auth-brand__kicker{color:var(--accent-purple-dark);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px}
 .auth-brand__title{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:clamp(1.8rem,3.5vw,2.6rem);line-height:1.15;letter-spacing:-.04em;color:var(--accent-purple-dark);margin-bottom:16px}
@@ -35,29 +29,21 @@ body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F
 .auth-brand__features{list-style:none;display:flex;flex-direction:column;gap:14px}
 .auth-brand__features li{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-secondary);font-weight:500}
 .auth-brand__features li i{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--accent-purple-bg);color:var(--accent-purple);font-size:14px;flex:0 0 auto}
-
-/* === Right Panel — Form Card === */
 .auth-card{background:#fff;border:1px solid var(--border-subtle);border-radius:20px;padding:40px;box-shadow:var(--shadow-md)}
 .auth-card__header{text-align:center;margin-bottom:28px}
 .auth-card__logo{margin-bottom:20px}
 .auth-card__logo img{height:48px;width:auto}
 .auth-card__title{font-size:22px;font-weight:800;color:var(--accent-purple-dark);margin-bottom:6px}
 .auth-card__subtitle{font-size:14px;color:var(--text-muted)}
-
-/* === Social Buttons === */
 .auth-social{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
 .auth-social-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 20px;border:1.5px solid var(--border-default);border-radius:var(--radius-pill);background:#fff;font-size:14px;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all .2s;font-family:inherit}
 .auth-social-btn:hover{border-color:var(--accent-purple);background:var(--accent-purple-bg);box-shadow:var(--shadow-sm)}
 .auth-social-btn i{font-size:18px}
 .auth-social-btn.google i{color:#4285F4}
 .auth-social-btn.linkedin i{color:#0A66C2}
-
-/* === Divider === */
 .auth-divider{display:flex;align-items:center;gap:16px;margin-bottom:24px}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border-subtle)}
 .auth-divider span{font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
-
-/* === Form Fields === */
 .auth-field{margin-bottom:16px}
 .auth-field label{display:block;font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
 .auth-input-wrap{position:relative}
@@ -67,33 +53,24 @@ body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F
 .auth-input::placeholder{color:var(--text-muted)}
 .auth-input-wrap .toggle-pw{position:absolute;right:14px;left:auto;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:4px}
 .auth-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* === Password Strength === */
 .pw-strength{margin-top:8px;display:flex;gap:6px;align-items:center}
 .pw-bar{flex:1;height:4px;border-radius:2px;background:var(--border-subtle);transition:background .3s}
-.pw-bar.weak{background:var(--accent-red)}
-.pw-bar.medium{background:var(--accent-yellow)}
-.pw-bar.strong{background:var(--accent-green)}
+.pw-bar.weak{background:var(--accent-red)}.pw-bar.medium{background:var(--accent-yellow)}.pw-bar.strong{background:var(--accent-green)}
 .pw-label{font-size:11px;font-weight:600;color:var(--text-muted);min-width:40px;text-align:right}
-
-/* === Terms === */
 .auth-terms{margin-bottom:20px;font-size:13px;color:var(--text-secondary);line-height:1.5}
 .auth-terms label{display:flex;align-items:flex-start;gap:8px;cursor:pointer}
 .auth-terms input{width:16px;height:16px;accent-color:var(--accent-purple);margin-top:2px;flex:0 0 auto;cursor:pointer}
 .auth-terms a{color:var(--accent-purple);font-weight:600;text-decoration:none}
 .auth-terms a:hover{color:var(--accent-purple-dark)}
-
-/* === Submit Button === */
 .auth-submit{width:100%;height:48px;border:none;border-radius:var(--radius-pill);background:var(--gradient-purple);color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.02em}
 .auth-submit:hover{transform:translateY(-2px);box-shadow:var(--shadow-glow-purple)}
 .auth-submit:active{transform:translateY(0)}
-
-/* === Footer Link === */
+.auth-message{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:16px;display:none}
+.auth-message.error{display:block;background:rgba(255,79,79,.1);color:var(--accent-red);border:1px solid rgba(255,79,79,.2)}
+.auth-message.success{display:block;background:rgba(52,199,89,.1);color:var(--accent-green);border:1px solid rgba(52,199,89,.2)}
 .auth-footer{text-align:center;margin-top:24px;font-size:14px;color:var(--text-muted)}
 .auth-footer a{color:var(--accent-purple);font-weight:700;text-decoration:none}
 .auth-footer a:hover{color:var(--accent-purple-dark)}
-
-/* === Animations === */
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .auth-brand{animation:fadeInUp .7s ease-out both}
 .auth-card{animation:fadeInUp .7s ease-out .15s both}
@@ -101,33 +78,15 @@ body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F
 .auth-brand__title{animation:fadeInUp .6s ease-out .1s both}
 .auth-brand__desc{animation:fadeInUp .6s ease-out .2s both}
 .auth-brand__features{animation:fadeInUp .6s ease-out .3s both}
-
-/* === Responsive === */
-@media(max-width:900px){
-  .auth-layout{grid-template-columns:1fr;gap:32px;max-width:440px}
-  .auth-brand{text-align:center;padding-right:0}
-  .auth-brand__desc{margin-left:auto;margin-right:auto}
-  .auth-brand__features{align-items:center}
-}
-@media(max-width:600px){
-  .auth-nav-inner{width:calc(100% - 16px);height:auto;min-height:56px;padding:8px 14px;flex-wrap:wrap;gap:4px}
-  .auth-nav-links{order:3;width:100%;justify-content:center;overflow-x:auto}
-  .auth-nav-links a{padding:6px 10px;font-size:12px}
-  .auth-container{padding:110px 16px 40px}
-  .auth-card{padding:28px 20px}
-  .auth-social{flex-direction:column}
-  .auth-row{grid-template-columns:1fr}
-}
+@media(max-width:900px){.auth-layout{grid-template-columns:1fr;gap:32px;max-width:440px}.auth-brand{text-align:center;padding-right:0}.auth-brand__desc{margin-left:auto;margin-right:auto}.auth-brand__features{align-items:center}}
+@media(max-width:600px){.auth-nav-inner{width:calc(100% - 16px);height:auto;min-height:56px;padding:8px 14px;flex-wrap:wrap;gap:4px}.auth-nav-links{order:3;width:100%;justify-content:center;overflow-x:auto}.auth-nav-links a{padding:6px 10px;font-size:12px}.auth-container{padding:110px 16px 40px}.auth-card{padding:28px 20px}.auth-social{flex-direction:column}.auth-row{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
 
-<!-- Navigation -->
 <nav class="auth-nav">
   <div class="auth-nav-inner">
-    <a href="index.html" class="auth-nav-brand">
-      <img src="logo.png" alt="NexJobs">
-    </a>
+    <a href="index.html" class="auth-nav-brand"><img src="logo.png" alt="NexJobs"></a>
     <div class="auth-nav-links">
       <a href="index.html"><i class="fas fa-house"></i>Home</a>
       <a href="features.html"><i class="fas fa-sparkles"></i>Features</a>
@@ -136,11 +95,8 @@ body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F
   </div>
 </nav>
 
-<!-- Main Content -->
 <div class="auth-container">
   <div class="auth-layout">
-
-    <!-- Left: Branding -->
     <div class="auth-brand">
       <div class="auth-brand__kicker">JOIN NEXJOBS</div>
       <h1 class="auth-brand__title">One account. Every platform.</h1>
@@ -153,31 +109,27 @@ body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F
       </ul>
     </div>
 
-    <!-- Right: Signup Form -->
     <div class="auth-card">
       <div class="auth-card__header">
-        <div class="auth-card__logo">
-          <img src="logo.png" alt="NexJobs">
-        </div>
+        <div class="auth-card__logo"><img src="logo.png" alt="NexJobs"></div>
         <h2 class="auth-card__title">Create your account</h2>
         <p class="auth-card__subtitle">Start your job search in minutes</p>
       </div>
 
-      <!-- Social Signup -->
+      <div id="signupMessage" class="auth-message"></div>
+
       <div class="auth-social">
-        <button class="auth-social-btn google" type="button">
+        <button class="auth-social-btn google" type="button" onclick="handleGoogleSignup()">
           <i class="fab fa-google"></i> Sign up with Google
         </button>
-        <button class="auth-social-btn linkedin" type="button">
+        <button class="auth-social-btn linkedin" type="button" onclick="handleLinkedInSignup()">
           <i class="fab fa-linkedin-in"></i> Sign up with LinkedIn
         </button>
       </div>
 
-      <!-- Divider -->
       <div class="auth-divider"><span>or sign up with email</span></div>
 
-      <!-- Signup Form -->
-      <form id="signupForm" onsubmit="return handleSignup(event)">
+      <form id="signupForm" onsubmit="return handleEmailSignup(event)">
         <div class="auth-row">
           <div class="auth-field">
             <label for="firstName">First name</label>
@@ -211,10 +163,7 @@ body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F
             <button type="button" class="toggle-pw" onclick="togglePassword('signupPassword',this)"><i class="fas fa-eye"></i></button>
           </div>
           <div class="pw-strength">
-            <div class="pw-bar" id="bar1"></div>
-            <div class="pw-bar" id="bar2"></div>
-            <div class="pw-bar" id="bar3"></div>
-            <div class="pw-bar" id="bar4"></div>
+            <div class="pw-bar" id="bar1"></div><div class="pw-bar" id="bar2"></div><div class="pw-bar" id="bar3"></div><div class="pw-bar" id="bar4"></div>
             <span class="pw-label" id="pwLabel"></span>
           </div>
         </div>
@@ -229,78 +178,113 @@ body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F
         </div>
 
         <div class="auth-terms">
-          <label>
-            <input type="checkbox" id="termsCheck" required>
-            <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
-          </label>
+          <label><input type="checkbox" id="termsCheck" required><span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span></label>
         </div>
 
-        <button type="submit" class="auth-submit">Create Account</button>
+        <button type="submit" class="auth-submit" id="signupBtn">Create Account</button>
       </form>
 
-      <div class="auth-footer">
-        Already have an account? <a href="login.html">Sign in</a>
-      </div>
+      <div class="auth-footer">Already have an account? <a href="login.html">Sign in</a></div>
     </div>
-
   </div>
 </div>
 
+<script src="static/supabase_client.js"></script>
 <script>
+function showMessage(type, text) {
+  const el = document.getElementById('signupMessage');
+  el.className = 'auth-message ' + type;
+  el.textContent = text;
+  el.style.display = 'block';
+}
+function clearMessage() {
+  const el = document.getElementById('signupMessage');
+  el.className = 'auth-message';
+  el.style.display = 'none';
+  el.textContent = '';
+}
 function togglePassword(id, btn) {
   const input = document.getElementById(id);
   const icon = btn.querySelector('i');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.classList.replace('fa-eye', 'fa-eye-slash');
-  } else {
-    input.type = 'password';
-    icon.classList.replace('fa-eye-slash', 'fa-eye');
-  }
+  if (input.type === 'password') { input.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); }
+  else { input.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
 }
 
+// Google Sign-Up via Supabase popup (same flow as login — creates account if new)
+function handleGoogleSignup() {
+  clearMessage();
+  if (typeof supabase !== 'undefined' && supabase.signInWithGoogle) { supabase.signInWithGoogle(); return; }
+  const redirectUri = encodeURIComponent(window.location.origin + '/auth_callback.html');
+  const authUrl = SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + redirectUri + '&scope=openid%20email%20profile';
+  const popup = window.open(authUrl, 'google-signin', 'width=500,height=600,popup=yes');
+  if (!popup) { showMessage('error', 'Please allow popups to sign up with Google.'); }
+}
+
+// LinkedIn Sign-Up via serverless OAuth
+function handleLinkedInSignup() {
+  clearMessage();
+  window.location.href = '/api/oauth/start';
+}
+
+// Email/Password Sign-Up via Supabase
+async function handleEmailSignup(e) {
+  e.preventDefault();
+  clearMessage();
+
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName = document.getElementById('lastName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('confirmPassword').value;
+  const btn = document.getElementById('signupBtn');
+
+  if (password !== confirm) { showMessage('error', 'Passwords do not match.'); return false; }
+  if (password.length < 8) { showMessage('error', 'Password must be at least 8 characters.'); return false; }
+
+  btn.textContent = 'Creating account...'; btn.style.opacity = '.7'; btn.disabled = true;
+
+  try {
+    const resp = await fetch(SUPABASE_URL + '/auth/v1/signup', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, data: { first_name: firstName, last_name: lastName } }),
+    });
+    const data = await resp.json();
+
+    if (resp.ok && data.user) {
+      localStorage.setItem('supabase_token', data.session?.access_token || '');
+      localStorage.setItem('supabase_user', JSON.stringify(data.user));
+      showMessage('success', 'Account created! Redirecting...');
+      setTimeout(() => { window.location.href = '/'; }, 800);
+    } else {
+      showMessage('error', data.error || data.msg || 'Could not create account.');
+    }
+  } catch (err) { showMessage('error', 'Something went wrong. Please try again.'); }
+  finally { btn.textContent = 'Create Account'; btn.style.opacity = '1'; btn.disabled = false; }
+  return false;
+}
+
+// Password strength checker
 function checkStrength(pw) {
   const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
   const label = document.getElementById('pwLabel');
   bars.forEach(b => b.className = 'pw-bar');
   label.textContent = '';
-
   let score = 0;
   if (pw.length >= 8) score++;
   if (/[A-Z]/.test(pw)) score++;
   if (/[0-9]/.test(pw)) score++;
   if (/[^A-Za-z0-9]/.test(pw)) score++;
-
   const levels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
   const classes = ['', 'weak', 'weak', 'medium', 'strong'];
-
-  for (let i = 0; i < score; i++) {
-    bars[i].classList.add(classes[score]);
-  }
+  for (let i = 0; i < score; i++) { bars[i].classList.add(classes[score]); }
   label.textContent = levels[score] || '';
 }
 
-function handleSignup(e) {
-  e.preventDefault();
-  const pw = document.getElementById('signupPassword').value;
-  const cpw = document.getElementById('confirmPassword').value;
-  if (pw !== cpw) {
-    alert('Passwords do not match.');
-    return false;
-  }
-  const btn = e.target.querySelector('.auth-submit');
-  btn.textContent = 'Creating account...';
-  btn.style.opacity = '.7';
-  btn.disabled = true;
-  setTimeout(() => {
-    btn.textContent = 'Create Account';
-    btn.style.opacity = '1';
-    btn.disabled = false;
-    alert('Signup feature coming soon!');
-  }, 1500);
-  return false;
-}
+// Auto-redirect if already logged in
+(function checkAuth() {
+  if (localStorage.getItem('supabase_token')) { window.location.href = '/'; }
+})();
 </script>
-
 </body>
 </html>
