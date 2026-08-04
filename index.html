@@ -125,12 +125,7 @@
         .search-history-item:last-child { border-bottom: none; }
         .search-history-item small { color: #94a3b8; }
 
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .upload-section { margin: -20px 1rem 2rem; padding: 20px; }
-        }
-    
-/* ===== RESPONSIVE: Tablet landscape ===== */
+        
 @media(max-width:1024px){
   .pokee-sidebar{width:min(960px,calc(100% - 24px))!important;height:70px!important}
   .pokee-brand i{width:52px!important;height:52px!important;font-size:26px!important;border-radius:12px!important}
@@ -148,12 +143,16 @@
   .pokee-category h2 span{font-size:12px!important}
   .dash-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))!important}
   .dash-panel{padding:18px!important}
-  .nex-landing-hero__grid{grid-template-columns:1fr 1fr!important}
   .nex-footer-grid{grid-template-columns:repeat(2,1fr)!important;gap:28px!important}
   .platform-links-row{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important}
+  .platform-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))!important}
+  .upload-section{max-width:100%!important;padding:32px!important}
+  .hero h1{font-size:2.5rem!important}
+  .hero p{font-size:1.1rem!important}
+  .hero{padding:80px 0 60px!important}
+  .job-card{padding:12px!important}
+  .results-section{padding:0 12px!important}
 }
-
-/* ===== RESPONSIVE: Tablet portrait ===== */
 @media(max-width:768px){
   .pokee-sidebar{width:calc(100% - 16px)!important;height:auto!important;max-height:64px!important;flex-wrap:wrap!important;padding:6px 10px!important;border-radius:14px!important;margin:10px auto 0!important}
   .pokee-brand i{width:40px!important;height:40px!important;font-size:20px!important;border-radius:10px!important}
@@ -196,7 +195,7 @@
   .platform-trust-divider span{font-size:9px!important;padding:0 12px!important}
   .platform-logo-item img{height:32px!important}
   .platform-logos-track{gap:32px!important}
-  .hero{padding:80px 0 50px!important}
+  .hero{padding:60px 0 40px!important}
   .hero h1{font-size:2rem!important}
   .hero p{font-size:1rem!important}
   .upload-section{margin:-20px 0 24px!important;padding:24px!important;max-width:100%!important}
@@ -239,9 +238,8 @@
   .btn-login{padding:6px 14px!important;font-size:13px!important}
   .btn-primary{padding:10px 24px!important;font-size:14px!important}
   .loading-box{padding:24px!important;max-width:90%!important}
+  .container{max-width:100%!important;padding:0 16px!important}
 }
-
-/* ===== RESPONSIVE: Mobile ===== */
 @media(max-width:576px){
   .pokee-sidebar{width:calc(100% - 12px)!important;max-height:none!important;flex-wrap:wrap!important;padding:4px 8px!important;border-radius:12px!important;gap:4px!important;margin:8px auto 0!important}
   .pokee-brand i{width:34px!important;height:34px!important;font-size:16px!important;border-radius:8px!important}
@@ -279,7 +277,7 @@
   .platform-logo-item img{height:26px!important}
   .platform-logos-track{gap:24px!important}
   .platform-logos-row::before,.platform-logos-row::after{width:40px!important}
-  .hero{padding:60px 0 40px!important}
+  .hero{padding:40px 0 30px!important}
   .hero h1{font-size:1.6rem!important}
   .hero p{font-size:.9rem!important;margin:0 auto 1.5rem!important}
   .upload-section{padding:16px!important;margin:-16px 0 20px!important}
@@ -341,10 +339,8 @@
   .btn-primary{padding:8px 18px!important;font-size:13px!important;width:100%!important}
   .loading-box{padding:20px!important;max-width:95%!important}
   .spinner{width:36px!important;height:36px!important}
-  .container{padding:0 12px!important}
+  .container{max-width:100%!important;padding:0 12px!important}
 }
-
-/* ===== RESPONSIVE: Small mobile ===== */
 @media(max-width:380px){
   .pokee-sidebar{width:calc(100% - 8px)!important}
   .pokee-nav a{padding:3px 4px!important;font-size:10px!important}
@@ -365,6 +361,7 @@
   .hero h1{font-size:1.35rem!important}
   .upload-section{padding:12px!important}
   .upload-box{padding:12px!important}
+  .container{max-width:100%!important;padding:0 8px!important}
 }
 
 </style>
