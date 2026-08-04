@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — NexJobs</title>
+    <meta name="description" content="Sign in to your NexJobs account to access AI-powered job search across 100+ platforms.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+:root{--bg-primary:#F3F0FC;--bg-secondary:#EBE6FA;--bg-card:#fff;--bg-card-hover:#FAFAFE;--border-subtle:#E8E3F9;--border-default:#D4CCE8;--text-primary:#1a1a2e;--text-secondary:#4a4a6a;--text-muted:#8a8aaa;--accent-purple:#6C4DE6;--accent-purple-dark:#2E1C5B;--accent-purple-light:#9B8AF7;--accent-purple-bg:#E8E3F9;--accent-green:#34C759;--accent-orange:#F06543;--accent-red:#FF4F4F;--accent-yellow:#FFB800;--gradient-purple:linear-gradient(135deg,#6C4DE6,#9B8AF7);--gradient-hero:linear-gradient(135deg,#2E1C5B,#6C4DE6);--shadow-sm:0 2px 8px rgba(46,28,91,.06);--shadow-md:0 4px 16px rgba(46,28,91,.1);--shadow-lg:0 8px 32px rgba(46,28,91,.12);--shadow-glow-purple:0 4px 20px rgba(108,77,230,.25);--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-pill:50px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg-primary);scroll-behavior:smooth}
+body{font-family:'Inter',Arial,sans-serif;background:linear-gradient(135deg,#F3F0FC 0%,#EBE6FA 50%,#F0EDFC 100%);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column}
+
+/* === Header Nav === */
+.auth-nav{position:fixed;top:14px;left:0;right:0;z-index:1000;display:flex;justify-content:center}
+.auth-nav-inner{width:min(1160px,calc(100% - 32px));height:64px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;background:#F8F7FF;border:1px solid rgba(46,28,91,.06);border-radius:32px;box-shadow:0 2px 16px rgba(46,28,91,.06)}
+.auth-nav-brand{display:flex;align-items:center;gap:0;text-decoration:none}
+.auth-nav-brand img{height:38px;width:auto}
+.auth-nav-links{display:flex;align-items:center;gap:2px}
+.auth-nav-links a{padding:8px 18px;border-radius:20px;text-decoration:none;color:#1a1a2e;font-size:14px;font-weight:600;transition:all .2s;white-space:nowrap}
+.auth-nav-links a:hover{background:var(--accent-purple);color:#fff}
+.auth-nav-links a i{display:none}
+
+/* === Main Container === */
+.auth-container{flex:1;display:flex;align-items:center;justify-content:center;padding:120px 20px 60px;width:100%;max-width:1160px;margin:0 auto}
+.auth-layout{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;width:100%;max-width:960px}
+
+/* === Left Panel — Branding === */
+.auth-brand{text-align:left;padding-right:20px}
+.auth-brand__kicker{color:var(--accent-purple-dark);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px}
+.auth-brand__title{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:clamp(1.8rem,3.5vw,2.6rem);line-height:1.15;letter-spacing:-.04em;color:var(--accent-purple-dark);margin-bottom:16px}
+.auth-brand__desc{font-size:15px;color:var(--text-secondary);line-height:1.7;max-width:420px;margin-bottom:32px}
+.auth-brand__features{list-style:none;display:flex;flex-direction:column;gap:14px}
+.auth-brand__features li{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-secondary);font-weight:500}
+.auth-brand__features li i{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--accent-purple-bg);color:var(--accent-purple);font-size:14px;flex:0 0 auto}
+
+/* === Right Panel — Form Card === */
+.auth-card{background:#fff;border:1px solid var(--border-subtle);border-radius:20px;padding:40px;box-shadow:var(--shadow-md)}
+.auth-card__header{text-align:center;margin-bottom:32px}
+.auth-card__logo{margin-bottom:20px}
+.auth-card__logo img{height:48px;width:auto}
+.auth-card__title{font-size:22px;font-weight:800;color:var(--accent-purple-dark);margin-bottom:6px}
+.auth-card__subtitle{font-size:14px;color:var(--text-muted)}
+
+/* === Social Buttons === */
+.auth-social{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.auth-social-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 20px;border:1.5px solid var(--border-default);border-radius:var(--radius-pill);background:#fff;font-size:14px;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all .2s;font-family:inherit}
+.auth-social-btn:hover{border-color:var(--accent-purple);background:var(--accent-purple-bg);box-shadow:var(--shadow-sm)}
+.auth-social-btn i{font-size:18px}
+.auth-social-btn.google i{color:#4285F4}
+.auth-social-btn.linkedin i{color:#0A66C2}
+
+/* === Divider === */
+.auth-divider{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border-subtle)}
+.auth-divider span{font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+
+/* === Form Fields === */
+.auth-field{margin-bottom:18px}
+.auth-field label{display:block;font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.auth-input-wrap{position:relative}
+.auth-input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px}
+.auth-input{width:100%;height:46px;padding:0 14px 0 40px;border:1.5px solid var(--border-default);border-radius:var(--radius-pill);font-size:14px;color:var(--text-primary);background:#fff;outline:none;transition:all .2s;font-family:inherit}
+.auth-input:focus{border-color:var(--accent-purple);box-shadow:0 0 0 3px rgba(108,77,230,.1)}
+.auth-input::placeholder{color:var(--text-muted)}
+.auth-input-wrap .toggle-pw{position:absolute;right:14px;left:auto;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:4px}
+
+/* === Options Row === */
+.auth-options{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.auth-checkbox{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-secondary)}
+.auth-checkbox input{width:16px;height:16px;accent-color:var(--accent-purple);cursor:pointer}
+.auth-link{font-size:13px;color:var(--accent-purple);font-weight:600;text-decoration:none;transition:color .2s}
+.auth-link:hover{color:var(--accent-purple-dark)}
+
+/* === Submit Button === */
+.auth-submit{width:100%;height:48px;border:none;border-radius:var(--radius-pill);background:var(--gradient-purple);color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.02em}
+.auth-submit:hover{transform:translateY(-2px);box-shadow:var(--shadow-glow-purple)}
+.auth-submit:active{transform:translateY(0)}
+
+/* === Footer Link === */
+.auth-footer{text-align:center;margin-top:24px;font-size:14px;color:var(--text-muted)}
+.auth-footer a{color:var(--accent-purple);font-weight:700;text-decoration:none}
+.auth-footer a:hover{color:var(--accent-purple-dark)}
+
+/* === Animations === */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.auth-brand{animation:fadeInUp .7s ease-out both}
+.auth-card{animation:fadeInUp .7s ease-out .15s both}
+.auth-brand__kicker{animation:fadeInUp .6s ease-out both}
+.auth-brand__title{animation:fadeInUp .6s ease-out .1s both}
+.auth-brand__desc{animation:fadeInUp .6s ease-out .2s both}
+.auth-brand__features{animation:fadeInUp .6s ease-out .3s both}
+
+/* === Responsive === */
+@media(max-width:900px){
+  .auth-layout{grid-template-columns:1fr;gap:32px;max-width:440px}
+  .auth-brand{text-align:center;padding-right:0}
+  .auth-brand__desc{margin-left:auto;margin-right:auto}
+  .auth-brand__features{align-items:center}
+}
+@media(max-width:600px){
+  .auth-nav-inner{width:calc(100% - 16px);height:auto;min-height:56px;padding:8px 14px;flex-wrap:wrap;gap:4px}
+  .auth-nav-links{order:3;width:100%;justify-content:center;overflow-x:auto}
+  .auth-nav-links a{padding:6px 10px;font-size:12px}
+  .auth-container{padding:110px 16px 40px}
+  .auth-card{padding:28px 20px}
+  .auth-social{flex-direction:column}
+}
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="auth-nav">
+  <div class="auth-nav-inner">
+    <a href="index.html" class="auth-nav-brand">
+      <img src="logo.png" alt="NexJobs">
+    </a>
+    <div class="auth-nav-links">
+      <a href="index.html"><i class="fas fa-house"></i>Home</a>
+      <a href="features.html"><i class="fas fa-sparkles"></i>Features</a>
+      <a href="signup.html"><i class="fas fa-user-plus"></i>Sign Up</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="auth-container">
+  <div class="auth-layout">
+
+    <!-- Left: Branding -->
+    <div class="auth-brand">
+      <div class="auth-brand__kicker">WELCOME BACK</div>
+      <h1 class="auth-brand__title">Your next move starts here.</h1>
+      <p class="auth-brand__desc">Sign in to access your saved jobs, connected platforms, and AI-powered recommendations tailored to your skills.</p>
+      <ul class="auth-brand__features">
+        <li><i class="fas fa-bolt"></i> Instant access to 100+ job platforms</li>
+        <li><i class="fas fa-chart-pie"></i> AI-scored job matches</li>
+        <li><i class="fas fa-file-pdf"></i> Resume parsing & smart suggestions</li>
+        <li><i class="fas fa-link"></i> Direct apply — no runaround</li>
+      </ul>
+    </div>
+
+    <!-- Right: Login Form -->
+    <div class="auth-card">
+      <div class="auth-card__header">
+        <div class="auth-card__logo">
+          <img src="logo.png" alt="NexJobs">
+        </div>
+        <h2 class="auth-card__title">Sign in to your account</h2>
+        <p class="auth-card__subtitle">Continue where you left off</p>
+      </div>
+
+      <!-- Social Login -->
+      <div class="auth-social">
+        <button class="auth-social-btn google" type="button">
+          <i class="fab fa-google"></i> Continue with Google
+        </button>
+        <button class="auth-social-btn linkedin" type="button">
+          <i class="fab fa-linkedin-in"></i> Continue with LinkedIn
+        </button>
+      </div>
+
+      <!-- Divider -->
+      <div class="auth-divider"><span>or sign in with email</span></div>
+
+      <!-- Email Form -->
+      <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div class="auth-field">
+          <label for="loginEmail">Email address</label>
+          <div class="auth-input-wrap">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="loginEmail" class="auth-input" placeholder="you@example.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label for="loginPassword">Password</label>
+          <div class="auth-input-wrap">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="loginPassword" class="auth-input" placeholder="Enter your password" required autocomplete="current-password">
+            <button type="button" class="toggle-pw" onclick="togglePassword('loginPassword',this)"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+
+        <div class="auth-options">
+          <label class="auth-checkbox">
+            <input type="checkbox" checked> Remember me
+          </label>
+          <a href="#" class="auth-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="auth-submit">Sign In</button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="signup.html">Create one</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function togglePassword(id, btn) {
+  const input = document.getElementById(id);
+  const icon = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.classList.replace('fa-eye', 'fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('fa-eye-slash', 'fa-eye');
+  }
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.auth-submit');
+  btn.textContent = 'Signing in...';
+  btn.style.opacity = '.7';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = 'Sign In';
+    btn.style.opacity = '1';
+    btn.disabled = false;
+    alert('Login feature coming soon!');
+  }, 1500);
+  return false;
+}
+</script>
+
+</body>
+</html>
