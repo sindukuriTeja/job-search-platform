@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How NexJobs Works — Upload Resume, Search 100+ Platforms, Get Matched Jobs</title>
+    <meta name="description" content="Learn how NexJobs works: upload your resume, our AI parses your skills, searches 100+ job platforms, and ranks jobs by match score. Free, no sign-up required.">
+    <meta name="keywords" content="how NexJobs works, AI resume job search, how to use NexJobs, resume parsing, smart job matching, free job search">
+    <meta name="author" content="NexJobs">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://nexjobs.in/how-it-works.html">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nexjobs.in/how-it-works.html">
+    <meta property="og:title" content="How NexJobs Works — AI-Powered Job Search in 3 Steps">
+    <meta property="og:description" content="Upload your resume, get AI-powered job matches across 100+ platforms. No sign-up, no backend, completely free.">
+    <meta property="og:image" content="https://nexjobs.in/og-image.png">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://nexjobs.in/how-it-works.html">
+    <meta property="twitter:title" content="How NexJobs Works — AI-Powered Job Search in 3 Steps">
+    <meta property="twitter:description" content="Upload your resume, get AI-powered job matches across 100+ platforms.">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "How to Use NexJobs to Find Jobs with Your Resume",
+      "description": "Step-by-step guide to using NexJobs AI-powered job search platform.",
+      "url": "https://nexjobs.in/how-it-works.html",
+      "image": "https://nexjobs.in/og-image.png",
+      "totalTime": "PT5M",
+      "estimatedCost": {
+        "@type": "MonetaryAmount",
+        "currency": "INR",
+        "value": "0"
+      },
+      "supply": ["A resume in PDF, DOCX, or TXT format"],
+      "tool": ["A web browser (Chrome, Firefox, Safari, or Edge)"],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Upload Your Resume",
+          "text": "Go to NexJobs.in and upload your resume in PDF, DOCX, or TXT format. The AI parser extracts your skills, experience, education, and projects — all processed in your browser.",
+          "url": "https://nexjobs.in/how-it-works.html#step-1"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Select Job Categories",
+          "text": "Choose from 12 categories including software engineering, AI/ML, remote jobs, internships, government jobs, startups, and more. NexJobs builds search queries from your resume skills.",
+          "url": "https://nexjobs.in/how-it-works.html#step-2"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Search & Get Matched Jobs",
+          "text": "NexJobs searches 5+ job APIs simultaneously and generates direct search links for 100+ platforms. Each job is scored by match percentage — education (35%), skills (25%), certifications (15%), projects (15%), keywords (10%).",
+          "url": "https://nexjobs.in/how-it-works.html#step-3"
+        }
+      ],
+      "publisher": {
+        "@type": "Organization",
+        "name": "NexJobs",
+        "url": "https://nexjobs.in"
+      }
+    }
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #334155; }
+        .navbar { background: white; padding: 1rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .navbar-brand { font-size: 1.5rem; font-weight: 800; color: #2563eb; text-decoration: none; }
+        .navbar-brand span { color: #7c3aed; }
+        .nav-link { color: #64748b; font-weight: 500; text-decoration: none; margin: 0 0.5rem; }
+        .nav-link:hover { color: #2563eb; }
+        .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #2563eb 100%); padding: 80px 0 60px; color: white; text-align: center; }
+        .page-hero h1 { font-size: 2.8rem; font-weight: 900; margin-bottom: 1rem; }
+        .page-hero p { font-size: 1.2rem; opacity: 0.9; max-width: 700px; margin: 0 auto; }
+        .section { padding: 60px 0; }
+        .section-title { font-size: 2rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; }
+        .section-subtitle { font-size: 1.1rem; color: #64748b; max-width: 700px; margin: 0 auto 3rem; }
+        .step-card { display: flex; gap: 2rem; align-items: flex-start; background: white; border-radius: 16px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .step-number { width: 60px; height: 60px; background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; color: white; flex-shrink: 0; }
+        .step-content h3 { font-size: 1.4rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem; }
+        .step-content p { color: #64748b; line-height: 1.7; font-size: 1.05rem; }
+        .step-content ul { margin-top: 0.75rem; padding-left: 1.2rem; }
+        .step-content ul li { color: #64748b; margin-bottom: 0.4rem; line-height: 1.6; }
+        .cta-section { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); padding: 60px 0; text-align: center; color: white; }
+        .cta-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
+        .cta-section p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; }
+        .btn-primary { background: #2563eb; border: none; padding: 12px 32px; border-radius: 8px; font-weight: 600; color: white; text-decoration: none; display: inline-block; }
+        .btn-primary:hover { background: #1d4ed8; color: white; }
+        footer { background: #0f172a; color: #94a3b8; padding: 40px 0; text-align: center; }
+        footer a { color: #94a3b8; text-decoration: none; }
+        footer a:hover { color: white; }
+        .scoring-bar { display: flex; height: 32px; border-radius: 8px; overflow: hidden; margin: 1.5rem 0; }
+        .scoring-bar div { display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.85rem; }
+        @media (max-width: 768px) {
+            .page-hero h1 { font-size: 2rem; }
+            .section-title { font-size: 1.5rem; }
+            .step-card { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="https://nexjobs.in/" class="navbar-brand">Nex<span>Jobs</span></a>
+            <div>
+                <a href="https://nexjobs.in/" class="nav-link">Home</a>
+                <a href="https://nexjobs.in/about.html" class="nav-link">About</a>
+                <a href="https://nexjobs.in/features.html" class="nav-link">Features</a>
+                <a href="https://nexjobs.in/how-it-works.html" class="nav-link" style="color:#2563eb;font-weight:700;">How It Works</a>
+                <a href="https://nexjobs.in/faq.html" class="nav-link">FAQ</a>
+            </div>
+        </div>
+    </nav>
+    <section class="page-hero">
+        <div class="container">
+            <h1>How NexJobs Works</h1>
+            <p>Find your dream job in 3 simple steps — no sign-up required.</p>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container" style="max-width:800px;">
+            <div class="step-card" id="step-1">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Upload Your Resume</h3>
+                    <p>Go to <strong>NexJobs.in</strong> and drag &amp; drop your resume. We support all major formats:</p>
+                    <ul>
+                        <li><strong>PDF</strong> — parsed using pdf.js in your browser</li>
+                        <li><strong>DOCX</strong> — parsed using mammoth.js in your browser</li>
+                        <li><strong>TXT</strong> — plain text resumes are read directly</li>
+                    </ul>
+                    <p style="margin-top:0.75rem;">Our AI parser extracts your <strong>skills</strong>, <strong>work experience</strong>, <strong>education</strong>, <strong>certifications</strong>, and <strong>projects</strong> — all processed locally in your browser. Your data never leaves your device.</p>
+                </div>
+            </div>
+            <div class="step-card" id="step-2">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Select Job Categories &amp; Location</h3>
+                    <p>Choose the categories that match what you're looking for from <strong>12 job categories</strong>:</p>
+                    <ul>
+                        <li>🇮🇳 India Job Portals (Naukri, Indeed India, Instahyre)</li>
+                        <li>💻 Software Engineering (GitHub Jobs, Stack Overflow)</li>
+                        <li>🤖 AI / ML &amp; Data Science</li>
+                        <li>🌐 Remote Jobs (Remote OK, We Work Remotely)</li>
+                        <li>✈️ International Portals (USA, Europe, Global)</li>
+                        <li>🎓 Internships (Internshala, LetsIntern)</li>
+                        <li>👨‍💻 Freelancing (Upwork, Fiverr, Freelancer)</li>
+                        <li>🚀 Startup Jobs (Wellfound, AngelList)</li>
+                        <li>🏢 Company Career Pages</li>
+                        <li>🎯 Off-Campus Hiring</li>
+                        <li>🏛️ Government Jobs (UPSC, SSC, Railways, Banking)</li>
+                        <li>⚡ Quick Apply</li>
+                    </ul>
+                    <p style="margin-top:0.75rem;">NexJobs automatically builds optimized search queries from your resume skills and experience level.</p>
+                </div>
+            </div>
+            <div class="step-card" id="step-3">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Search &amp; Get Matched Jobs</h3>
+                    <p>NexJobs runs two types of search simultaneously:</p>
+                    <ul>
+                        <li><strong>Live API Search</strong> — Fetches real job listings from 5+ job APIs (Arbeitnow, Remotive, Remote OK, Himalayas, We Work Remotely)</li>
+                        <li><strong>Direct Search Links</strong> — Generates pre-filled search URLs for 100+ platforms (LinkedIn, Naukri, Indeed, Glassdoor, Monster, and more)</li>
+                    </ul>
+                    <p style="margin-top:0.75rem;">Every job is scored using our <strong>priority-based matching engine</strong>:</p>
+                    <div class="scoring-bar">
+                        <div style="width:35%;background:#2563eb;">Education 35%</div>
+                        <div style="width:25%;background:#7c3aed;">Skills 25%</div>
+                        <div style="width:15%;background:#16a34a;">Certs 15%</div>
+                        <div style="width:15%;background:#ea580c;">Projects 15%</div>
+                        <div style="width:10%;background:#dc2626;">Keywords 10%</div>
+                    </div>
+                    <p>Jobs are ranked from highest to lowest match score, so you see the best opportunities first. Click "View &amp; Apply" to go directly to the job posting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Find Your Dream Job?</h2>
+            <p>Upload your resume and search 100+ job platforms in seconds — completely free.</p>
+            <a href="https://nexjobs.in/" class="btn-primary"><i class="fas fa-search"></i> Start Searching on NexJobs</a>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p style="font-size:1.2rem;font-weight:700;color:white;margin-bottom:1rem;">Nex<span style="color:#a58fff;">Jobs</span></p>
+            <p>&copy; 2026 NexJobs. AI-Powered Resume Job Search Platform.</p>
+            <p style="margin-top:1rem;">
+                <a href="https://nexjobs.in/">Home</a> &middot;
+                <a href="https://nexjobs.in/about.html">About</a> &middot;
+                <a href="https://nexjobs.in/features.html">Features</a> &middot;
+                <a href="https://nexjobs.in/how-it-works.html">How It Works</a> &middot;
+                <a href="https://nexjobs.in/faq.html">FAQ</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
