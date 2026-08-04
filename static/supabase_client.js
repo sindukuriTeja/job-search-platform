@@ -6,6 +6,8 @@
  *   SUPABASE_ANON_KEY — Your Supabase anon/public key
  *
  * For local dev, replace the placeholders below.
+ *
+ * Updated: 2026-03-07 — added supabase.auth namespace (signInWithOAuth, signInWithPassword, signUp, resetPasswordForEmail, getSession)
  */
 
 const SUPABASE_URL    = 'https://izajwafosfpazmnpnqgz.supabase.co';
