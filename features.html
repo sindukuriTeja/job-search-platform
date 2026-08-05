@@ -1,195 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexJobs Features — AI Resume Parsing, Smart Job Matching & 100+ Platform Search</title>
-    <meta name="description" content="NexJobs features AI resume parsing, smart job matching with priority scoring, multi-platform search across 100+ job portals, and complete privacy. All free, all client-side.">
-    <meta name="keywords" content="NexJobs features, AI resume parsing, smart job matching, multi-platform job search, privacy-first job search, free job search tool">
-    <meta name="author" content="NexJobs">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://nexjobs.in/features.html">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://nexjobs.in/features.html">
-    <meta property="og:title" content="NexJobs Features — AI Resume Parsing, Smart Job Matching & 100+ Platform Search">
-    <meta property="og:description" content="Explore NexJobs powerful features: AI resume parsing, smart job matching, multi-platform search, and complete privacy.">
-    <meta property="og:image" content="https://nexjobs.in/og-image.png">
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://nexjobs.in/features.html">
-    <meta property="twitter:title" content="NexJobs Features — AI Resume Parsing, Smart Job Matching & 100+ Platform Search">
-    <meta property="twitter:description" content="Explore NexJobs powerful features: AI resume parsing, smart job matching, multi-platform search, and complete privacy.">
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "NexJobs Features",
-      "url": "https://nexjobs.in/features.html",
-      "description": "Explore NexJobs features: AI resume parsing, smart job matching, multi-platform search across 100+ job portals.",
-      "publisher": {
-        "@type": "Organization",
-        "name": "NexJobs",
-        "url": "https://nexjobs.in"
-      }
-    }
-    </script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #334155; }
-        .navbar { background: white; padding: 1rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-        .navbar-brand { font-size: 1.5rem; font-weight: 800; color: #2563eb; text-decoration: none; }
-        .navbar-brand span { color: #7c3aed; }
-        .nav-link { color: #64748b; font-weight: 500; text-decoration: none; margin: 0 0.5rem; }
-        .nav-link:hover { color: #2563eb; }
-        .page-hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #2563eb 100%); padding: 80px 0 60px; color: white; text-align: center; }
-        .page-hero h1 { font-size: 2.8rem; font-weight: 900; margin-bottom: 1rem; }
-        .page-hero p { font-size: 1.2rem; opacity: 0.9; max-width: 700px; margin: 0 auto; }
-        .section { padding: 60px 0; }
-        .section-title { font-size: 2rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; }
-        .section-subtitle { font-size: 1.1rem; color: #64748b; max-width: 700px; margin: 0 auto 3rem; }
-        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .feature-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.3s; }
-        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .feature-card i { font-size: 2rem; color: #2563eb; margin-bottom: 1rem; }
-        .feature-card h3 { font-size: 1.2rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem; }
-        .feature-card p { color: #64748b; line-height: 1.6; }
-        .cta-section { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); padding: 60px 0; text-align: center; color: white; }
-        .cta-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; }
-        .cta-section p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; }
-        .btn-primary { background: #2563eb; border: none; padding: 12px 32px; border-radius: 8px; font-weight: 600; color: white; text-decoration: none; display: inline-block; }
-        .btn-primary:hover { background: #1d4ed8; color: white; }
-        footer { background: #0f172a; color: #94a3b8; padding: 40px 0; text-align: center; }
-        footer a { color: #94a3b8; text-decoration: none; }
-        footer a:hover { color: white; }
-        @media (max-width: 768px) { .page-hero h1 { font-size: 2rem; } .section-title { font-size: 1.5rem; } }
-    </style>
-<style id="hyperverge-premium-theme">
-/* NexJobs premium dark interface — Hyperverge-inspired */
-:root{--bg-primary:#0a0a0a;--bg-secondary:#111111;--bg-card:#161616;--bg-card-hover:#1c1c1c;--border-subtle:#222222;--border-default:#2a2a2a;--border-hover:#3a3a3a;--text-primary:#f5f5f5;--text-secondary:#a0a0a0;--text-muted:#666666;--accent-purple:#927cff;--accent-purple-light:#a58fff;--accent-blue:#4f8cff;--accent-green:#36c76a;--gradient-primary:linear-gradient(135deg,#927cff 0%,#4f8cff 100%);--gradient-card:linear-gradient(180deg,#1a1a1a 0%,#141414 100%);--shadow-glow-purple:0 0 28px rgba(146,124,255,.18);--radius-md:12px;--radius-lg:16px}*{box-sizing:border-box}html{background:var(--bg-primary)}body{font-family:Inter,system-ui,sans-serif!important;background:radial-gradient(circle at 50% -20%,rgba(79,140,255,.12),transparent 35%),var(--bg-primary)!important;color:var(--text-primary)!important;letter-spacing:-.01em}.navbar,.pokee-sidebar{background:rgba(10,10,10,.86)!important;border-color:var(--border-subtle)!important;backdrop-filter:blur(18px)}.navbar{box-shadow:none!important;border-bottom:1px solid var(--border-subtle);padding:16px 0!important}.navbar-brand,.pokee-brand{color:#fff!important;font-weight:800!important;letter-spacing:-1px}.navbar-brand span,.pokee-brand span{background:var(--gradient-primary);-webkit-background-clip:text;background-clip:text;color:transparent!important}.nav-link{color:var(--text-secondary)!important;transition:color .2s ease!important}.nav-link:hover{color:#fff!important}.page-hero,.hero{position:relative;overflow:hidden;background:radial-gradient(circle at 50% 0,rgba(146,124,255,.2),transparent 44%),var(--bg-primary)!important;border-bottom:1px solid var(--border-subtle)}.page-hero{padding:112px 0 86px!important}.page-hero h1,.hero h1,.section-title{color:var(--text-primary)!important;font-weight:800!important;letter-spacing:-.055em}.page-hero h1,.hero h1{font-size:clamp(2.5rem,6vw,4.8rem)!important;line-height:1.02}.page-hero h1{background:linear-gradient(115deg,#fff 20%,#a58fff 62%,#6da5ff);-webkit-background-clip:text;background-clip:text;color:transparent!important}.page-hero p,.hero p,.section-subtitle{color:var(--text-secondary)!important}.section{padding:88px 0!important;background:transparent!important}.section-title{font-size:clamp(2rem,4vw,3rem)!important;text-align:center;background:var(--gradient-primary);-webkit-background-clip:text;background-clip:text;color:transparent!important}.feature-card,.faq-item,.mission-box,.dash-stat,.dash-panel,.resume-status,.pokee-card,.legacy-search .upload-section,.legacy-search .search-history,.legacy-search .job-card{background:var(--gradient-card)!important;color:var(--text-primary)!important;border:1px solid var(--border-default)!important;border-radius:var(--radius-lg)!important;box-shadow:none!important;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease!important}.feature-card:hover,.faq-item:hover,.mission-box:hover,.dash-stat:hover,.dash-panel:hover,.resume-status:hover,.pokee-card:hover,.legacy-search .job-card:hover{transform:translateY(-4px);border-color:rgba(146,124,255,.65)!important;box-shadow:var(--shadow-glow-purple)!important}.feature-card h3,.mission-box h2,.faq-question{color:var(--text-primary)!important}.feature-card p,.mission-box p,.faq-answer p{color:var(--text-secondary)!important}.feature-card i{color:var(--accent-purple)!important}.mission-box{background:linear-gradient(135deg,rgba(146,124,255,.12),rgba(79,140,255,.06))!important}.stat-item h2{background:var(--gradient-primary);-webkit-background-clip:text;background-clip:text;color:transparent!important}.stat-item p{color:var(--text-secondary)!important}.faq-question:hover{color:var(--accent-purple-light)!important}.faq-question i{color:var(--accent-purple)!important}.btn-primary,.legacy-search .btn-primary,.resume-action{background:var(--gradient-primary)!important;border:0!important;color:white!important;border-radius:10px!important;box-shadow:0 8px 22px rgba(103,115,255,.22)!important;transition:transform .2s ease,box-shadow .2s ease!important}.btn-primary:hover,.legacy-search .btn-primary:hover,.resume-action:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(103,115,255,.35)!important}.cta-section{background:radial-gradient(circle at 50% 0,rgba(146,124,255,.2),transparent 55%),#101010!important;border-block:1px solid var(--border-subtle)}footer{background:#090909!important;border-top:1px solid var(--border-subtle);color:var(--text-muted)!important}footer a{color:var(--text-secondary)!important}
-/* App workspace: turn the legacy rail into a clean Hyperverge-like top bar. IDs and event hooks remain unchanged. */
-.pokee-shell{display:block!important;min-height:100vh}.pokee-sidebar{position:sticky!important;inset:0!important;width:100%!important;height:70px!important;padding:0 max(24px,calc((100vw - 1240px)/2))!important;display:flex!important;flex-direction:row!important;align-items:center!important;border-right:0!important;border-bottom:1px solid var(--border-subtle)!important;z-index:100}.pokee-brand{padding:0!important;font-size:21px!important;white-space:nowrap}.pokee-side-label{display:none!important}.pokee-nav{margin:auto!important;display:flex!important;gap:4px!important}.pokee-nav a{padding:9px 13px!important;border-radius:8px!important;color:var(--text-secondary)!important;font-size:13px!important}.pokee-nav a:hover,.pokee-nav a.active{background:rgba(146,124,255,.13)!important;color:#fff!important;border-left:0!important}.pokee-nav a.active i{color:var(--accent-purple-light)!important}.pokee-user{margin:0!important;padding:0!important;border:0!important}.pokee-login{width:auto!important;background:var(--gradient-primary)!important;border:0!important;border-radius:9px!important;padding:10px 14px!important;color:#fff!important}.pokee-main{margin:0 auto!important;width:100%!important;max-width:1320px!important;padding:62px 38px!important}.pokee-page-top{margin-bottom:42px!important}.pokee-title{font-size:clamp(2rem,4vw,3.2rem)!important;background:var(--gradient-primary);-webkit-background-clip:text;background-clip:text;color:transparent!important}.pokee-eyebrow{color:var(--accent-purple-light)!important}.pokee-search input,.pokee-controls select,.form-control,.form-select,.legacy-search .form-control,.legacy-search .form-select{background:#121212!important;border:1px solid var(--border-default)!important;color:var(--text-primary)!important;border-radius:10px!important}.pokee-search input:focus,.form-control:focus,.form-select:focus{border-color:var(--accent-purple)!important;box-shadow:0 0 0 3px rgba(146,124,255,.12)!important}.pokee-card{min-height:104px!important}.pokee-icon{background:rgba(146,124,255,.12)!important}.pokee-connect,.dashboard-refresh{background:transparent!important;border:1px solid var(--border-default)!important;color:var(--text-primary)!important;border-radius:9px!important}.pokee-connect:hover,.dashboard-refresh:hover{border-color:var(--accent-purple)!important;box-shadow:var(--shadow-glow-purple)!important}.legacy-search .upload-box{background:#121212!important;border-color:var(--border-default)!important}.legacy-search .platform-card{background:var(--gradient-card)!important;border-color:var(--border-default)!important}.legacy-search .platform-card.selected{background:rgba(146,124,255,.15)!important;border-color:var(--accent-purple)!important}@media(max-width:760px){.pokee-sidebar{height:auto!important;min-height:62px!important;padding:10px 16px!important;flex-wrap:wrap!important}.pokee-nav{order:3;width:100%;overflow-x:auto!important;margin:4px 0 0!important}.pokee-nav a{white-space:nowrap!important}.pokee-user{margin-left:auto!important}.pokee-main{padding:38px 18px!important}.pokee-controls{min-width:0!important}.page-hero{padding:82px 0 65px!important}}
-/* Standalone test and callback states */
-.search-box,#results{background:var(--gradient-card)!important;border:1px solid var(--border-default)!important;color:var(--text-primary)!important;box-shadow:none!important}.search-box input{background:#121212!important;color:var(--text-primary)!important;border-color:var(--border-default)!important}.search-box button{background:var(--gradient-primary)!important}.job{border-color:var(--border-subtle)!important}.job h3{color:var(--accent-purple-light)!important}.job .company,.job .location,.job .skills,#log{color:var(--text-secondary)!important}.status.running{background:rgba(79,140,255,.14)!important;color:#a8c7ff!important}.status.done{background:rgba(54,199,106,.14)!important;color:#8ceaae!important}.status.error{background:rgba(255,79,79,.14)!important;color:#ffaaaa!important}.loading h3{color:var(--text-primary)!important}.loading p{color:var(--text-secondary)!important}.spinner{border-color:var(--border-default)!important;border-top-color:var(--accent-purple)!important}
-
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NexJobs Features — AI Resume Parsing, Smart Job Matching & 100+ Platform Search</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"><style>
+:root{--bg-primary:#F3F0FC;--bg-secondary:#EBE6FA;--bg-card:#fff;--border-subtle:#E8E3F9;--border-default:#D4CCE8;--text-primary:#1a1a2e;--text-secondary:#4a4a6a;--text-muted:#8a8aaa;--accent-purple:#6C4DE6;--accent-purple-dark:#2E1C5B;--accent-purple-light:#9B8AF7;--accent-purple-bg:#E8E3F9;--gradient-purple:linear-gradient(135deg,#6C4DE6,#9B8AF7);--shadow-sm:0 2px 8px rgba(46,28,91,.06);--shadow-md:0 4px 16px rgba(46,28,91,.1);--shadow-glow-purple:0 4px 20px rgba(108,77,230,.25)}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg-primary)}body{margin:0;font-family:Inter,Arial,sans-serif;background:#fff;color:var(--text-primary);line-height:1.6}.pokee-shell{min-height:100vh}.pokee-sidebar{position:fixed;top:14px;left:0;right:0;margin:14px auto;width:min(1160px,calc(100% - 32px));height:64px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;background:#F8F7FF;border:1px solid rgba(46,28,91,.06);border-radius:32px;box-shadow:0 2px 16px rgba(46,28,91,.06);z-index:1000}.pokee-brand{text-decoration:none;white-space:nowrap}.nex-logo-text{font-weight:800;font-size:18px;letter-spacing:.18em;color:var(--accent-purple-dark)}.pokee-nav{display:flex;gap:2px;margin:auto}.pokee-nav a{padding:8px 17px;border-radius:20px;text-decoration:none;color:var(--text-primary);font-size:14px;font-weight:600;transition:.2s}.pokee-nav a:hover,.pokee-nav a.active{background:var(--accent-purple);color:#fff}.pokee-login{border:1.5px solid var(--text-primary);background:transparent;color:var(--text-primary);border-radius:50px;padding:10px 22px;font:600 14px Inter;text-decoration:none;transition:.2s}.pokee-login:hover{background:var(--text-primary);color:#fff}.pokee-main{padding-top:92px}.nex-hero{position:relative;overflow:hidden;text-align:center;padding:70px 25px 48px;margin-bottom:28px;background:linear-gradient(135deg,#F3F0FC,#EBE6FA);border-radius:0 0 28px 28px}.nex-hero__content{position:relative;z-index:1;margin:auto;max-width:850px}.nex-kicker{color:var(--accent-purple-dark);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.nex-hero h1{margin:13px auto 17px;max-width:820px;color:var(--accent-purple-dark);font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:clamp(2.7rem,5.6vw,5rem);letter-spacing:-.055em;line-height:1.04}.nex-hero p{max-width:650px;margin:0 auto;color:var(--text-secondary);font-size:1.05rem}.sparkle{position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;box-shadow:0 0 6px 2px #fff;animation:sparkleFloat 4s ease-in-out infinite}.sparkle:before,.sparkle:after{content:'';position:absolute;background:#fff}.sparkle:before{width:20px;height:2px;top:1px;left:-8px}.sparkle:after{width:2px;height:20px;top:-8px;left:1px}.one{top:16%;left:13%}.two{top:28%;right:12%}.three{bottom:13%;left:23%}.four{bottom:22%;right:22%}@keyframes sparkleFloat{50%{opacity:.5;transform:scale(1.25)}}.container{width:min(1080px,calc(100% - 40px));margin:auto}.section{padding:54px 0;background:transparent!important}.section[style]{padding-top:30px!important}.section-title{margin:0 0 8px;text-align:center;color:var(--accent-purple-dark);font-family:'Playfair Display',Georgia,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:600;letter-spacing:-.04em}.section-subtitle{text-align:center;max-width:680px;margin:0 auto;color:var(--text-secondary)}.mission-box,.feature-card,.step-card,.faq-item,.stat-item{background:var(--bg-card)!important;border:1px solid var(--border-subtle);border-radius:16px;box-shadow:var(--shadow-sm);transition:.25s}.mission-box,.feature-card,.step-card{padding:26px}.mission-box{max-width:800px;margin:auto!important;background:linear-gradient(135deg,#faf9ff,#f2effd)!important}.mission-box h2{margin-top:0;color:var(--accent-purple-dark);font-family:'Playfair Display',Georgia,serif;font-size:2rem}.mission-box p,.feature-card p,.step-content p,.faq-answer p{color:var(--text-secondary)}.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}.feature-card:hover,.step-card:hover,.faq-item:hover{transform:translateY(-4px);border-color:var(--accent-purple-light);box-shadow:var(--shadow-glow-purple)}.feature-card i{display:grid;place-items:center;width:44px;height:44px;margin-bottom:16px;background:var(--accent-purple-bg);border-radius:11px;color:var(--accent-purple);font-size:20px}.feature-card h3{margin:0 0 8px;color:var(--accent-purple-dark);font-size:17px}.feature-card p{margin:0;font-size:14px}.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat-item{text-align:center;padding:22px}.stat-item h2{margin:0;color:var(--accent-purple);font-size:2rem}.stat-item p{margin:3px 0 0;color:var(--text-muted);font-size:13px;font-weight:600}.step-card{display:flex;gap:22px;margin-bottom:18px}.step-number{display:grid;place-items:center;flex:0 0 46px;height:46px;border-radius:14px;background:var(--gradient-purple);color:#fff;font-size:20px;font-weight:800}.step-content h3{margin:0 0 8px;color:var(--accent-purple-dark);font-size:20px}.step-content ul{padding-left:20px;color:var(--text-secondary)}.faq-item{margin-bottom:12px;padding:0;overflow:hidden}.faq-question{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:21px 24px;color:var(--accent-purple-dark);font-weight:700;cursor:pointer}.faq-question i{color:var(--accent-purple);transition:.25s}.faq-question.active i{transform:rotate(180deg)}.faq-answer{max-height:0;overflow:hidden;transition:max-height .3s}.faq-answer.open{max-height:500px}.faq-answer p{margin:0;padding:0 24px 22px}.cta-section{margin-top:22px;padding:58px 20px;text-align:center;background:linear-gradient(135deg,#F3F0FC,#EBE6FA)!important;border-block:1px solid var(--border-subtle)}.cta-section h2{margin:0 0 8px;color:var(--accent-purple-dark);font-family:'Playfair Display',Georgia,serif;font-size:clamp(2rem,4vw,2.7rem);font-weight:600}.cta-section p{margin:0 0 22px;color:var(--text-secondary)}.btn-primary{display:inline-flex;align-items:center;gap:9px;border:1px solid #111!important;border-radius:50px!important;padding:13px 21px!important;background:#111!important;color:#fff!important;font:700 14px Inter;text-decoration:none;transition:.2s}.btn-primary:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}.nex-footer{padding:48px max(24px,calc((100vw - 1160px)/2)) 24px;background:#fff;border-top:1px solid var(--border-subtle);color:var(--text-secondary)}.nex-footer-grid{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:30px}.nex-footer h3{margin:0 0 10px;font-size:14px;color:var(--accent-purple-dark)}.nex-footer a{display:block;margin:9px 0;color:var(--text-secondary);font-size:13px;text-decoration:none}.nex-footer a:hover{color:var(--accent-purple)}.nex-footer-brand{color:var(--accent-purple-dark);font-weight:900;font-size:20px;letter-spacing:.07em}.nex-footer p{font-size:13px;line-height:1.65;max-width:280px}.nex-footer a i{width:16px;margin-right:6px;text-align:center}.nex-copyright{margin-top:28px;padding-top:16px;border-top:1px solid var(--border-subtle);font-size:12px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.nex-legal-links{display:flex;gap:18px}.nex-copyright .nex-legal-links a{display:inline;margin:0;color:var(--text-muted);font-size:12px}@media(max-width:800px){.pokee-sidebar{height:auto;min-height:62px;flex-wrap:wrap;padding:10px 15px}.pokee-nav{order:3;width:100%;justify-content:center;overflow:auto;margin:4px 0}.pokee-nav a{white-space:nowrap}.pokee-user{position:absolute;right:12px;top:12px}.pokee-main{padding-top:82px}.feature-grid{grid-template-columns:repeat(2,1fr)}.nex-footer-grid{grid-template-columns:1fr 1fr}.nex-footer-grid>div:first-child{grid-column:1/-1}}@media(max-width:540px){.pokee-sidebar{width:calc(100% - 20px);top:8px;margin-top:8px}.pokee-nav a{padding:7px 8px;font-size:11px}.nex-hero{padding:47px 15px 34px}.nex-hero h1{font-size:2.55rem}.container{width:calc(100% - 28px)}.section{padding:38px 0}.feature-grid,.stats-row{grid-template-columns:1fr}.step-card{padding:20px;gap:14px}.step-number{flex-basis:38px;height:38px;border-radius:11px;font-size:16px}.nex-footer{padding:38px 24px 20px}.nex-footer-grid{grid-template-columns:1fr}.nex-footer-grid>div:first-child{grid-column:auto}}
 </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a href="https://nexjobs.in/" class="navbar-brand">Nex<span>Jobs</span></a>
-            <div>
-                <a href="https://nexjobs.in/" class="nav-link">Home</a>
-                <a href="https://nexjobs.in/about.html" class="nav-link">About</a>
-                <a href="https://nexjobs.in/features.html" class="nav-link" style="color:#2563eb;font-weight:700;">Features</a>
-                <a href="https://nexjobs.in/how-it-works.html" class="nav-link">How It Works</a>
-                <a href="https://nexjobs.in/faq.html" class="nav-link">FAQ</a>
-                            <a href="https://nexjobs.in/" class="btn-primary nav-cta">Start searching <i class="fas fa-arrow-right"></i></a>
-            </div>
-        </div>
-    </nav>
-    <section class="page-hero">
-        <div class="container">
-            <h1>NexJobs Features</h1>
-            <p>AI-powered job search tools that save you hours of manual searching.</p>
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
-            <h2 class="section-title text-center">Core Features</h2>
-            <p class="section-subtitle text-center">Everything you need to find the right job, faster.</p>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <i class="fas fa-file-pdf"></i>
-                    <h3>AI Resume Parsing</h3>
-                    <p>Upload your resume in PDF, DOCX, or TXT format. NexJobs uses pdf.js and mammoth.js to extract your skills, experience, education, and projects — all processed in your browser.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-brain"></i>
-                    <h3>Smart Job Matching</h3>
-                    <p>Our priority-based scoring engine ranks every job by education match (35%), skills (25%), certifications (15%), projects (15%), and keywords (10%) — so you see the best matches first.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-globe"></i>
-                    <h3>Multi-Platform Search</h3>
-                    <p>Search 5+ job APIs simultaneously (Arbeitnow, Remotive, Remote OK, Himalayas, We Work Remotely) and get direct search links for 100+ platforms including LinkedIn, Naukri, Indeed, and Glassdoor.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-shield-halved"></i>
-                    <h3>Complete Privacy</h3>
-                    <p>Everything runs client-side in your browser. Your resume data never leaves your device. No backend servers, no data collection, no tracking cookies.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-tags"></i>
-                    <h3>12 Job Categories</h3>
-                    <p>Search across India job portals, software engineering, AI/ML & data science, remote jobs, international portals, internships, freelancing, startups, company career pages, off-campus hiring, government jobs, and quick apply.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-user-circle"></i>
-                    <h3>Google OAuth Sign-In</h3>
-                    <p>Optionally sign in with Google to persist your search history in localStorage. No mandatory accounts — use NexJobs anonymously.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="section" style="background:white;">
-        <div class="container">
-            <h2 class="section-title text-center">Supported Job Platforms</h2>
-            <p class="section-subtitle text-center">NexJobs generates pre-filled search URLs for 100+ platforms across every category.</p>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <i class="fab fa-linkedin"></i>
-                    <h3>LinkedIn Jobs</h3>
-                    <p>Search LinkedIn's millions of job listings with your exact skills and experience level pre-filled.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-briefcase"></i>
-                    <h3>Naukri.com</h3>
-                    <p>India's largest job portal — search with your resume data automatically applied to filters.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-magnifying-glass"></i>
-                    <h3>Indeed</h3>
-                    <p>Search Indeed's global job listings with your skills, location, and experience pre-configured.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-building"></i>
-                    <h3>Glassdoor</h3>
-                    <p>Find jobs at companies with salary insights and interview reviews built into the search.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-rocket"></i>
-                    <h3>Wellfound (AngelList)</h3>
-                    <p>Discover startup jobs and connect directly with founders and hiring managers.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-graduation-cap"></i>
-                    <h3>Internshala</h3>
-                    <p>Find internships and training programs for students and freshers across India.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="cta-section">
-        <div class="container">
-            <h2>Try NexJobs Features Free</h2>
-            <p>No sign-up required. Upload your resume and start searching in seconds.</p>
-            <a href="https://nexjobs.in/" class="btn-primary"><i class="fas fa-search"></i> Start Searching Now</a>
-        </div>
-    </section>
-    <footer>
-        <div class="container">
-            <p style="font-size:1.2rem;font-weight:700;color:white;margin-bottom:1rem;">Nex<span style="color:#a58fff;">Jobs</span></p>
-            <p>&copy; 2026 NexJobs. AI-Powered Resume Job Search Platform.</p>
-            <p style="margin-top:1rem;">
-                <a href="https://nexjobs.in/">Home</a> &middot;
-                <a href="https://nexjobs.in/about.html">About</a> &middot;
-                <a href="https://nexjobs.in/features.html">Features</a> &middot;
-                <a href="https://nexjobs.in/how-it-works.html">How It Works</a> &middot;
-                <a href="https://nexjobs.in/faq.html">FAQ</a>
-            </p>
-        </div>
-    </footer>
-</body>
-</html>
+</head><body><div class="pokee-shell"><header class="pokee-sidebar"><a class="pokee-brand" href="index.html"><span class="nex-logo-text">NEXJOBS</span></a><nav class="pokee-nav" aria-label="Main navigation"><a href="index.html" class="">Home</a><a href="about.html" class="">About</a><a href="features.html" class="active">Features</a><a href="how-it-works.html" class="">How it works</a><a href="faq.html" class="">FAQ</a></nav><div class="pokee-user"><a class="pokee-login" href="login.html">Login</a></div></header><main class="pokee-main"><section class="nex-hero">
+<div class="nex-hero__content"><div class="nex-kicker">NexJobs</div>
+<h1>NexJobs Features</h1>
+<p>AI-powered job search tools that save you hours of manual searching.</p>
+</div>
+<span class="sparkle one"></span><span class="sparkle two"></span><span class="sparkle three"></span><span class="sparkle four"></span></section><section class="section">
+<div class="container">
+<h2 class="section-title text-center">Core Features</h2>
+<p class="section-subtitle text-center">Everything you need to find the right job, faster.</p>
+<div class="feature-grid">
+<div class="feature-card">
+<i class="fas fa-file-pdf"></i>
+<h3>AI Resume Parsing</h3>
+<p>Upload your resume in PDF, DOCX, or TXT format. NexJobs uses pdf.js and mammoth.js to extract your skills, experience, education, and projects — all processed in your browser.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-brain"></i>
+<h3>Smart Job Matching</h3>
+<p>Our priority-based scoring engine ranks every job by education match (35%), skills (25%), certifications (15%), projects (15%), and keywords (10%) — so you see the best matches first.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-globe"></i>
+<h3>Multi-Platform Search</h3>
+<p>Search 5+ job APIs simultaneously (Arbeitnow, Remotive, Remote OK, Himalayas, We Work Remotely) and get direct search links for 100+ platforms including LinkedIn, Naukri, Indeed, and Glassdoor.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-shield-halved"></i>
+<h3>Complete Privacy</h3>
+<p>Everything runs client-side in your browser. Your resume data never leaves your device. No backend servers, no data collection, no tracking cookies.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-tags"></i>
+<h3>12 Job Categories</h3>
+<p>Search across India job portals, software engineering, AI/ML &amp; data science, remote jobs, international portals, internships, freelancing, startups, company career pages, off-campus hiring, government jobs, and quick apply.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-user-circle"></i>
+<h3>Google OAuth Sign-In</h3>
+<p>Optionally sign in with Google to persist your search history in localStorage. No mandatory accounts — use NexJobs anonymously.</p>
+</div>
+</div>
+</div>
+</section><section class="section" style="background:white;">
+<div class="container">
+<h2 class="section-title text-center">Supported Job Platforms</h2>
+<p class="section-subtitle text-center">NexJobs generates pre-filled search URLs for 100+ platforms across every category.</p>
+<div class="feature-grid">
+<div class="feature-card">
+<i class="fab fa-linkedin"></i>
+<h3>LinkedIn Jobs</h3>
+<p>Search LinkedIn's millions of job listings with your exact skills and experience level pre-filled.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-briefcase"></i>
+<h3>Naukri.com</h3>
+<p>India's largest job portal — search with your resume data automatically applied to filters.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-magnifying-glass"></i>
+<h3>Indeed</h3>
+<p>Search Indeed's global job listings with your skills, location, and experience pre-configured.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-building"></i>
+<h3>Glassdoor</h3>
+<p>Find jobs at companies with salary insights and interview reviews built into the search.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-rocket"></i>
+<h3>Wellfound (AngelList)</h3>
+<p>Discover startup jobs and connect directly with founders and hiring managers.</p>
+</div>
+<div class="feature-card">
+<i class="fas fa-graduation-cap"></i>
+<h3>Internshala</h3>
+<p>Find internships and training programs for students and freshers across India.</p>
+</div>
+</div>
+</div>
+</section><section class="cta-section">
+<div class="container">
+<h2>Try NexJobs Features Free</h2>
+<p>No sign-up required. Upload your resume and start searching in seconds.</p>
+<a class="btn-primary" href="index.html"><i class="fas fa-search"></i> Start Searching Now</a>
+</div>
+</section></main><footer class="nex-footer"><div class="nex-footer-grid"><div><div class="nex-footer-brand">NEXJOBS</div><p>AI-powered job discovery, designed for your next move.</p></div><div><h3>Platform</h3><a href="index.html">Job search</a><a href="index.html">Resume matching</a></div><div><h3>Resources</h3><a href="about.html">About us</a><a href="features.html">Features</a><a href="how-it-works.html">How it works</a></div><div><h3>Support</h3><a href="faq.html">Help center</a><a href="mailto:hello@nexjobs.in">Contact us</a></div><div><h3>Follow us</h3><a href="https://twitter.com/nexjobs" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i>Twitter</a><a href="https://linkedin.com/company/nexjobs" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i>LinkedIn</a><a href="https://instagram.com/nexjobs" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i>Instagram</a></div></div><div class="nex-copyright"><span>© 2025 NexJobs. Built for the next move.</span><span class="nex-legal-links"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a></span></div></footer></div></body></html>
