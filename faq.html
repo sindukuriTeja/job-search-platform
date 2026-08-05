@@ -3,41 +3,42 @@
 /* New Footer Design */
 .nex-footer-wrapper{position:relative;margin-top:0}
 .nex-footer-cta{position:relative;margin:0;padding:0}
-.nex-footer-cta-inner{position:relative;background:linear-gradient(135deg,#F3F0FC 0%,#EBE6FA 50%,#E8E3F9 100%);border-radius:0;padding:48px 5%;display:flex;align-items:center;justify-content:center;gap:32px;overflow:hidden;box-shadow:none;width:100%}
-.nex-footer-cta-inner::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background-image:radial-gradient(circle at 1px 1px,rgba(108,77,230,.08) 1px,transparent 0);background-size:24px 24px;pointer-events:none}
-.nex-footer-cta-text{position:relative;z-index:1;flex:1;max-width:560px;text-align:center}
-.nex-footer-cta-text h2{font-family:'Playfair Display',Georgia,serif;font-size:clamp(2rem,3.5vw,2.8rem);font-weight:700;color:var(--accent-purple-dark);line-height:1.15;margin:0 0 12px}
-.nex-footer-cta-text p{font-size:16px;color:var(--text-secondary);margin:0 0 28px;line-height:1.65}
-.nex-footer-cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--accent-purple-dark);color:#fff;border:none;border-radius:50px;padding:14px 32px;font:700 15px Inter;cursor:pointer;transition:all .25s;text-decoration:none;white-space:nowrap}
-.nex-footer-cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(46,28,91,.3)}
-.nex-footer-cta-btn i{background:#fff;color:var(--accent-purple-dark);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
+.nex-footer-cta-inner{position:relative;background:linear-gradient(135deg,#D3C9FC 0%,#B99BF8 100%);border-radius:32px;padding:48px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;overflow:hidden;box-shadow:0 8px 32px rgba(108,77,230,.15);max-width:1200px;margin:0 auto -80px;position:relative;z-index:2}
+.nex-footer-cta-inner::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.15) 1px,transparent 0);background-size:24px 24px;pointer-events:none}
+.nex-footer-cta-text{position:relative;z-index:1;flex:1;max-width:600px}
+.nex-footer-cta-text h2{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:700;color:#0B0B1E;line-height:1.15;margin:0 0 16px}
+.nex-footer-cta-text p{font-size:16px;color:#4a4a6a;margin:0 0 28px;line-height:1.65}
+.nex-footer-cta-btn{display:inline-flex;align-items:center;justify-content:space-between;gap:12px;background:#000;color:#fff;border:none;border-radius:50px;padding:14px 32px;font:600 15px Inter;cursor:pointer;transition:all .25s;text-decoration:none;white-space:nowrap;min-width:160px}
+.nex-footer-cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.nex-footer-cta-btn i{background:#fff;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px}
 .nex-footer-cta-visual{position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:center;gap:16px}
-.nex-footer-cta-icon{width:72px;height:72px;border-radius:20px;background:var(--gradient-purple);display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;box-shadow:0 8px 24px rgba(108,77,230,.3)}
-.nex-footer-cta-sparkle{position:absolute;top:-12px;right:-12px;width:28px;height:28px;background:var(--accent-purple-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;animation:sparkleFloat 3s ease-in-out infinite}
-.nex-footer{background:#1a1a2e;color:#a0a0b0;padding:56px 5% 32px;border-radius:0;margin:0;width:100%}
-.nex-footer-grid{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:32px;margin-bottom:40px}
-.nex-footer-brand{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.nex-footer-brand img{height:36px;width:auto}
-.nex-footer-brand-text{font-family:'Inter',sans-serif;font-weight:800;font-size:18px;letter-spacing:.14em;color:#fff;text-transform:uppercase}
-.nex-footer-desc{font-size:14px;line-height:1.65;max-width:320px;color:#8a8aaa;margin:0}
-.nex-footer-col h4{font-size:13px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.08em;margin:0 0 16px}
-.nex-footer-col a{display:block;font-size:14px;color:#8a8aaa;text-decoration:none;margin:0 0 10px;transition:color .2s}
-.nex-footer-col a:hover{color:var(--accent-purple-light)}
-.nex-footer-social{display:flex;gap:10px;margin-top:8px}
-.nex-footer-social a{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.06);color:#8a8aaa;font-size:16px;text-decoration:none;transition:all .2s}
-.nex-footer-social a:hover{background:var(--accent-purple);color:#fff}
-.nex-footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.nex-footer-cta-icon{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#6C4DE6,#9B8AF7);display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;box-shadow:0 8px 24px rgba(108,77,230,.3)}
+.nex-footer-cta-sparkle{position:absolute;top:-12px;right:-12px;width:28px;height:28px;background:#9B8AF7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;animation:sparkleFloat 3s ease-in-out infinite}
+.nex-footer{background:#0a0a0a;color:#a0a0b0;padding:120px 5% 60px;border-radius:40px 40px 0 0;margin:0;width:100%}
+.nex-footer-grid{display:grid;grid-template-columns:repeat(5,1fr) 1.5fr;gap:32px;max-width:1200px;margin:0 auto 48px}
+.nex-footer-col h4{font-size:14px;font-weight:700;color:#e5e5e5;text-transform:uppercase;letter-spacing:.08em;margin:0 0 20px}
+.nex-footer-col a{display:block;font-size:13px;color:#999;text-decoration:none;margin:0 0 14px;transition:color .2s}
+.nex-footer-col a:hover{color:#fff}
+.nex-footer-social{display:flex;gap:10px;margin-top:12px}
+.nex-footer-social a{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.06);color:#999;font-size:16px;text-decoration:none;transition:all .2s}
+.nex-footer-social a:hover{background:#6C4DE6;color:#fff}
+.nex-footer-bottom{padding-top:32px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;max-width:1200px;margin:0 auto}
 .nex-footer-copyright{font-size:13px;color:#6a6a8a}
-.nex-footer-legal{display:flex;gap:20px}
+.nex-footer-legal{display:flex;gap:24px}
 .nex-footer-legal a{font-size:13px;color:#6a6a8a;text-decoration:none;transition:color .2s}
-.nex-footer-legal a:hover{color:var(--accent-purple-light)}
-.nex-footer-badges{display:flex;gap:12px;align-items:center;margin-top:16px}
-.nex-footer-badge{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:10px;color:#8a8aaa;font-weight:700;text-align:center;line-height:1.1;padding:4px}
-.nex-scroll-top{position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--accent-purple);color:#fff;border:none;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(108,77,230,.4);transition:all .2s;z-index:999}
-.nex-scroll-top:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,77,230,.5)}
+.nex-footer-legal a:hover{color:#fff}
+.nex-footer-badges{display:flex;gap:16px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.nex-footer-badge{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:9px;color:#999;font-weight:700;text-align:center;line-height:1.1;padding:4px;border:1px solid rgba(255,255,255,.1)}
+.nex-footer-badge:hover{background:rgba(255,255,255,.1);transform:translateY(-2px);transition:all .2s}
+.nex-scroll-top{position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:#5F48EC;color:#fff;border:none;font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(95,72,236,.4);transition:all .2s;z-index:999}
+.nex-scroll-top:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(95,72,236,.5)}
 .nex-scroll-top.visible{display:flex}
-@media(max-width:800px){.nex-footer-cta-inner{flex-direction:column;text-align:center;padding:32px 5%}.nex-footer-cta-text{max-width:100%}.nex-footer-cta-visual{justify-content:center}.nex-footer-grid{grid-template-columns:1fr 1fr;gap:24px}.nex-footer{padding:40px 5% 24px}}
-@media(max-width:540px){.nex-footer-cta-inner{padding:24px 5%;border-radius:0}.nex-footer-cta-text h2{font-size:1.5rem}.nex-footer-grid{grid-template-columns:1fr}.nex-footer{padding:32px 5% 20px;border-radius:0}.nex-footer-bottom{flex-direction:column;text-align:center}.nex-footer-badges{justify-content:center}}
+.nex-privacy-btn{position:fixed;bottom:24px;left:24px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#D3C9FC,#B99BF8);color:#2E1C5B;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(108,77,230,.3);transition:all .2s;z-index:999}
+.nex-privacy-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,77,230,.4)}
+@keyframes sparkleFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.1)}}
+@media(max-width:1024px){.nex-footer-cta-inner{flex-direction:column;text-align:center;padding:36px 28px}.nex-footer-cta-text{max-width:100%}.nex-footer-cta-visual{justify-content:center}.nex-footer{padding:100px 5% 48px}.nex-footer-grid{grid-template-columns:repeat(3,1fr);gap:24px}}
+@media(max-width:768px){.nex-footer-cta-inner{padding:28px 20px;border-radius:24px}.nex-footer-cta-text h2{font-size:1.6rem}.nex-footer{padding:80px 4% 36px;border-radius:24px 24px 0 0}.nex-footer-grid{grid-template-columns:repeat(2,1fr);gap:20px}.nex-footer-bottom{flex-direction:column;text-align:center;gap:12px}}
+@media(max-width:540px){.nex-footer-cta-inner{padding:24px 16px;border-radius:20px}.nex-footer-cta-text h2{font-size:1.5rem}.nex-footer-grid{grid-template-columns:1fr}.nex-footer{padding:32px 5% 20px;border-radius:0}.nex-footer-bottom{flex-direction:column;text-align:center}.nex-footer-badges{justify-content:center}}
 
 </style>
 </head><body><div class="pokee-shell"><header class="pokee-sidebar"><a class="pokee-brand" href="index.html"><img src="/logo.png" alt="NexJobs" class="nex-logo-img" style="height:36px;width:auto;"></a><nav class="pokee-nav" aria-label="Main navigation"><a href="index.html" class="">Home</a><a href="about.html" class="">About</a><a href="features.html" class="">Features</a><a href="how-it-works.html" class="">How it works</a><a href="faq.html" class="active">FAQ</a></nav><div class="pokee-user"><a class="pokee-login" href="login.html">Login</a></div></header><main class="pokee-main"><section class="nex-hero">
@@ -163,14 +164,14 @@
 <a class="btn-primary" href="index.html"><i class="fas fa-search"></i> Start Searching on NexJobs</a>
 </div>
 </section></main><footer id="nexFooter" class="nex-footer-wrapper">
-  <!-- CTA Banner -->
+  <!-- Floating CTA Card -->
   <div class="nex-footer-cta">
     <div class="nex-footer-cta-inner">
       <div class="nex-footer-cta-text">
-        <h2>Ready to land your dream job?</h2>
+        <h2>Ready to Improve Conversions and Reduce Risk?</h2>
         <p>Upload your resume and search 100+ job platforms in one click. Let AI do the heavy lifting.</p>
-        <a href="index.html" class="nex-footer-cta-btn">
-          Start Searching <i class="fas fa-arrow-right"></i>
+        <a href="#" onclick="dashboardNavigate('upload');return false;" class="nex-footer-cta-btn">
+          Start Searching <i class="fas fa-arrow-up-right-from-square"></i>
         </a>
       </div>
       <div class="nex-footer-cta-visual">
@@ -182,39 +183,47 @@
   <!-- Main Footer -->
   <div class="nex-footer">
     <div class="nex-footer-grid">
-      <div>
-        <div class="nex-footer-brand">
-          <img src="/logo.png" alt="NexJobs" style="height:36px;width:auto;">
-        </div>
-        <p class="nex-footer-desc">AI-powered job discovery, designed for your next move.</p>
-        <div class="nex-footer-social">
-          <a href="https://twitter.com/nexjobs" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i></a>
-          <a href="https://linkedin.com/company/nexjobs" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="https://instagram.com/nexjobs" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
-        </div>
+      <div class="nex-footer-col">
+        <h4>Solutions</h4>
+        <a href="#" onclick="dashboardNavigate('search');return false;">Job Search</a>
+        <a href="#" onclick="dashboardNavigate('upload');return false;">Resume Matching</a>
+        <a href="#" onclick="dashboardNavigate('saved');return false;">Saved Jobs</a>
+        <a href="#" onclick="dashboardNavigate('auth');return false;">Authorizations</a>
       </div>
       <div class="nex-footer-col">
-        <h4>Platform</h4>
-        <a href="index.html">Job Search</a>
-        <a href="index.html">Resume Matching</a>
-        <a href="index.html">Saved Jobs</a>
+        <h4>Industries</h4>
+        <a href="#">Technology</a>
+        <a href="#">Finance</a>
+        <a href="#">Healthcare</a>
+        <a href="#">Startups</a>
       </div>
       <div class="nex-footer-col">
         <h4>Resources</h4>
-        <a href="about.html">About Us</a>
-        <a href="features.html">Features</a>
         <a href="how-it-works.html">How It Works</a>
-      </div>
-      <div class="nex-footer-col">
-        <h4>Support</h4>
-        <a href="faq.html">Help Center</a>
-        <a href="mailto:hello@nexjobs.in">Contact Us</a>
-        <a href="privacy.html">Privacy Policy</a>
+        <a href="features.html">Features</a>
+        <a href="faq.html">FAQ</a>
+        <a href="about.html">Blog</a>
       </div>
       <div class="nex-footer-col">
         <h4>Legal</h4>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html">Cookie Policy</a>
+      </div>
+      <div class="nex-footer-col">
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="mailto:hello@nexjobs.in">Careers</a>
+        <a href="mailto:hello@nexjobs.in">Contact</a>
+      </div>
+      <div class="nex-footer-col">
+        <h4>Security &amp; Compliance</h4>
+        <div class="nex-footer-badges">
+          <div class="nex-footer-badge">GDPR<br>Ready</div>
+          <div class="nex-footer-badge">ISO<br>27001</div>
+          <div class="nex-footer-badge">SOC 2</div>
+          <div class="nex-footer-badge">SSL<br>Secure</div>
+        </div>
       </div>
     </div>
     <div class="nex-footer-bottom">
@@ -222,10 +231,12 @@
       <div class="nex-footer-legal">
         <a href="privacy.html">Privacy</a>
         <a href="terms.html">Terms</a>
+        <a href="privacy.html">Cookies</a>
       </div>
     </div>
   </div>
 </footer>
+
 <button class="nex-scroll-top" id="nexScrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button></div><script>function toggleFaq(q){const a=q.nextElementSibling,w=a.classList.contains("open");document.querySelectorAll(".faq-answer").forEach(x=>x.classList.remove("open"));document.querySelectorAll(".faq-question").forEach(x=>x.classList.remove("active"));if(!w){a.classList.add("open");q.classList.add("active")}}
         // Scroll to top button
         window.addEventListener('scroll', function() {
