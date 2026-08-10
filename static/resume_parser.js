@@ -20,7 +20,15 @@ async function parseResume(file) {
         throw new Error('Unsupported file format. Please upload PDF, DOCX, or TXT.');
     }
 
-    return extractResumeData(text);
+    const basicData = extractResumeData(text);
+    // Keep local extraction as a fallback when AI is unavailable.
+    if (typeof window.parseResumeWithAI === 'function') {
+        try {
+            const aiData = await window.parseResumeWithAI(text);
+            return {...basicData, ...aiData, totalExperience: aiData.experience_years ?? basicData.totalExperience, experienceLevel: aiData.experience_level || basicData.experienceLevel, rawText: basicData.rawText};
+        } catch (error) { console.warn('AI resume enhancement unavailable; using local extraction.', error.message); }
+    }
+    return basicData;
 }
 
 /**
